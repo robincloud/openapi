@@ -39,6 +39,7 @@ image   | url       | 상품 대표 이미지
 --------|-----------|----------
 id      | string(64)| \<sid>\_\<pid>\_\<oid> 형태로 구성.
 name    | string    | 상품 판매 이름
+option  | string    | 옵션 이름 (선택 사항. oid가 있을 경우)
 image   | url       | 상품 판매 대표 이미지
 price   | number    | 판매가
 delivery | number   | 배송비
