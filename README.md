@@ -22,7 +22,7 @@ $ npm test
 
 
 # Document (문서)
-see [wiki](wiki) 
+see [wiki](/robincloud/openapi/wiki) 
 
 
 # Demo (데모)
