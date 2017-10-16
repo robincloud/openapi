@@ -21,7 +21,7 @@ class AuthService {
 		});
 	}
 
-	static signin(email, passphrase) {
+	static login(email, passphrase) {
 		return User.findByEmail(email)
 		.then((user) => {
 			if (!user) {
@@ -78,7 +78,7 @@ class AuthService {
 
 		return User.initialize()
 		.then(() => AuthService.signup(email, pass))
-		.then(() => AuthService.signin(email, pass))
+		.then(() => AuthService.login(email, pass))
 		.then((token) => {
 			console.log('* Issued token:');
 			console.log(token);
