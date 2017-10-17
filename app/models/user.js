@@ -1,33 +1,21 @@
-const AWS = require('aws-sdk');
-const config = require('../config');
+const DB = require('../database');
+const AbstractModel = require('./AbstractModel');
 
-
-class User {
+class User extends AbstractModel {
 	static initialize() {
-		// Open connection with DynamoDB
-		if (!User.dynamodb) {
-			AWS.config.update({
-				region: "ap-northeast-2",
-				accessKeyId: config['accessKeyId'],
-				secretAccessKey: config['secretAccessKey']
-			});
-
-			User.tableName = 'users';
-			User.dynamodb = new AWS.DynamoDB();
-			User.docClient = new AWS.DynamoDB.DocumentClient();	
-		}
+        User.tableName = 'users';
 
 		// Create table if not exists
 		const params = {
 			TableName: User.tableName
 		};
-		return User.dynamodb.describeTable(params).promise()
+		return DB.dynamodb.describeTable(params).promise()
 		.catch((err) => {
 			if (err.code !== 'ResourceNotFoundException') {
 				throw err;
 			}
 
-			const params = {
+			const tableDescription = {
 				TableName: User.tableName,
 				AttributeDefinitions: [
 					{
@@ -46,7 +34,7 @@ class User {
 					WriteCapacityUnits: 2
 				}
 			};
-			return User.dynamodb.createTable(tableDescription).promise();
+			return DB.dynamodb.createTable(tableDescription).promise();
 		});
 	}
 
@@ -58,7 +46,7 @@ class User {
 			}
 		};
 
-		return User.docClient.get(params).promise()
+		return DB.docClient.get(params).promise()
 		.then((data) => {
 			if (!data['Item']) return null;
 
@@ -105,12 +93,13 @@ class User {
 					email
 				}
 			};
-			return User.docClient.delete(params).promise();
+			return DB.docClient.delete(params).promise();
 		});
 	}
 
 
 	constructor(email, passphrase, admin = false) {
+		super();
 		this._object = {
 			email,
 			passphrase,
@@ -118,20 +107,15 @@ class User {
 		};
 	}
 
-	get(field)			{ return this._object[field]; }
-	set(field, value)	{ this._object[field] = value; }
 	save() {
 		const params = {
 			TableName: User.tableName,
 			Item: this._object
 		};
 
-		return User.docClient.put(params).promise()
+		return DB.docClient.put(params).promise()
 		.then(() => this);
 	}
-	toObject()			{ return this._object; }
-	toJSON()			{ return JSON.stringify(this._object); }
-
 
 	static _isValidEmailAddress(email) {
 		const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
