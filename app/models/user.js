@@ -1,4 +1,5 @@
 const AWS = require('aws-sdk');
+const config = require('../config');
 
 
 class User {
@@ -7,19 +8,18 @@ class User {
 		if (!User.dynamodb) {
 			AWS.config.update({
 				region: "ap-northeast-2",
-				accessKeyId: "AKIAJRDDLOK7LS5ZCI4Q",
-				secretAccessKey: "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",
-				endpoint: "http://localhost:8000"
+				accessKeyId: config['accessKeyId'],
+				secretAccessKey: config['secretAccessKey']
 			});
 
-			User.table = 'Users';
+			User.tableName = 'users';
 			User.dynamodb = new AWS.DynamoDB();
 			User.docClient = new AWS.DynamoDB.DocumentClient();	
 		}
 
 		// Create table if not exists
 		const params = {
-			TableName: User.table
+			TableName: User.tableName
 		};
 		return User.dynamodb.describeTable(params).promise()
 		.catch((err) => {
@@ -28,7 +28,7 @@ class User {
 			}
 
 			const params = {
-				TableName: User.table,
+				TableName: User.tableName,
 				AttributeDefinitions: [
 					{
 						AttributeName: 'email',
@@ -52,7 +52,7 @@ class User {
 
 	static findByEmail(email) {
 		const params = {
-			TableName: User.table,
+			TableName: User.tableName,
 			Key: {
 				email
 			}
@@ -100,7 +100,7 @@ class User {
 			}
 
 			const params = {
-				TableName: User.table,
+				TableName: User.tableName,
 				Key: {
 					email
 				}
@@ -122,7 +122,7 @@ class User {
 	set(field, value)	{ this._object[field] = value; }
 	save() {
 		const params = {
-			TableName: User.table,
+			TableName: User.tableName,
 			Item: this._object
 		};
 
@@ -169,3 +169,4 @@ class User {
 
 module.exports = User;
 
+User.test();
