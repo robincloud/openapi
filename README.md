@@ -9,6 +9,7 @@ The required Basic Development Environment (개발 및 실행 환경에 대해�
 - DynamoDB : [로컬 설치 참고 문서](http://docs.aws.amazon.com/ko_kr/amazondynamodb/latest/developerguide/DynamoDBLocal.html).
 
 
+
 # Installation (설치)
 How to install development server environment locally (개발 환경 설치 및 운영에 대한 설명서).
 
@@ -21,12 +22,15 @@ $ npm test
 ```
 
 
+
 # Document (문서)
-see [wiki](/robincloud/openapi/wiki) 
+See [wiki](https://github.com/robincloud/openapi/wiki) 
+
 
 
 # Demo (데모)
 실제 실행 환경의 데모. 
+
 
 
 ---
