@@ -43,7 +43,7 @@ See [wiki](https://github.com/robincloud/openapi/wiki)
 
 필드명   | 타입        | 설명
 --------|-----------|----------
-id      | string(64)| \<sid>\_\<pid>\_\<oid> 형태로 구성 <br> sid: shop-id 쇼핑몰별 고유아이디 (네이버쇼핑일 경우 nv)  <br> pid: product-id 제품 ID <br> oid: *option-id 옵션ID값으로 선택사항 <br> 자세한 내용은 [아래 참고](#TBD).
+id      | string(64)| \<sid>\_\<pid>\_\<oid> 형태로 구성 <br> sid: shop-id 쇼핑몰별 고유아이디 (네이버쇼핑일 경우 nv)  <br> pid: product-id 제품 ID <br> oid: *option-id 옵션ID값으로 선택사항 <br> 자세한 내용은 [아래 참고](#tbd).
 name    | string    | 상품 이름
 option  | string    | 옵션 이름 (선택 사항. oid가 있을 경우)
 image   | url       | 상품 대표 이미지
