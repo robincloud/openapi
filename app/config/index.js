@@ -23,7 +23,6 @@ MANDATORY_CONFIGS.forEach((envName) => {
 
 // Command line arguments
 const optionDefinitions = [
-    {name: 'endpoint', alias: 'e', type: String, defaultValue: 'http://localhost:8000'},
 	{name: 'port', alias: 'p', type: Number, defaultValue: 8090},
 	{name: 'verbose', alias: 'v', type: Boolean, defaultValue: false}
 ];
@@ -38,11 +37,11 @@ const options = commandLineArgs(optionDefinitions);
 
 // Merge configurations from options top of environment variables
 const config = Object.assign(environment, options);
-// MANDATORY_CONFIGS.forEach((envName) => {
-// 	if (!config[envName]) {
-// 		throw new Error(`Required configuration value (${envName}) is missing.`);
-// 	}
-// });
+MANDATORY_CONFIGS.forEach((envName) => {
+	if (!config[envName]) {
+		throw new Error(`Required configuration value (${envName}) is missing.`);
+	}
+});
 
 
 module.exports = config;
