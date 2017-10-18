@@ -12,6 +12,7 @@ app.use(bodyParser.json({limit: '50mb'}));
 
 // Routings
 app.use('/auth', require('./api/auth/auth.router'));
+app.use('/items', require('./api/items/items.router'));
 
 // Response echo to 'GET /' request for healthy check
 app.get('/', (req, res) => {
