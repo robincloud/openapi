@@ -85,7 +85,7 @@ class Mall extends AbstractModel {
             });
     }
 
-    static delete(id) {
+    static remove(id) {
         if (!id) {
             throw new Error(`id is empty.`);
         }
@@ -121,7 +121,7 @@ class Mall extends AbstractModel {
             .then((item) => {
                 if (item) console.log('Mall found');
                 console.log(item);
-                return Mall.delete(item.get('id'));
+                return Mall.remove(item.get('id'));
             })
             .then(() => {
                 console.log('PASSED(Mall)');

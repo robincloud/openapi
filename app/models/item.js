@@ -83,7 +83,7 @@ class Item extends AbstractModel {
             });
     }
 
-    static delete(id) {
+    static remove(id) {
         if (!id) {
             throw new Error(`id is empty.`);
         }
@@ -119,7 +119,7 @@ class Item extends AbstractModel {
             .then((item) => {
                 if (item) console.log('Item found');
                 console.log(item);
-                return Item.delete(item.get('id'));
+                return Item.remove(item.get('id'));
             })
             .then(() => {
                 console.log('PASSED(Item)');

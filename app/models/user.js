@@ -76,7 +76,7 @@ class User extends AbstractModel {
 		});
 	}
 
-	static delete(email) {
+	static remove(email) {
 		if (!email) {
 			throw new Error(`Email address is empty.`);
 		}
@@ -139,7 +139,7 @@ class User extends AbstractModel {
 			if (user) console.log('User found.');
 			console.log(user);
 
-			return User.delete(email);
+			return User.remove(email);
 		})
 		.then(() => {
 			console.log('PASSED.');
