@@ -1,4 +1,4 @@
-const ItemService = require('../../services/items');
+const ItemService = require('../services/items');
 
 
 const save = (req, res) => {
