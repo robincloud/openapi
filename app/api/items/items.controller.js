@@ -12,7 +12,7 @@ const save = (req, res) => {
             });
         })
         .catch((err) => {
-            res.status(400).json({
+            res.status(500).json({
                 message: err.message
             });
         });
@@ -24,6 +24,7 @@ const query = (req, res) => {
     ItemService.get(id)
         .then((item) => {
             res.json({
+                message: 'Item found',
                 item
             });
         })

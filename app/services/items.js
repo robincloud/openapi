@@ -5,18 +5,17 @@ const Mall = require('../models/mall');
 class ItemSerivce {
     static save(data) {
         // handle data
-        return Item.create(data);
+        return Item.create(data)
+            .then((item) => item.toObject());
     }
 
     static get(id) {
         return Item.findById(id)
             .then((item) => {
                 if (!item) {
-                    return new Error(`An item with id (${id}) does not exist.`);
+                    throw new Error(`An item with id (${id}) does not exist.`);
                 }
-                item = item.toObject();
-
-                return item;
+                return item.toObject();
             })
     }
 

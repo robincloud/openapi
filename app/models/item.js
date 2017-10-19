@@ -77,7 +77,8 @@ class Item extends AbstractModel {
         return Item.findById(data.id)
             .then((item) => {
                 if (item) {
-                    throw new Error(`Given id (${item.get('id')}) already exists.`);
+                    //throw new Error(`Given id (${item.get('id')}) already exists.`);
+
                 }
                 return new Item(data.id, data.name).save();
             });
@@ -115,6 +116,9 @@ class Item extends AbstractModel {
                 console.log('Item created');
                 console.log(item);
                 return Item.findById(item.get('id'));
+            },(err) => {
+                console.log(err);
+                return Item.findById(data.id);
             })
             .then((item) => {
                 if (item) console.log('Item found');

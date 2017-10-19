@@ -117,6 +117,9 @@ class Mall extends AbstractModel {
                 console.log('Mall created');
                 console.log(item);
                 return Mall.findById(item.get('id'));
+            }, (err) => {
+                console.log(err);
+                return Mall.findById(data.id);
             })
             .then((item) => {
                 if (item) console.log('Mall found');
