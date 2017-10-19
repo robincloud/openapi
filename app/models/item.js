@@ -126,11 +126,11 @@ class Item extends AbstractModel {
             })
             .catch((err) => {
                 console.error(err);
-                throw new Error(`failure during test for item`);
+                throw err;
             })
     }
 }
 
 
 module.exports = Item;
-Item.test();
+Item.test().catch((err) => {});

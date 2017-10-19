@@ -128,6 +128,7 @@ class Mall extends AbstractModel {
             })
             .catch((err) => {
                 console.error(err);
+                throw err;
             })
     }
 
@@ -135,4 +136,4 @@ class Mall extends AbstractModel {
 
 
 module.exports = Mall;
-Mall.test();
+Mall.test().catch((err) => {});

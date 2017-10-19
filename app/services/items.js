@@ -21,16 +21,10 @@ class ItemSerivce {
     }
 
     static test() {
-        return Item.test()
-            .then(() => {
-                return Mall.test()
-            })
+        return Promise.all([Item.test(), Mall.test()])
             .then(() => {
                 return 'success';
             })
-            .catch((err) => {
-                return err;
-            });
     }
 }
 
