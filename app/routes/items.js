@@ -44,7 +44,7 @@ router.get('/items/test', controller.test);
  *         description: item's id
  *         in: path
  *         required: true
- *         type: integer
+ *         type: string
  *     responses:
  *       200:
  *         description: A single item

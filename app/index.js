@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const config = require('./config');
 const swaggerJSDoc = require('swagger-jsdoc');
+const path = require('path');
 
 
 // App instance
@@ -23,11 +24,24 @@ const options = {
     // import swaggerDefinitions
     swaggerDefinition: swaggerDefinition,
     // path to the API docs
-    apis: ['./routes/*.js'],
+    apis: [path.join(__dirname,'routes/*.js')],
 };
 
 // initialize swagger-jsdoc
 const swaggerSpec = swaggerJSDoc(options);
+
+// Setting middlewares
+app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
+app.use(bodyParser.json({limit: '50mb'}));
+
+// Response echo to 'GET /' request for healthy check
+app.get('/', (req, res) => {
+    res.send('RobinCloud Open API');
+});
+
+// Routings
+app.use('/', require('./routes/auth'));
+app.use('/', require('./routes/items'));
 
 // serve swagger
 app.get('/swagger.json', function(req, res) {
@@ -35,18 +49,8 @@ app.get('/swagger.json', function(req, res) {
     res.send(swaggerSpec);
 });
 
-// Setting middlewares
-app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
-app.use(bodyParser.json({limit: '50mb'}));
-
-// Routings
-app.use('/', require('./routes/auth'));
-app.use('/', require('./routes/items'));
-
-// Response echo to 'GET /' request for healthy check
-app.get('/', (req, res) => {
-	res.send('RobinCloud Open API');
-});
+// Swagger-ui routes
+app.use('/swagger-ui', express.static(path.join(__dirname, 'swagger-ui')));
 
 
 // Launching application
