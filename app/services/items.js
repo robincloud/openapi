@@ -3,14 +3,23 @@ const Mall = require('../models/mall');
 
 
 class ItemSerivce {
-    static save(data) {
+    static saveItem(data) {
         // handle data
+        data.oid = Item.getOid(data);
         return Item.create(data)
             .then((item) => item.toObject());
     }
 
-    static get(id) {
-        return Item.findById(id)
+    static saveMall(data) {
+        // handle data
+        data.oid = Item.getOid(data);
+        return Item.create(data)
+            .then((item) => item.toObject());
+    }
+
+    static get(data) {
+        data.oid = Item.getOid(data);
+        return Item.findById(data.oid)
             .then((item) => {
                 if (!item) {
                     throw new Error(`An item with id (${id}) does not exist.`);

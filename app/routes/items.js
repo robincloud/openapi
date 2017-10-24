@@ -4,54 +4,156 @@ const controller = require('../api/items.controller');
 /**
  * @swagger
  * definitions:
+ *   ItemMall:
+ *     properties:
+ *      time:
+ *          type: string
+ *      url:
+ *          type: string
+ *      api:
+ *          type: string
+ *      data:
+ *          type: array
+ *          items:
+ *              type: object
+ *              properties:
+ *                id:
+ *                    type: number
+ *                mid:
+ *                    type: number
+ *                cat_id:
+ *                    type: number
+ *                pkey:
+ *                    type: number
+ *                name:
+ *                    type: string
+ *                nodes:
+ *                    type: array
+ *                    items:
+ *                        type: object
+ *                        properties:
+ *                            id:
+ *                                type: number
+ *                            name:
+ *                                type: string
+ *                            mall:
+ *                                type: string
+ *                            price:
+ *                                type: number
+ *                            delivery:
+ *                                type: number
+ *                            npay:
+ *                                type: number
+ *
+ */
+
+/**
+ * @swagger
+ * definitions:
  *   Item:
+ *     properties:
+ *       mall_name:
+ *          type: string
+ *       id:
+ *          type: number
+ *       pkey:
+ *          type: number
+ *       mid:
+ *          type: number
+ *       name:
+ *          type: string
+ */
+
+/**
+ * @swagger
+ * definitions:
+ *   ItemDescription:
  *     properties:
  *       id:
  *         type: string
  *       name:
  *         type: string
+ *       price:
+ *         type: number
  */
+
+/**
+ * @swagger
+ * /items/malls:
+ *  post:
+ *      description: Store the data crawled from the mall
+ *      produces:
+ *          - application/json
+ *      consumes:
+ *          - application/json
+ *      parameters:
+ *          - in: body
+ *            schema:
+ *              $ref: '#/definitions/ItemMall'
+ *
+ *      responses:
+ *          200:
+ *              description: Successfully created
+ */
+router.post('/items/malls', controller.saveMall);
 
 /**
  * @swagger
  * /items:
- *   post:
- *     tags:
- *       - Items
- *     description: Create a new item
- *     produces:
- *       - application/json
- *     parameters:
+ *  post:
+ *      description: Store a new item
+ *      produces:
+ *          - application/json
+ *      consumes:
+ *          - application/json
+ *      parameters:
+ *          - in: body
+ *            name: item_detail
+ *            description: items to be added
+ *            schema:
+ *              $ref: '#/definitions/Item'
  *
- *     responses:
- *       200:
- *         description: Successfully created
+ *      responses:
+ *          200:
+ *              description: Successfully created
  */
-router.post('/items', controller.save);
+router.post('/items/', controller.saveItem);
 router.get('/items/test', controller.test);
 
 /**
  * @swagger
- * /items/{id}:
+ * /items:
  *   get:
- *     tags:
- *       - Items
  *     description: Returns a single item
  *     produces:
- *       - application/json
+ *      - application/json
  *     parameters:
- *       - name: id
- *         description: item's id
- *         in: path
- *         required: true
- *         type: string
+ *      - in: query
+ *        name: mall_name
+ *        description: item's mall name
+ *        required: true
+ *        type: string
+ *        example: nv
+ *      - in: query
+ *        name: id
+ *        description: item's id
+ *        required: true
+ *        type: number
+ *        example: 1111111111
+ *      - in: query
+ *        name: pkey
+ *        description: item's option id
+ *        required: false
+ *        type: number
+ *        example: 111
+ *
  *     responses:
  *       200:
- *         description: A single item
+ *         description: the description of the item
  *         schema:
- *           $ref: '#/definitions/Item'
+ *           $ref: '#/definitions/ItemDescription'
  */
-router.get('/items/:id', controller.query);
+router.get('/items', controller.query);
 
 
 module.exports = router;

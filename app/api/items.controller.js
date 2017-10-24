@@ -1,10 +1,10 @@
 const ItemService = require('../services/items');
 
 
-const save = (req, res) => {
+const saveItem = (req, res) => {
     const data = req.body;
 
-    ItemService.save(data)
+    ItemService.saveItem(data)
         .then((item) => {
             res.json({
                 message: 'An new item is saved successfully.',
@@ -18,10 +18,26 @@ const save = (req, res) => {
         });
 };
 
-const query = (req, res) => {
-    const {id} = req.params;
+const saveMall = (req, res) => {
+    const data = req.body;
 
-    ItemService.get(id)
+    ItemService.saveMall(data)
+        .then((item) => {
+            res.json({
+                message: 'An new item is saved successfully.',
+                item
+            });
+        })
+        .catch((err) => {
+            res.status(500).json({
+                message: err.message
+            });
+        });
+};
+const query = (req, res) => {
+    const data = req.query;
+
+    ItemService.get(data)
         .then((item) => {
             res.json({
                 message: 'Item found',
@@ -51,7 +67,8 @@ const test = (req, res) => {
 
 
 module.exports = {
-    save,
+    saveItem,
+    saveMall,
     query,
     test
 };

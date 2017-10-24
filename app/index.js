@@ -15,7 +15,7 @@ const swaggerDefinition = {
         version: '1.0.0',
         description: 'Open API server API specification',
     },
-    host: 'localhost:8090',
+    host: `${config['server']}:${config['port']}`,
     basePath: '/',
 };
 

@@ -1,11 +1,12 @@
-const commandLineArgs = require('command-line-args')
+const commandLineArgs = require('command-line-args');
 
 
 // Following config values must be provided for launch
 const MANDATORY_CONFIGS = [
 	'awsAccessKeyId',
 	'awsSecretAccessKey',
-	'jwtSecret'
+	'jwtSecret',
+	'server'
 ];
 
 
@@ -24,7 +25,7 @@ MANDATORY_CONFIGS.forEach((envName) => {
 // Command line arguments
 const optionDefinitions = [
     {name: 'endpoint', alias: 'e', type: String, defaultValue: 'http://localhost:8000'},
-	{name: 'port', alias: 'p', type: Number, defaultValue: 8090},
+    {name: 'port', alias: 'p', type: Number, defaultValue: '8090'},
 	{name: 'verbose', alias: 'v', type: Boolean, defaultValue: false}
 ];
 MANDATORY_CONFIGS.forEach((envName) => {
