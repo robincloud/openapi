@@ -88,6 +88,7 @@ const controller = require('../api/items.controller');
  *          - application/json
  *      parameters:
  *          - in: body
+ *            name: item_detail
  *            schema:
  *              $ref: '#/definitions/ItemMall'
  *
@@ -135,8 +136,8 @@ router.get('/items/test', controller.test);
  *        type: string
  *        example: nv
  *      - in: query
- *        name: id
- *        description: item's id
+ *        name: mall_id
+ *        description: item's mall id
  *        required: true
  *        type: number
  *        example: 1111111111

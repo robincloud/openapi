@@ -3,13 +3,10 @@ const AbstractModel = require('./AbstractModel');
 
 
 class Item extends AbstractModel {
-    constructor(oid,mall_name,id,pkey,name) {
+    constructor(id,name) {
         super();
         this._object = {
-            oid,
-            mall_name,
             id,
-            pkey,
             name
         };
     }
@@ -40,13 +37,13 @@ class Item extends AbstractModel {
                     TableName: Item.tableName,
                     AttributeDefinitions: [
                         {
-                            AttributeName: 'oid',
+                            AttributeName: 'id',
                             AttributeType: 'S'
                         }
                     ],
                     KeySchema: [
                         {
-                            AttributeName: 'oid',
+                            AttributeName: 'id',
                             KeyType: 'HASH'
                         }
                     ],
@@ -59,11 +56,11 @@ class Item extends AbstractModel {
                 return DB.dynamodb.createTable(tableDescription).promise();
             });
     }
-    static findById(oid) {
+    static findById(id) {
         const params = {
             TableName: Item.tableName,
             Key: {
-                oid
+                id
             }
         };
         console.log(params);
@@ -72,69 +69,73 @@ class Item extends AbstractModel {
             .then((data) => {
                 if (!data['Item']) return null;
 
-                const {oid, mall_name, id, pkey, name} = data['Item'];
-                return new Item(oid, mall_name, id, pkey, name);
+                const {id, name} = data['Item'];
+                return new Item(id, name);
             });
     }
 
     static create(data) {
-        data.oid = Item.getOid(data);
-        return Item.findById(data.oid)
+        return Item.findById(data.id)
             .then((item) => {
                 if (item) {
-                    throw new Error(`Given id (${item.get('oid')}) already exists.`);
+                    throw new Error(`Given id (${item.get('id')}) already exists.`);
                 }
-                return new Item(data.oid, data.mall_name, data.id, data.pkey, data.name).save();
+                return new Item(data.id, data.name).save();
             });
     }
 
-    static remove(oid) {
-        if (!oid) {
+    static remove(id) {
+        if (!id) {
             throw new Error(`id is empty.`);
         }
 
-        return Item.findById(oid)
+        return Item.findById(id)
             .then((item) => {
                 if (!item) {
-                    throw new Error(`Given id (${oid}) does not exist.`);
+                    throw new Error(`Given id (${id}) does not exist.`);
                 }
 
                 const params = {
                     TableName: Item.tableName,
                     Key: {
-                        oid
+                        id
                     }
                 };
                 return DB.docClient.delete(params).promise();
             });
     }
 
-    static getOid(data) {
-        const oid = data.mall_name + "_" + data.id + (data.pkey ? "_"+data.pkey : "");
-        console.log(oid);
-        return oid;
+    static getId(data) {
+        const id = data.mall_name + "_" + data.mall_id + (data.pkey ? "_"+data.pkey : "");
+        console.log(id);
+        return id;
     }
 
     static test() {
         const data = {
-            mall_name: 'op',
-            id: '111111',
+            id: 'op_1111111',
             name: 'test_item_name'
         };
+
+        const query = {
+            mall_name: 'op',
+            mall_id: '1111111',
+        };
+
         return Item.initialize()
             .then(() => Item.create(data))
             .then((item) => {
                 console.log('Item created');
                 console.log(item);
-                return Item.findById(item.get('oid'));
+                return Item.findById(Item.getId(query));
             },(err) => {
                 console.log(err);
-                return Item.findById(Item.getOid(data));
+                return Item.findById(Item.getId(query));
             })
             .then((item) => {
                 if (item) console.log('Item found');
                 console.log(item);
-                return Item.remove(item.get('oid'));
+                return Item.remove(item.get('id'));
             })
             .then(() => {
                 console.log('PASSED(Item)');

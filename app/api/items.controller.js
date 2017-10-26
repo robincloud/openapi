@@ -20,6 +20,8 @@ const saveItem = (req, res) => {
 
 const saveMall = (req, res) => {
     const data = req.body;
+    // handle data
+    // iterate data.data
 
     ItemService.saveMall(data)
         .then((item) => {
