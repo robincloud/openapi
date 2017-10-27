@@ -71,9 +71,9 @@ const controller = require('../api/items.controller');
  *                    description: additional meta information
  *                    properties:
  *                      cat:
- *                          type:string
+ *                          type: string
  *                      thumbnail:
- *                          type:string
+ *                          type: string
  *
  */
 
