@@ -1,34 +1,22 @@
-const AWS = require('aws-sdk');
+const DB = require('../database');
+const AbstractModel = require('./AbstractModel');
 
-
-class User {
+class User extends AbstractModel {
 	static initialize() {
-		// Open connection with DynamoDB
-		if (!User.dynamodb) {
-			AWS.config.update({
-				region: "ap-northeast-2",
-				accessKeyId: "AKIAJRDDLOK7LS5ZCI4Q",
-				secretAccessKey: "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",
-				endpoint: "http://localhost:8000"
-			});
-
-			User.table = 'Users';
-			User.dynamodb = new AWS.DynamoDB();
-			User.docClient = new AWS.DynamoDB.DocumentClient();	
-		}
+        User.tableName = 'users';
 
 		// Create table if not exists
 		const params = {
-			TableName: User.table
+			TableName: User.tableName
 		};
-		return User.dynamodb.describeTable(params).promise()
+		return DB.dynamodb.describeTable(params).promise()
 		.catch((err) => {
 			if (err.code !== 'ResourceNotFoundException') {
 				throw err;
 			}
 
-			const params = {
-				TableName: User.table,
+			const tableDescription = {
+				TableName: User.tableName,
 				AttributeDefinitions: [
 					{
 						AttributeName: 'email',
@@ -46,19 +34,19 @@ class User {
 					WriteCapacityUnits: 2
 				}
 			};
-			return User.dynamodb.createTable(tableDescription).promise();
+			return DB.dynamodb.createTable(tableDescription).promise();
 		});
 	}
 
 	static findByEmail(email) {
 		const params = {
-			TableName: User.table,
+			TableName: User.tableName,
 			Key: {
 				email
 			}
 		};
 
-		return User.docClient.get(params).promise()
+		return DB.docClient.get(params).promise()
 		.then((data) => {
 			if (!data['Item']) return null;
 
@@ -88,7 +76,7 @@ class User {
 		});
 	}
 
-	static delete(email) {
+	static remove(email) {
 		if (!email) {
 			throw new Error(`Email address is empty.`);
 		}
@@ -100,17 +88,18 @@ class User {
 			}
 
 			const params = {
-				TableName: User.table,
+				TableName: User.tableName,
 				Key: {
 					email
 				}
 			};
-			return User.docClient.delete(params).promise();
+			return DB.docClient.delete(params).promise();
 		});
 	}
 
 
 	constructor(email, passphrase, admin = false) {
+		super();
 		this._object = {
 			email,
 			passphrase,
@@ -118,20 +107,15 @@ class User {
 		};
 	}
 
-	get(field)			{ return this._object[field]; }
-	set(field, value)	{ this._object[field] = value; }
 	save() {
 		const params = {
-			TableName: User.table,
+			TableName: User.tableName,
 			Item: this._object
 		};
 
-		return User.docClient.put(params).promise()
+		return DB.docClient.put(params).promise()
 		.then(() => this);
 	}
-	toObject()			{ return this._object; }
-	toJSON()			{ return JSON.stringify(this._object); }
-
 
 	static _isValidEmailAddress(email) {
 		const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -155,7 +139,7 @@ class User {
 			if (user) console.log('User found.');
 			console.log(user);
 
-			return User.delete(email);
+			return User.remove(email);
 		})
 		.then(() => {
 			console.log('PASSED.');
@@ -169,3 +153,4 @@ class User {
 
 module.exports = User;
 
+User.test();
