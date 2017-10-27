@@ -5,30 +5,51 @@ const controller = require('../api/items.controller');
  * @swagger
  * definitions:
  *   ItemMall:
+ *     description: server info
  *     properties:
  *      time:
  *          type: string
+ *          example: 2017-08-08 11:08:44
  *      url:
  *          type: string
  *      api:
  *          type: string
+ *      id:
+ *          type: string
+ *          description: id from server
+ *          example: nv_5639964597
+ *      mid:
+ *          type: string
+ *          description: target mid of nshop
+ *          example: 5639964597
  *      data:
  *          type: array
+ *          description: client crawling response
  *          items:
  *              type: object
  *              properties:
- *                id:
- *                    type: number
- *                mid:
- *                    type: number
- *                cat_id:
- *                    type: number
+ *                cat:
+ *                    type: string
+ *                    description: category name ( delimiter < )
+ *                    example: 'food>ramen'
+ *                item_name:
+ *                    type: string
+ *                    description: item name
+ *                    example: shin ramen 120g
+ *                option_name:
+ *                    type: string
+ *                    description: option name
  *                pkey:
  *                    type: number
- *                name:
- *                    type: string
+ *                    description: option id (or key)
+ *                    example: 20041523
+ *                count:
+ *                    type: number
+ *                    description: max search count
+ *                    example: 1328
  *                nodes:
  *                    type: array
+ *                    description: list of malls found
  *                    items:
  *                        type: object
  *                        properties:
@@ -44,6 +65,15 @@ const controller = require('../api/items.controller');
  *                                type: number
  *                            npay:
  *                                type: number
+ *                                description: whether it's npay(1) or not(0)
+ *                meta:
+ *                    type: object
+ *                    description: additional meta information
+ *                    properties:
+ *                      cat:
+ *                          type:string
+ *                      thumbnail:
+ *                          type:string
  *
  */
 
