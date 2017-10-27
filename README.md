@@ -32,13 +32,15 @@ See [wiki](https://github.com/robincloud/openapi/wiki)
 실제 실행 환경의 데모. 
 
 
-
 ---
 
+
 # Database Schema (디비 스키마)
+
 데이터베이스용 테이블의 스키마 정의.
 
 ## items (기본 상품 테이블)
+
 비교 상품군을 저장하는 테이블.
 
 필드명   | 타입        | 설명
@@ -49,6 +51,7 @@ option  | string    | 옵션 이름 (선택 사항. oid가 있을 경우)
 image   | url       | 상품 대표 이미지
 malls   | array     | 연관된 메타 상품의 리스트로, malls.id 를 리스트로 저장함.
 refId   | string    | 참조되는 items.id의 연결 값.
+vector  | array<N>  | 상품의 10차원 벡터값.
 *cat    | string    | 카테고리
 *maker  | string    | 제조사
 *brand  | string    | 브랜드.
@@ -57,6 +60,7 @@ refId   | string    | 참조되는 items.id의 연결 값.
 
 
 ## malls (메타 상품 테이블)
+
 메타 상품을 저장하는 테이블.
 
 필드명    | 타입       | 설명
