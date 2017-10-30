@@ -34,12 +34,8 @@ const swaggerSpec = swaggerJSDoc(options);
 app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 app.use(bodyParser.json({limit: '50mb'}));
 
-// Response echo to 'GET /' request for healthy check
-app.get('/', (req, res) => {
-    res.send('RobinCloud Open API');
-});
-
 // Routings
+app.use('/', require('./routes/basic'));
 app.use('/', require('./routes/auth'));
 app.use('/', require('./routes/items'));
 app.use('/', require('./routes/tasks'));

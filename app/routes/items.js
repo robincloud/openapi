@@ -109,27 +109,6 @@ const controller = require('../api/items.controller');
 
 /**
  * @swagger
- * /items/malls:
- *  post:
- *      description: Store the data crawled from the mall
- *      produces:
- *          - application/json
- *      consumes:
- *          - application/json
- *      parameters:
- *          - in: body
- *            name: item_detail
- *            schema:
- *              $ref: '#/definitions/ItemMall'
- *
- *      responses:
- *          200:
- *              description: Successfully created
- */
-router.post('/items/malls', controller.saveMall);
-
-/**
- * @swagger
  * /items:
  *  post:
  *      description: Store a new item
@@ -185,6 +164,27 @@ router.get('/items/test', controller.test);
  *           $ref: '#/definitions/ItemDescription'
  */
 router.get('/items', controller.query);
+
+/**
+ * @swagger
+ * /items/malls:
+ *  post:
+ *      description: Store the data crawled from the mall
+ *      produces:
+ *          - application/json
+ *      consumes:
+ *          - application/json
+ *      parameters:
+ *          - in: body
+ *            name: item_detail
+ *            schema:
+ *              $ref: '#/definitions/ItemMall'
+ *
+ *      responses:
+ *          200:
+ *              description: Successfully created
+ */
+router.post('/items/malls', controller.saveMall);
 
 
 module.exports = router;
