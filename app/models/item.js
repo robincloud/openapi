@@ -77,10 +77,10 @@ class Item extends AbstractModel {
     		    	items: (data['Items'] || []).map(({id, name}) => new Item(id, name))
 		        };
     		    if ('LastEvaluatedKey' in data) {
-    		    	result['last'] = false;
+    		    	result['final'] = false;
 			        result['nextId'] = data['LastEvaluatedKey'];
 		        } else {
-			        result['last'] = true;
+			        result['final'] = true;
 		        }
 
     		    return result;
