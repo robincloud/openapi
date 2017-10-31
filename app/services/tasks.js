@@ -69,8 +69,16 @@ class TaskManager extends EventEmitter {
 
 		// Private variables
 		this._tFetchItems = null;    // Timer object for fetching tasks
-		this._totalFetched = 0;
-		this._totalConsumed = 0;
+		this._event = {
+			started: null,
+			finished: null,
+			exhausted: null,
+			scheduled: null
+		};
+		this._count = {
+			fetched: 0,
+			consumed: 0
+		};
 		this._itemQueue = [];
 		this._idScanFrom = null;
 
@@ -78,9 +86,13 @@ class TaskManager extends EventEmitter {
 		this._scheduledJob = schedule.scheduleJob('00 * * * *', this._wakeup);
 	}
 
-	get fetched()   { return this._totalFetched; }
-	get consumed()  { return this._totalConsumed; }
-	get available() { return this._itemQueue.length; }
+	get startedAt()     { return this._event.started; }
+	get finishedAt()    { return this._event.finished; }
+	get exhaustedAt()   { return this._event.exhausted; }
+	get scheduledAt()   { return this._event.scheduled; }
+	get fetched()       { return this._count.fetched; }
+	get consumed()      { return this._count.consumed; }
+	get available()     { return this._itemQueue.length; }
 
 	isBusy() {
 		return (this._tFetchItems || this.available);
@@ -112,14 +124,22 @@ class TaskManager extends EventEmitter {
 		if (this.isBusy()) return;
 
 		// Initialize
-		this._totalFetched = 0;
-		this._totalConsumed = 0;
+		this._event = {
+			started: new Date(),    // Mark as started
+			finished: null,
+			exhausted: null,
+			scheduled: this._scheduledJob.nextInvocation()
+		};
+		this._count = {
+			fetched: 0,
+			consumed: 0
+		};
 		this._itemQueue = [];
 		this._idScanFrom = null;
 
-		// Schedule fetch task
+		// Enable fetch task
 		this._tFetchItems = setInterval(() => {
-			// Enough amount of items are already in queue.
+			// Enough amount of items are already in queue
 			if (this.available > (MAX_QUEUE_SIZE - SCAN_SIZE)) return;
 
 			dataSource.get(SCAN_SIZE)
@@ -139,18 +159,25 @@ class TaskManager extends EventEmitter {
 	}
 
 	_suspend() {
+		this._event.finished = new Date();  // Mark as finished
+
+		// Disable fetch task
 		clearInterval(this._tFetchItems);
 		this._tFetchItems = null;
 	}
 
 	_fetch(items) {
 		this._itemQueue = this._itemQueue.concat(items);
-		this._totalFetched += items.length;
+		this._count.fetched += items.length;
 	}
 
 	_consume(size, resolve) {
 		const itemsToConsume = this._itemQueue.splice(0, size);
-		this._totalConsumed += itemsToConsume.length;
+		this._count.consumed += itemsToConsume.length;
+
+		if (this._event.finished && !this._event.exhausted && !this._itemQueue.length) {
+			this._event.exhausted = new Date();  // Mark as consumed
+		}
 
 		resolve(itemsToConsume);
 	}
@@ -174,7 +201,53 @@ class TaskService {
 	}
 
 	getStats(agent = null) {
-		// TODO
+		const now = new Date();
+		const msecFetchElapsed = (this._manager.finishedAt || now) - this._manager.startedAt;
+		const msecConsumeElapsed = (this._manager.exhaustedAt || now) - this._manager.startedAt;
+
+		return {
+			status: this._manager.isBusy() ? 'running' : 'idle',
+			current_event: {
+				started: this._manager.startedAt,
+				finished: this._manager.finishedAt,
+				exhausted: this._manager.exhaustedAt,
+				elapsed: this._msToString(now - this._manager.startedAt)
+			},
+			next_event: this._manager.scheduledAt,
+			count: {
+				fetched: this._manager.fetched,
+				consumed: this._manager.consumed,
+				available: this._manager.available
+			},
+			throughput: {
+				fetch: this._throughput(this._manager.fetched, msecFetchElapsed),
+				consume: this._throughput(this._manager.consumed, msecConsumeElapsed)
+			}
+		};
+	}
+
+
+	_msToString(time) {
+		const pad = (num, space = 2) => {
+			let padded = String(num);
+			while (padded.length < space) padded = '0' + padded;
+			return padded;
+		};
+
+		const ms = time % 1000;
+		time = (time - ms) / 1000;
+		const s = time % 60;
+		time = (time - s) / 60;
+		const m = time % 60;
+		time = (time - m) / 60;
+		const h = time;
+
+		return `${pad(h)}:${pad(m)}:${pad(s)}.${pad(ms, 3)}`;
+	}
+
+	_throughput(count, msec) {
+		const throughput = Math.round(count / msec * 1000 * 100) / 100;
+		return `${throughput} processed/sec`;
 	}
 }
 
@@ -217,13 +290,15 @@ class TaskServiceTester {
 		// Start 5 consumers
 		const requestTasks = (agent) => {
 			return setInterval(() => {
-				taskService.requestTasks(agent, 2)
+				taskService.requestTasks(agent, 12)
 				.then((tasks) => {
 					if (tasks.length) {
-						console.log(`[${agent}]: ${JSON.stringify(tasks, null, 4)}`);
+						const stats = taskService.getStats();
+						console.log(`---------------------------------------------`);
+						console.log(`${JSON.stringify(stats, null, 4)}`);
 					}
 				});
-			}, 20);
+			}, 200);
 		};
 		const tasks = [1, 2, 3, 4, 5].map((num) => {
 			return requestTasks(`agent${num}`);
