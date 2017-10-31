@@ -139,4 +139,3 @@ class Mall extends AbstractModel {
 
 
 module.exports = Mall;
-Mall.test().catch((err) => {});

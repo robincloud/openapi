@@ -152,5 +152,3 @@ class User extends AbstractModel {
 
 
 module.exports = User;
-
-User.test();

@@ -42,6 +42,7 @@ app.get('/', (req, res) => {
 // Routings
 app.use('/', require('./routes/auth'));
 app.use('/', require('./routes/items'));
+app.use('/', require('./routes/tasks'));
 
 // serve swagger
 app.get('/swagger.json', function(req, res) {
@@ -53,8 +54,18 @@ app.get('/swagger.json', function(req, res) {
 app.use('/swagger-ui', express.static(path.join(__dirname, 'swagger-ui')));
 
 
-// Launching application
-const listener = app.listen(config['port'], () => {
-    console.log(`Starting application listening on port ${listener.address().port} ...`);
+// Launching application after models are initialized
+Promise.all([
+	require('./models/item').initialize(),
+	require('./models/mall').initialize(),
+	require('./models/user').initialize()
+])
+.then(() => {
+	const listener = app.listen(config['port'], () => {
+		console.log(`Starting application listening on port ${listener.address().port} ...`);
+	})
+})
+.catch((err) => {
+	console.error(`Failed to initialize DynamoDB models: ${err.message}`);
 });
 
