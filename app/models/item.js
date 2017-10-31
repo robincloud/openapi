@@ -3,12 +3,9 @@ const AbstractModel = require('./AbstractModel');
 
 
 class Item extends AbstractModel {
-    constructor(id,name) {
+    constructor(data) {
         super();
-        this._object = {
-            id,
-            name
-        };
+        this._object = data;
     }
 
     save() {
@@ -99,9 +96,7 @@ class Item extends AbstractModel {
         return DB.docClient.get(params).promise()
             .then((data) => {
                 if (!data['Item']) return null;
-
-                const {id, name} = data['Item'];
-                return new Item(id, name);
+                return new Item(data['Item']);
             });
     }
 
@@ -111,7 +106,7 @@ class Item extends AbstractModel {
                 if (item) {
                     throw new Error(`Given id (${item.get('id')}) already exists.`);
                 }
-                return new Item(data.id, data.name).save();
+                return new Item(data).save();
             });
     }
 

@@ -55,17 +55,26 @@ const controller = require('../api/items.controller');
  *                        properties:
  *                            id:
  *                                type: number
+ *                                example: 11900885999
  *                            name:
  *                                type: string
+ *                                example: shin ramen 120g / best
  *                            mall:
  *                                type: string
+ *                                example: food online mall
+ *                            thumbnail:
+ *                                type: string
+ *                                description: thumbnail url
  *                            price:
  *                                type: number
+ *                                example: 10000
  *                            delivery:
  *                                type: number
+ *                                example: 2500
  *                            npay:
  *                                type: number
  *                                description: whether it's npay(1) or not(0)
+ *                                example: 1
  *                meta:
  *                    type: object
  *                    description: additional meta information

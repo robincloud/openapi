@@ -26,7 +26,7 @@ const saveMall = (req, res) => {
     ItemService.saveMall(data)
         .then((item) => {
             res.json({
-                message: 'An new item is saved successfully.',
+                message: 'items and malls are saved successfully.',
                 item
             });
         })
