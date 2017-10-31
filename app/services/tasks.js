@@ -2,10 +2,10 @@ const EventEmitter = require('events');
 const schedule = require('node-schedule');
 const Item = require('../models/item');
 
-// Scan 300 items per every 1 second whenever queued items are less than (1000 - 300)
+// Scan 200 items per every 0.5 second whenever queued items are less than (1000 - 200)
 const MAX_QUEUE_SIZE = 1000;
-const SCAN_SIZE = 300;
-const SCAN_INTERVAL_MSEC = 1000;
+const SCAN_SIZE = 200;
+const SCAN_INTERVAL_MSEC = 500;
 
 
 // DataSource interface
@@ -18,8 +18,8 @@ class DataSource {
 }
 
 
-// ItemDataSource class
-class ItemTableDataSource extends DataSource {
+// ItemModelDataSource class
+class ItemModelDataSource extends DataSource {
 	constructor() {
 		super();
 		this._idScanFrom = null;
@@ -107,7 +107,7 @@ class TaskManager extends EventEmitter {
 	///////////////////////////////////////////////////////////////////////////
 	// Private methods
 
-	_wakeup(dataSource = new ItemTableDataSource()) {
+	_wakeup(dataSource = new ItemModelDataSource()) {
 		// Prevent two or more jobs working simultaneously
 		if (this.isBusy()) return;
 
@@ -117,9 +117,10 @@ class TaskManager extends EventEmitter {
 		this._itemQueue = [];
 		this._idScanFrom = null;
 
-		// Schedule the scanning task
+		// Schedule fetch task
 		this._tFetchItems = setInterval(() => {
-			if (this.available >= (MAX_QUEUE_SIZE - SCAN_SIZE)) return;
+			// Enough amount of items are already in queue.
+			if (this.available > (MAX_QUEUE_SIZE - SCAN_SIZE)) return;
 
 			dataSource.get(SCAN_SIZE)
 			.then((items) => {
