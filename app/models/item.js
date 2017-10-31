@@ -56,6 +56,37 @@ class Item extends AbstractModel {
                 return DB.dynamodb.createTable(tableDescription).promise();
             });
     }
+
+    // Limit = 0 means there is no limitation of number of items to evaluate.
+	// However, DynamoDB limits maximum data set size to 1 MB. In this case the results are returned immediately.
+    static scan(size = 0, fromId = null) {
+    	const params = {
+    		TableName: Item.tableName,
+	    };
+    	if (size) {
+    		params['Limit'] = size;
+	    }
+    	if (fromId) {
+    		params['ExclusiveStartKey'] = fromId;
+	    }
+
+	    return DB.dynamodb.scan(params).promise()
+	        .then((data) => {
+    		    const result = {
+    		    	count: data['Count'],
+    		    	items: (data['Items'] || []).map(({id, name}) => new Item(id, name))
+		        };
+    		    if ('LastEvaluatedKey' in data) {
+    		    	result['last'] = false;
+			        result['nextId'] = data['LastEvaluatedKey'];
+		        } else {
+			        result['last'] = true;
+		        }
+
+    		    return result;
+	        });
+    }
+
     static findById(id) {
         const params = {
             TableName: Item.tableName,
@@ -149,4 +180,3 @@ class Item extends AbstractModel {
 
 
 module.exports = Item;
-Item.test().catch((err) => {});

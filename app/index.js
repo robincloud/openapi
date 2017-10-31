@@ -42,6 +42,7 @@ app.get('/', (req, res) => {
 // Routings
 app.use('/', require('./routes/auth'));
 app.use('/', require('./routes/items'));
+app.use('/', require('./routes/tasks'));
 
 // serve swagger
 app.get('/swagger.json', function(req, res) {
