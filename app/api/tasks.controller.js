@@ -27,7 +27,7 @@ const getStatsAll = (req, res) => {
 
 
 const getStatsAgent = (req, res) => {
-	const {agent = ''} = res.params;
+	const {agent = ''} = req.params;
 	TaskService.getStats(agent)
 	.then((stats) => {
 		res.json(stats);
