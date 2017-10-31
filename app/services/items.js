@@ -11,6 +11,7 @@ class ItemSerivce {
 
     static saveMall(req) {
         // handle data
+        console.log(req);
         const sid = req.id.split('_')[0];
         const pid = req.id.split('_')[1];
 
@@ -21,6 +22,7 @@ class ItemSerivce {
             const currentMalls = data.nodes.map( (node) => {
                 var mall = {
                     id: sid + '_' + node.id,
+                    sid: sid,
                     mall: node.mall,
                     name: node.name,
                     price: node.price,
@@ -29,11 +31,11 @@ class ItemSerivce {
                 };
                 return new Mall(mall);
             });
-            console.log(currentMalls);
             malls = malls.concat(currentMalls);
 
             const item = {
                 id: req.id + (data.pkey ? "_" + data.pkey : ""),
+                sid: sid,
                 name: data.item_name,
                 option: data.option_name,
                 malls: currentMalls.map( (m) => m.get("id")),
@@ -41,9 +43,10 @@ class ItemSerivce {
                 vector: '1234',
                 cat: data.cat,
             };
-            console.log(item);
             return new Item(item);
         });
+        console.log(malls);
+        console.log(items);
 
         // save items and malls to db
         var promises = [];
