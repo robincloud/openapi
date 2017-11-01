@@ -59,13 +59,13 @@ class User extends AbstractModel {
 
 	static create(email, passphrase) {
 		if (!email) {
-			throw new CustomError.InvalidArgument('Email address is empty.');
+			throw new CustomError.InvalidArgument('empty email address');
 		}
 		if (!User._isValidEmailAddress(email)) {
-			throw new CustomError.InvalidArgument(`Email address (${email}) is invalid.`);
+			throw new CustomError.InvalidArgument(`invalid email address (${email})`);
 		}
 		if (!passphrase) {
-			throw new CustomError.InvalidArgument(`Passphrase is empty.`);
+			throw new CustomError.InvalidArgument(`empty passphrase`);
 		}
 
 		return User.findByEmail(email)
@@ -80,7 +80,7 @@ class User extends AbstractModel {
 
 	static remove(email) {
 		if (!email) {
-			throw new CustomError.InvalidArgument(`Email address is empty.`);
+			throw new CustomError.InvalidArgument(`empty email address`);
 		}
 
 		return User.findByEmail(email)

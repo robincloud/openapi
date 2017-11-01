@@ -98,11 +98,13 @@ class HttpResponse {
 			throw new Error('Error parameter must be the instance of Error object.');
 		}
 
-		this._statusCode = err.statusCode;
+		const {statusCode = 500, name = 'InternalServerError', message = ''} = err;
+
+		this._statusCode = statusCode;
 		this._body = {
-			status: (HTTP_STATUS_CODE[err.statusCode] || 'Unknown status code'),
-			title: (err.name || ''),
-			detail: (err.message || '')
+			status: (HTTP_STATUS_CODE[statusCode] || 'Unknown status code'),
+			title: name,
+			detail: message
 		};
 	}
 }

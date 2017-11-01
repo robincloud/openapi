@@ -23,7 +23,7 @@ const login = (req, res) => {
 
 	AuthService.login(email, passphrase)
 	.then((token) => {
-		httpResponse.setData(token);
+		httpResponse.setData({access_token: token});
 		res.json(httpResponse.body);
 	})
 	.catch((err) => {

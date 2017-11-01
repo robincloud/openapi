@@ -40,7 +40,7 @@ class ItemModelDataSource extends DataSource {
 		.then((result) => {
 			// Verify count of items
 			if (result.count !== result.items.length) {
-				throw new CustomError.ServerError(`Count of fetched items is not match.`, 'ItemModelDataSource');
+				throw new CustomError.ServerError(`not matching fetched items count`, 'DataSourceError');
 			}
 
 			// Mark finished if final flag is set
@@ -50,7 +50,7 @@ class ItemModelDataSource extends DataSource {
 			// Otherwise save the ID of the beginning of next scan
 			else {
 				if (!result.nextId) {
-					throw new CustomError.ServerError(`'nextId' value is not set even though there are more items to scan.`, 'ItemModelDataSource');
+					throw new CustomError.ServerError(`missing 'nextId' value in scan result`, 'DataSourceError');
 				}
 				this._idScanFrom = result.nextId;
 			}
@@ -114,7 +114,7 @@ class TaskManager extends EventEmitter {
 		return new Promise((resolve, reject) => {
 			const haveListeners = this.emit('consume', size, resolve);
 			if (!haveListeners) {
-				reject(new CustomError.ServerError(`No handlers had been registered for 'consume' event.`));
+				reject(new CustomError.ServerError(`no handler for 'consume' event`, 'TaskManagerError'));
 			}
 		});
 	}
@@ -151,7 +151,7 @@ class TaskManager extends EventEmitter {
 				// Emit 'fetch' event - TaskManager._fetch() will be invoked
 				const haveListeners = this.emit('fetch', items);
 				if (!haveListeners) {
-					throw new CustomError.ServerError(`No handlers had been registered for 'fetch' event.`, 'TaskManager');
+					throw new CustomError.ServerError(`no handler for 'fetch' event`, 'TaskManagerError');
 				}
 
 				// Suspend fetch task if no more items are left
@@ -199,7 +199,7 @@ class TaskService {
 
 	requestTasks(agent, size = 1) {
 		if (!agent) {
-			throw new CustomError.InvalidArgument('Required parameter (agent) is missing.');
+			throw new CustomError.InvalidArgument('missing required parameter (agent)');
 		}
 
 		return this._manager.popTasks(size)
@@ -251,7 +251,7 @@ class TaskService {
 
 	setClientVersion(version) {
 		if (!version) {
-			throw new CustomError.InvalidArgument('Required parameter (version) is missing.');
+			throw new CustomError.InvalidArgument('missing required parameter (version)');
 		}
 		const expired = 0;  // Never expired
 

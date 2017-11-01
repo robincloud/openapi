@@ -38,7 +38,7 @@ class AuthService {
 				.update(passphrase)
 				.digest('base64');
 			if (user.passphrase !== encrypted_passphrase) {
-				throw new CustomError.AuthenticationFailed('Passphrase is wrong.');
+				throw new CustomError.AuthenticationFailed('wrong passphrase');
 			}
 
 			// Generate and respond the token if sign in succeeded.
@@ -52,7 +52,7 @@ class AuthService {
 			};
 			return new Promise((resolve, reject) => {
 				jwt.sign(payload, secret, options, (err, token) => {
-					if (err) reject(err);
+					if (err) reject(new CustomError.AuthenticationFailed(err.message, err.name));
 					else resolve(token);
 				});
 			});
@@ -60,14 +60,14 @@ class AuthService {
 	}
 
 	static verify(token) {
-		if (!token) {
-			throw new CustomError.AuthenticationFailed('Token is not specified. Not logged in.');
-		}
-
 		return new Promise((resolve, reject) => {
+			if (!token) {
+				return reject(new CustomError.InvalidArgument('empty token'));
+			}
+
 			const secret = Config['jwtSecret'];
 			jwt.verify(token, secret, (err, payload) => {
-				if (err) reject(err);
+				if (err) reject(new CustomError.AuthenticationFailed(err.message, err.name));
 				else resolve(payload);
 			});
 		});
