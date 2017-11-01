@@ -5,13 +5,9 @@ const Mall = require('../models/mall');
 class ItemSerivce {
     static saveItem(req) {
         // handle data
-        return Item.create(req)
-            .then((item) => item.toObject());
-    };
 
-    static saveMall(req) {
-        // handle data
-
+        if (!req.id)
+            throw new Error(`ID is not provided for the data`);
         const sid = req.id.split('_')[0]||'';
         const pid = req.id.split('_')[1]||'';
 

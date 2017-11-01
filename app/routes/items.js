@@ -89,23 +89,6 @@ const controller = require('../api/items.controller');
 /**
  * @swagger
  * definitions:
- *   Item:
- *     properties:
- *       mall_name:
- *          type: string
- *       id:
- *          type: number
- *       pkey:
- *          type: number
- *       mid:
- *          type: number
- *       name:
- *          type: string
- */
-
-/**
- * @swagger
- * definitions:
  *   ItemDescription:
  *     properties:
  *       id:
@@ -116,27 +99,6 @@ const controller = require('../api/items.controller');
  *         type: number
  */
 
-/**
- * @swagger
- * /items:
- *  post:
- *      description: Store a new item
- *      produces:
- *          - application/json
- *      consumes:
- *          - application/json
- *      parameters:
- *          - in: body
- *            name: item_detail
- *            description: items to be added
- *            schema:
- *              $ref: '#/definitions/Item'
- *
- *      responses:
- *          200:
- *              description: Successfully created
- */
-router.post('/items/', controller.saveItem);
 router.get('/items/test', controller.test);
 
 /**
@@ -176,7 +138,7 @@ router.get('/items', controller.query);
 
 /**
  * @swagger
- * /items/malls:
+ * /items:
  *  post:
  *      description: Store the data crawled from the mall
  *      produces:
@@ -193,7 +155,7 @@ router.get('/items', controller.query);
  *          200:
  *              description: Successfully created
  */
-router.post('/items/malls', controller.saveMall);
+router.post('/items', controller.saveItem);
 
 
 module.exports = router;
