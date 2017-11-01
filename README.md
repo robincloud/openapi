@@ -18,7 +18,7 @@ How to install development server environment locally (개발 환경 설치 및 
 $ git clone https://github.com/robincloud/openapi
 $ cd openapi
 $ npm install
-$ npm test
+$ npm start
 ```
 
 
@@ -27,6 +27,8 @@ $ npm test
 See [wiki](https://github.com/robincloud/openapi/wiki) 
 
 
+# API specification
+http://{server-address}/swagger-ui/
 
 # Demo (데모)
 실제 실행 환경의 데모. 
@@ -50,6 +52,7 @@ TBD..
 필드명   | 타입        | 설명
 --------|-----------|----------
 id      | string(64)| \<sid>\_\<pid>\_\<oid> 형태로 구성 <br> sid: shop-id 쇼핑몰별 고유아이디 (네이버쇼핑일 경우 nv)  <br> pid: product-id 제품 ID <br> oid: *option-id 옵션ID값으로 선택사항 <br> 자세한 내용은 [아래 참고](#tbd).
+sid     | string(32)| 쇼핑몰별 고유아이디(네이버쇼핑의 경우 nv)
 name    | string    | 상품 이름
 option  | string    | 옵션 이름 (선택 사항. oid가 있을 경우)
 image   | url       | 상품 대표 이미지
@@ -70,6 +73,7 @@ vector  | array<N>  | 상품의 10차원 벡터값.
 필드명    | 타입       | 설명
 --------|-----------|----------
 id      | string(64)| \<sid>\_\<pid>\_\<oid> 형태로 구성.
+sid	    | string(32)| 쇼핑몰별 고유아이디(네이버쇼핑의 경우 nv)
 name    | string    | 상품 판매 이름
 option  | string    | 옵션 이름 (선택 사항. oid가 있을 경우)
 image   | url       | 상품 판매 대표 이미지

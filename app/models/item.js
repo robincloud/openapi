@@ -71,7 +71,7 @@ class Item extends AbstractModel {
 	        .then((data) => {
     		    const result = {
     		    	count: data['Count'],
-    		    	items: (data['Items'] || []).map(({id, name}) => new Item(id, name))
+    		    	items: (data['Items'] || []).map((data) => new Item(data))
 		        };
     		    if ('LastEvaluatedKey' in data) {
     		    	result['final'] = false;
