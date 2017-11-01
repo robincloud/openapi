@@ -2,6 +2,7 @@ const EventEmitter = require('events');
 const Memcached = require('memcached');
 const schedule = require('node-schedule');
 const Config = require('../config');
+const Error = require('../error');
 const Item = require('../models/item');
 
 // Scan 200 items per every 0.5 second whenever queued items are less than (1000 - 200)
@@ -39,7 +40,7 @@ class ItemModelDataSource extends DataSource {
 		.then((result) => {
 			// Verify count of items
 			if (result.count !== result.items.length) {
-				throw new Error(`Count of fetched items is not match.`);
+				throw new Error.ServerError(`Count of fetched items is not match.`, 'ItemModelDataSource');
 			}
 
 			// Mark finished if final flag is set
@@ -49,7 +50,7 @@ class ItemModelDataSource extends DataSource {
 			// Otherwise save the ID of the beginning of next scan
 			else {
 				if (!result.nextId) {
-					throw new Error(`'nextId' value is not set even though there are more items to scan.`);
+					throw new Error.ServerError(`'nextId' value is not set even though there are more items to scan.`, 'ItemModelDataSource');
 				}
 				this._idScanFrom = result.nextId;
 			}
@@ -149,7 +150,7 @@ class TaskManager extends EventEmitter {
 				// Emit 'fetch' event - TaskManager._fetch() will be invoked
 				const haveListeners = this.emit('fetch', items);
 				if (!haveListeners) {
-					throw new Error(`No handlers had been registered for 'fetch' event.`);
+					throw new Error.ServerError(`No handlers had been registered for 'fetch' event.`, 'TaskManager');
 				}
 
 				// Suspend fetch task if no more items are left
@@ -196,6 +197,10 @@ class TaskService {
 	}
 
 	requestTasks(agent, size = 1) {
+		if (!agent) {
+			throw new Error.InvalidArgument('Required parameter (agent) is missing.');
+		}
+
 		return this._manager.popTasks(size)
 		.then((items) => {
 			return items.map((item) => {
@@ -244,6 +249,9 @@ class TaskService {
 	}
 
 	setClientVersion(version) {
+		if (!version) {
+			throw new Error.InvalidArgument('Required parameter (version) is missing.');
+		}
 		const expired = 0;  // Never expired
 
 		return new Promise((resolve, reject) => {

@@ -1,92 +1,81 @@
 const TaskService = require('../services/tasks');
-
-
-const ErrorName = 'TaskService error';
+const HttpResponse = require('../services/http-response');
 
 
 const requestTasks = (req, res) => {
 	const {agent, size = 1} = (req.query || {});
-	if (!agent) return res.status(400).json('Required parameter (agent) is missing.');
+	const httpResponse = new HttpResponse();
 
 	TaskService.requestTasks(agent, size)
 	.then((tasks) => {
-		res.json(tasks);
+		httpResponse.setData(tasks);
+		res.json(httpResponse.body);
 	})
 	.catch((err) => {
-		res.status(500).json({
-			status: 'Internal Server Error',
-			title: (err.name || ErrorName),
-			detail: err.message
-		});
+		httpResponse.setError(err);
+		res.status(httpResponse.statusCode).json(httpResponse.body);
 	});
 };
-
 
 const getStatsAll = (req, res) => {
+	const httpResponse = new HttpResponse();
+
 	TaskService.getStats()
 	.then((stats) => {
-		res.json(stats);
+		httpResponse.setData(stats);
+		res.json(httpResponse.body);
 	})
 	.catch((err) => {
-		res.status(500).json({
-			status: 'Internal Server Error',
-			title: (err.name || ErrorName),
-			detail: err.message
-		});
+		httpResponse.setError(err);
+		res.status(httpResponse.statusCode).json(httpResponse.body);
 	});
 };
-
 
 const getStatsAgent = (req, res) => {
 	const {agent = ''} = req.params;
+	const httpResponse = new HttpResponse();
 
 	TaskService.getStats(agent)
 	.then((stats) => {
-		res.json(stats);
+		httpResponse.setData(stats);
+		res.json(httpResponse.body);
 	})
 	.catch((err) => {
-		res.status(500).json({
-			status: 'Internal Server Error',
-			title: (err.name || ErrorName),
-			detail: err.message
-		});
+		httpResponse.setError(err);
+		res.status(httpResponse.statusCode).json(httpResponse.body);
 	});
 };
-
 
 const getClientVersion = (req, res) => {
+	const httpResponse = new HttpResponse();
+
 	TaskService.getClientVersion()
 	.then((version) => {
-		res.json({
+		httpResponse.setData({
 			clientVersion: version
 		});
+		res.json(httpResponse.body);
 	})
 	.catch((err) => {
-		res.status(500).json({
-			status: 'Internal Server Error',
-			title: (err.name || ErrorName),
-			detail: err.message
-		});
+		httpResponse.setError(err);
+		res.status(httpResponse.statusCode).json(httpResponse.body);
 	});
 };
-
 
 const setClientVersion = (req, res) => {
 	const version = req.params.version;
-	if (!version) return res.status(400).json('Required parameter (version) is missing.');
+	const httpResponse = new HttpResponse();
 
 	TaskService.setClientVersion(version)
 	.then(() => {
-		res.json({
+		httpResponse.setData({
 			clientVersion: version
 		});
+		res.json(httpResponse.body);
 	})
 	.catch((err) => {
-		res.status(500).json({
-			status: 'Internal Server Error',
-			title: (err.name || ErrorName),
-			detail: err.message
-		});
+		httpResponse.setError(err);
+		res.status(httpResponse.statusCode).json(httpResponse.body);
 	});
 };
 

@@ -30,10 +30,19 @@ class UserExists extends Error {
 	}
 }
 
+class ServerError extends Error {
+	constructor(message, name = 'Server error') {
+		super(message);
+		this.name = name;
+		this.statusCode = 500;
+	}
+}
+
 
 module.exports = {
 	InvalidArgument,
 	AuthenticationFailed,
 	UserNotFound,
-	UserExists
+	UserExists,
+	ServerError
 };
