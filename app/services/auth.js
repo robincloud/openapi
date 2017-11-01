@@ -18,7 +18,9 @@ class AuthService {
 				crypto.createHmac('sha1', secret)
 				.update(passphrase)
 				.digest('base64');
-			return User.create(email, encrypted_passphrase);
+
+			return User.create(email, encrypted_passphrase)
+			.then((user) => user.toObject());
 		});
 	}
 
