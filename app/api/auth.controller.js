@@ -1,55 +1,49 @@
 const AuthService = require('../services/auth');
+const HttpResponse = require('../services/http-response');
 
 
 const signup = (req, res) => {
 	const {email, passphrase} = req.body;
+	const httpResponse = new HttpResponse();
 
 	AuthService.signup(email, passphrase)
 	.then((user) => {
-		res.json({
-			message: 'A new user is registered successfully.',
-			user
-		});
+		httpResponse.setData(user);
+		res.json(httpResponse.body);
 	})
 	.catch((err) => {
-		res.status(400).json({
-			message: err.message
-		});
+		httpResponse.setError(err);
+		res.status(httpResponse.statusCode).json(httpResponse.body);
 	});
 };
-
 
 const login = (req, res) => {
 	const {email, passphrase} = req.body;
+	const httpResponse = new HttpResponse();
 
 	AuthService.login(email, passphrase)
 	.then((token) => {
-		res.json({
-			message: 'Login done.',
-			access_token: token
-		});
+		httpResponse.setData(token);
+		res.json(httpResponse.body);
 	})
 	.catch((err) => {
-		res.status(403).json({
-			message: err.message
-		});
+		httpResponse.setError(err);
+		res.status(httpResponse.statusCode).json(httpResponse.body);
 	});
 };
 
-
 const verify = (req, res) => {
-	const token = (req.headers['x-access-token'] || req.query.access_token);
+	const token = (req.headers['x-access-token'] || req.query['access_token']);
+	const httpResponse = new HttpResponse();
 
 	AuthService.verify(token)
 	.then((payload) => {
-		res.json({
-			payload
-		});
+		httpResponse.setData(payload);
+		res.json(httpResponse.body);
 	})
 	.catch((err) => {
-		res.status(403).json({
-			message: err.message
-		});
+		httpResponse.setError(err);
+		res.status(httpResponse.statusCode).json(httpResponse.body);
 	});
 };
 
