@@ -12,7 +12,7 @@ class AuthService {
 				throw new Error(`Email address (${email}) is already exist.`);
 			}
 
-			const secret = Config['jwt-secret'];
+			const secret = Config['jwtSecret'];
 			const encrypted_passphrase =
 				crypto.createHmac('sha1', secret)
 				.update(passphrase)
@@ -29,7 +29,7 @@ class AuthService {
 			}
 			user = user.toObject();
 
-			const secret = Config['jwt-secret'];
+			const secret = Config['jwtSecret'];
 			const encrypted_passphrase =
 				crypto.createHmac('sha1', secret)
 				.update(passphrase)
@@ -62,7 +62,7 @@ class AuthService {
 		}
 
 		return new Promise((resolve, reject) => {
-			const secret = Config['jwt-secret'];
+			const secret = Config['jwtSecret'];
 			jwt.verify(token, secret, (err, payload) => {
 				if (err) reject(err);
 				else resolve(payload);
@@ -88,7 +88,7 @@ class AuthService {
 			console.log('* Restored payload:');
 			console.log(payload);
 
-			return User.delete(email);
+			return User.remove(email);
 		})
 		.then(() => {
 			console.log('PASSED.');
@@ -101,4 +101,3 @@ class AuthService {
 
 
 module.exports = AuthService;
-
