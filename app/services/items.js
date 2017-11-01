@@ -12,8 +12,9 @@ class ItemSerivce {
     static saveMall(req) {
         // handle data
         console.log(req);
-        const sid = req.id.split('_')[0];
-        const pid = req.id.split('_')[1];
+
+        const sid = req.id.split('_')[0]||'';
+        const pid = req.id.split('_')[1]||'';
 
         // make data array to items
         var malls = [];
