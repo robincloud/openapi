@@ -1,7 +1,7 @@
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const Config = require('../config');
-const Error = require('../error');
+const CustomError = require('./custom-error');
 const User = require('../models/user');
 
 
@@ -10,7 +10,7 @@ class AuthService {
 		return User.findByEmail(email)
 		.then((user) => {
 			if (user) {
-				throw new Error.UserExists(email);
+				throw new CustomError.UserExists(email);
 			}
 
 			const secret = Config['jwtSecret'];
@@ -28,7 +28,7 @@ class AuthService {
 		return User.findByEmail(email)
 		.then((user) => {
 			if (!user) {
-				throw new Error.UserNotFound(email);
+				throw new CustomError.UserNotFound(email);
 			}
 			user = user.toObject();
 
@@ -38,7 +38,7 @@ class AuthService {
 				.update(passphrase)
 				.digest('base64');
 			if (user.passphrase !== encrypted_passphrase) {
-				throw new Error.AuthenticationFailed('Passphrase is wrong.');
+				throw new CustomError.AuthenticationFailed('Passphrase is wrong.');
 			}
 
 			// Generate and respond the token if sign in succeeded.
@@ -61,7 +61,7 @@ class AuthService {
 
 	static verify(token) {
 		if (!token) {
-			throw new Error.AuthenticationFailed('Token is not specified. Not logged in.');
+			throw new CustomError.AuthenticationFailed('Token is not specified. Not logged in.');
 		}
 
 		return new Promise((resolve, reject) => {

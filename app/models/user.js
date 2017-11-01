@@ -1,5 +1,5 @@
 const DB = require('../database');
-const Error = require('../error');
+const CustomError = require('../services/custom-error');
 const AbstractModel = require('./AbstractModel');
 
 
@@ -59,19 +59,19 @@ class User extends AbstractModel {
 
 	static create(email, passphrase) {
 		if (!email) {
-			throw new Error.InvalidArgument('Email address is empty.');
+			throw new CustomError.InvalidArgument('Email address is empty.');
 		}
 		if (!User._isValidEmailAddress(email)) {
-			throw new Error.InvalidArgument(`Email address (${email}) is invalid.`);
+			throw new CustomError.InvalidArgument(`Email address (${email}) is invalid.`);
 		}
 		if (!passphrase) {
-			throw new Error.InvalidArgument(`Passphrase is empty.`);
+			throw new CustomError.InvalidArgument(`Passphrase is empty.`);
 		}
 
 		return User.findByEmail(email)
 		.then((user) => {
 			if (user) {
-				throw new Error.UserExists(email);
+				throw new CustomError.UserExists(email);
 			}
 
 			return new User(email, passphrase).save();
@@ -80,13 +80,13 @@ class User extends AbstractModel {
 
 	static remove(email) {
 		if (!email) {
-			throw new Error.InvalidArgument(`Email address is empty.`);
+			throw new CustomError.InvalidArgument(`Email address is empty.`);
 		}
 
 		return User.findByEmail(email)
 		.then((user) => {
 			if (!user) {
-				throw new Error.UserNotFound(email);
+				throw new CustomError.UserNotFound(email);
 			}
 
 			const params = {
