@@ -1,5 +1,7 @@
 const EventEmitter = require('events');
+const Memcached = require('memcached');
 const schedule = require('node-schedule');
+const Config = require('../config');
 const Item = require('../models/item');
 
 // Scan 200 items per every 0.5 second whenever queued items are less than (1000 - 200)
@@ -188,6 +190,9 @@ class TaskManager extends EventEmitter {
 class TaskService {
 	constructor() {
 		this._manager = new TaskManager();
+
+		const memcachedServer = `${Config['server']}:11211`;
+		this._memcached = new Memcached(memcachedServer);
 	}
 
 	requestTasks(agent, size = 1) {
@@ -226,6 +231,31 @@ class TaskService {
 		};
 	}
 
+	getClientVersion() {
+		return new Promise((resolve, reject) => {
+			this._memcached.get('clientVersion', (err, data) => {
+				if (err) {
+					err.name = 'Memcached error';
+					reject(err);
+				}
+				else resolve(data);
+			});
+		});
+	}
+
+	setClientVersion(version) {
+		const expired = 0;  // Never expired
+
+		return new Promise((resolve, reject) => {
+			this._memcached.set('clientVersion', version, expired, (err) => {
+				if (err) {
+					err.name = 'Memcached error';
+					reject(err);
+				}
+				else resolve();
+			});
+		});
+	}
 
 	_msToString(time) {
 		const pad = (num, space = 2) => {

@@ -23,6 +23,7 @@
     "command-line-args": "^4.0.7",
     "express": "^4.16.2",
     "jsonwebtoken": "^8.1.0",
+    "memcached": "^2.2.2",
     "node-schedule": "^1.2.5",
     "nodemon": "^1.12.1",
     "swagger-jsdoc": "^1.9.7"
