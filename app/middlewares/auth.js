@@ -3,7 +3,7 @@ const HttpResponse = require('../services/http-response');
 
 
 const _authMiddleware = (req, res, next, checkAdmin) => {
-	const token = (req.headers['x-access-token'] || req.query.token);
+	const token = (req.headers['x-access-token'] || req.query['access_token']);
 
 	AuthService.verify(token, checkAdmin)
 	.then((payload) => {
