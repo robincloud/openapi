@@ -15,7 +15,6 @@ const CONFIGS = [
     'port',
 ];
 
-
 // Runtime user environment
 const environment = {};
 MANDATORY_CONFIGS.concat(CONFIGS).forEach((envName) => {
@@ -31,7 +30,6 @@ MANDATORY_CONFIGS.concat(CONFIGS).forEach((envName) => {
 // Command line arguments
 const optionDefinitions = [
     {name: 'server', alias: 's', type: String, defaultValue: 'localhost'},
-    {name: 'endpoint', alias: 'e', type: String, defaultValue: 'http://localhost:8000'},
     {name: 'port', alias: 'p', type: Number, defaultValue: '8090'},
 	{name: 'verbose', alias: 'v', type: Boolean, defaultValue: false}
 ];
