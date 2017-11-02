@@ -2,23 +2,22 @@ const AWS = require('aws-sdk');
 const config = require('../config');
 
 
-class DB {
-    static initialize() {
+class Database {
+    constructor() {
         // Open connection with DynamoDB
-        if (!DB.dynamodb) {
-            AWS.config.update({
-                region: "ap-northeast-2",
-                accessKeyId: config['accessKeyId'],
-                secretAccessKey: config['secretAccessKey'],
-                endpoint: config['endpoint']
-            });
+        AWS.config.update({
+            region: "ap-northeast-2",
+            accessKeyId: config['accessKeyId'],
+            secretAccessKey: config['secretAccessKey']
+        });
 
-            DB.dynamodb = new AWS.DynamoDB();
-            DB.docClient = new AWS.DynamoDB.DocumentClient();
-        }
+        this._dynamodb = new AWS.DynamoDB();
+        this._docClient = new AWS.DynamoDB.DocumentClient();
     }
+
+    get dynamodb()  { return this._dynamodb; }
+    get docClient() { return this._docClient; }
 }
 
 
-module.exports = DB;
-DB.initialize();
+module.exports = new Database();
