@@ -13,7 +13,7 @@ const controller = require('../api/auth.controller');
  *       - application/json
  *     parameters:
  *       - in: body
- *         name: body
+ *         name: account
  *         schema:
  *           type: object
  *           required:
@@ -22,42 +22,42 @@ const controller = require('../api/auth.controller');
  *           properties:
  *             email:
  *               type: string
- *               description: Name of this account (Should be valid email address)
- *               example: new_account@somedomain.com
+ *               description: Name of this account (Should be a valid email address)
+ *               example: "new_account@somedomain.com"
  *             passphrase:
  *               type: string
  *               description: Passphrase for this account
- *               example: mypassword
+ *               example: "mypassword"
  *     responses:
- *       200:
+ *       201:
  *         description: New account is successfully created
  *         schema:
  *           type: object
  *           properties:
  *             email:
  *               type: string
- *               example: new_account@somedomain.com
+ *               example: "new_account@somedomain.com"
  *             passphrase:
  *               type: string
- *               example: iElFc3iL/VybmgLZeOPauq9Lot0=
+ *               example: "iElFc3iL/VybmgLZeOPauq9Lot0="
  *             admin:
  *               type: boolean
  *               description: Whether the account has a root privilege
  *               example: false
  *       400:
- *         description: Invalid argument
+ *         description: One of the required parameters is missing
  *         schema:
  *           type: object
  *           properties:
  *             status:
  *               type: string
- *               example: Bad Request
+ *               example: "Bad Request"
  *             title:
  *               type: string
- *               example: InvalidArgumentError
+ *               example: "InvalidArgumentError"
  *             detail:
  *               type: string
- *               example: empty email address
+ *               example: "empty email address"
  *       409:
  *         description: Given email address had already been registered
  *         schema:
@@ -65,13 +65,13 @@ const controller = require('../api/auth.controller');
  *           properties:
  *             status:
  *               type: string
- *               example: Conflict
+ *               example: "Conflict"
  *             title:
  *               type: string
- *               example: UserExistsError
+ *               example: "UserExistsError"
  *             detail:
  *               type: string
- *               example: email address (new_account@somedomain.com) already exists
+ *               example: "email address (new_account@somedomain.com) already exists"
  */
 router.post('/auth/signup', controller.signup);
 
@@ -86,7 +86,7 @@ router.post('/auth/signup', controller.signup);
  *       - application/json
  *     parameters:
  *       - in: body
- *         name: body
+ *         name: account
  *         schema:
  *           type: object
  *           required:
@@ -96,11 +96,11 @@ router.post('/auth/signup', controller.signup);
  *             email:
  *               type: string
  *               description: Email address to log in
- *               example: new_account@somedomain.com
+ *               example: "new_account@somedomain.com"
  *             passphrase:
  *               type: string
  *               description: Passphrase for this account
- *               example: mypassword
+ *               example: "mypassword"
  *     responses:
  *       200:
  *         description: Successfully logged in
@@ -109,7 +109,8 @@ router.post('/auth/signup', controller.signup);
  *           properties:
  *             access_token:
  *               type: string
- *               example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im5ld19hY2NvdW50QHNvbWVkb21haW4uY29tIiwiYWRtaW4iOmZhbHNlLCJpYXQiOjE1MDk1MjU2NzAsImV4cCI6MTUwOTYxMjA3MCwiaXNzIjoidGhlY29tbWVyY2UuY28ua3IifQ.O7yR4Tr26737xM3rp-ko5E-xhxhAzKQAsGP-cJN2190
+ *               description: JSON Web Token used for authentication of further operations
+ *               example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im5ld19hY2NvdW50QHNvbWVkb21haW4uY29tIiwiYWRtaW4iOmZhbHNlLCJpYXQiOjE1MDk1MjU2NzAsImV4cCI6MTUwOTYxMjA3MCwiaXNzIjoidGhlY29tbWVyY2UuY28ua3IifQ.O7yR4Tr26737xM3rp-ko5E-xhxhAzKQAsGP-cJN2190"
  *       401:
  *         description: Log in failed
  *         schema:
@@ -117,13 +118,13 @@ router.post('/auth/signup', controller.signup);
  *           properties:
  *             status:
  *               type: string
- *               example: Unauthorized
+ *               example: "Unauthorized"
  *             title:
  *               type: string
- *               example: AuthenticationFailedError
+ *               example: "AuthenticationFailedError"
  *             detail:
  *               type: string
- *               example: wrong passphrase
+ *               example: "wrong passphrase"
  *       404:
  *         description: Unable to find the user
  *         schema:
@@ -131,13 +132,13 @@ router.post('/auth/signup', controller.signup);
  *           properties:
  *             status:
  *               type: string
- *               example: Not Found
+ *               example: "Not Found"
  *             title:
  *               type: string
- *               example: UserNotFoundError
+ *               example: "UserNotFoundError"
  *             detail:
  *               type: string
- *               example: unable to find email address (new_account@somedomain.com)`
+ *               example: "unable to find email address (new_account@somedomain.com)"
  */
 router.post('/auth/login', controller.login);
 
@@ -155,8 +156,8 @@ router.post('/auth/login', controller.login);
  *         name: access_token
  *         type: string
  *         required: true
- *         description: JSON Web Token value which can be obtained by logging in
- *         example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im5ld19hY2NvdW50QHNvbWVkb21haW4uY29tIiwiYWRtaW4iOmZhbHNlLCJpYXQiOjE1MDk1MjU2NzAsImV4cCI6MTUwOTYxMjA3MCwiaXNzIjoidGhlY29tbWVyY2UuY28ua3IifQ.O7yR4Tr26737xM3rp-ko5E-xhxhAzKQAsGP-cJN2190
+ *         description: JSON Web Token which can be obtained by logging in
+ *         example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im5ld19hY2NvdW50QHNvbWVkb21haW4uY29tIiwiYWRtaW4iOmZhbHNlLCJpYXQiOjE1MDk1MjU2NzAsImV4cCI6MTUwOTYxMjA3MCwiaXNzIjoidGhlY29tbWVyY2UuY28ua3IifQ.O7yR4Tr26737xM3rp-ko5E-xhxhAzKQAsGP-cJN2190"
  *     responses:
  *       200:
  *         description: JWT successfully verified
@@ -165,7 +166,7 @@ router.post('/auth/login', controller.login);
  *           properties:
  *             email:
  *               type: string
- *               example: new_account@somedomain.com
+ *               example: "new_account@somedomain.com"
  *             admin:
  *               type: boolean
  *               example: false
@@ -177,7 +178,7 @@ router.post('/auth/login', controller.login);
  *               example: 1509606329
  *             iss:
  *               type: string
- *               example: thecommerce.co.kr
+ *               example: "thecommerce.co.kr"
  *       400:
  *         description: Empty JWT
  *         schema:
@@ -185,13 +186,13 @@ router.post('/auth/login', controller.login);
  *           properties:
  *             status:
  *               type: string
- *               example: Bad Request
+ *               example: "Bad Request"
  *             title:
  *               type: string
- *               example: InvalidArgumentError
+ *               example: "InvalidArgumentError"
  *             detail:
  *               type: string
- *               example: empty token
+ *               example: "empty token"
  *       401:
  *         description: JWT verification failed
  *         schema:
@@ -199,13 +200,13 @@ router.post('/auth/login', controller.login);
  *           properties:
  *             status:
  *               type: string
- *               example: Unauthorized
+ *               example: "Unauthorized"
  *             title:
  *               type: string
- *               example: JsonWebTokenError
+ *               example: "JsonWebTokenError"
  *             detail:
  *               type: string
- *               example: invalid token
+ *               example: "invalid token"
  */
 router.get('/auth/verify', controller.verify);
 

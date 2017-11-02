@@ -6,11 +6,19 @@ class InvalidArgument extends Error {
 	}
 }
 
-class AuthenticationFailed extends Error {
+class Unauthorized extends Error {
 	constructor(message, name = '') {
 		super(message);
-		this.name = (name || 'AuthenticationFailedError');
+		this.name = (name || 'UnauthorizedError');
 		this.statusCode = 401;
+	}
+}
+
+class NotPermitted extends Error {
+	constructor(message, name = '') {
+		super(message);
+		this.name = (name || 'NotPermittedError');
+		this.statusCode = 403;
 	}
 }
 
@@ -41,7 +49,8 @@ class ServerError extends Error {
 
 module.exports = {
 	InvalidArgument,
-	AuthenticationFailed,
+	Unauthorized,
+	NotPermitted,
 	UserNotFound,
 	UserExists,
 	ServerError

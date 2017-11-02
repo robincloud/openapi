@@ -9,7 +9,7 @@ const requestTasks = (req, res) => {
 	TaskService.requestTasks(agent, size)
 	.then((tasks) => {
 		httpResponse.setData(tasks);
-		res.json(httpResponse.body);
+		res.status(httpResponse.statusCode).json(httpResponse.body);
 	})
 	.catch((err) => {
 		httpResponse.setError(err);
@@ -17,28 +17,14 @@ const requestTasks = (req, res) => {
 	});
 };
 
-const getStatsAll = (req, res) => {
+const getStats = (req, res) => {
+	const {agent = null} = req.params;
 	const httpResponse = new HttpResponse();
 
-	TaskService.getStats()
+	TaskService.getStatsAsync(agent)
 	.then((stats) => {
 		httpResponse.setData(stats);
-		res.json(httpResponse.body);
-	})
-	.catch((err) => {
-		httpResponse.setError(err);
 		res.status(httpResponse.statusCode).json(httpResponse.body);
-	});
-};
-
-const getStatsAgent = (req, res) => {
-	const {agent = ''} = req.params;
-	const httpResponse = new HttpResponse();
-
-	TaskService.getStats(agent)
-	.then((stats) => {
-		httpResponse.setData(stats);
-		res.json(httpResponse.body);
 	})
 	.catch((err) => {
 		httpResponse.setError(err);
@@ -54,7 +40,7 @@ const getClientVersion = (req, res) => {
 		httpResponse.setData({
 			clientVersion: version
 		});
-		res.json(httpResponse.body);
+		res.status(httpResponse.statusCode).json(httpResponse.body);
 	})
 	.catch((err) => {
 		httpResponse.setError(err);
@@ -82,8 +68,7 @@ const setClientVersion = (req, res) => {
 
 module.exports = {
 	requestTasks,
-	getStatsAll,
-	getStatsAgent,
+	getStats,
 	getClientVersion,
 	setClientVersion
 };

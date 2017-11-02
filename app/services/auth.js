@@ -38,7 +38,7 @@ class AuthService {
 				.update(passphrase)
 				.digest('base64');
 			if (user.passphrase !== encrypted_passphrase) {
-				throw new CustomError.AuthenticationFailed('wrong passphrase');
+				throw new CustomError.Unauthorized('wrong passphrase', 'AuthenticationFailed');
 			}
 
 			// Generate and respond the token if sign in succeeded.
@@ -52,14 +52,17 @@ class AuthService {
 			};
 			return new Promise((resolve, reject) => {
 				jwt.sign(payload, secret, options, (err, token) => {
-					if (err) reject(new CustomError.AuthenticationFailed(err.message, err.name));
-					else resolve(token);
+					if (err) {
+						reject(new CustomError.Unauthorized(err.message, err.name));
+					} else {
+						resolve(token);
+					}
 				});
 			});
 		});
 	}
 
-	static verify(token) {
+	static verify(token, checkAdmin = false) {
 		return new Promise((resolve, reject) => {
 			if (!token) {
 				return reject(new CustomError.InvalidArgument('empty token'));
@@ -67,8 +70,14 @@ class AuthService {
 
 			const secret = Config['jwtSecret'];
 			jwt.verify(token, secret, (err, payload) => {
-				if (err) reject(new CustomError.AuthenticationFailed(err.message, err.name));
-				else resolve(payload);
+				if (err) {
+					reject(new CustomError.Unauthorized(err.message, err.name));
+				} else if (checkAdmin && !payload.admin) {
+					reject(new CustomError.NotPermitted('only admins have a permission for this operation'));
+				}
+				else {
+					resolve(payload);
+				}
 			});
 		});
 	}

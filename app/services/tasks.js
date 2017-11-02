@@ -194,12 +194,13 @@ class TaskService {
 		this._manager = new TaskManager();
 
 		const memcachedServer = `${Config['server']}:11211`;
-		this._memcached = new Memcached(memcachedServer);
+		this._memcached = new Memcached(memcachedServer, {retries: 1});
 	}
 
 	requestTasks(agent, size = 1) {
 		if (!agent) {
-			throw new CustomError.InvalidArgument('missing required parameter (agent)');
+			const err = new CustomError.InvalidArgument('missing required parameter (agent)');
+			return Promise.reject(err);
 		}
 
 		return this._manager.popTasks(size)
@@ -211,39 +212,49 @@ class TaskService {
 		});
 	}
 
-	getStats(agent = null) {
+	getStatsSync(agent) {
+		const {startedAt, finishedAt, exhaustedAt, scheduledAt} = this._manager;
+		const {fetched, consumed, available} = this._manager;
+		const elapsedTime = (start, end) => {
+			return (start ? (end || new Date()) - start : 0);
+		};
+
 		const now = new Date();
-		const msecFetchElapsed = (this._manager.finishedAt || now) - this._manager.startedAt;
-		const msecConsumeElapsed = (this._manager.exhaustedAt || now) - this._manager.startedAt;
+		const msecTotalElapsed = elapsedTime(startedAt, now);
+		const msecFetchElapsed = elapsedTime(startedAt, finishedAt);
+		const msecConsumeElapsed = elapsedTime(startedAt, exhaustedAt);
 
 		return {
 			status: this._manager.isBusy() ? 'running' : 'idle',
 			current_event: {
-				started: this._manager.startedAt,
-				finished: this._manager.finishedAt,
-				exhausted: this._manager.exhaustedAt,
-				elapsed: this._msToString(now - this._manager.startedAt)
+				started: startedAt,
+				finished: finishedAt,
+				exhausted: exhaustedAt,
+				elapsed: TaskService._msToString(msecTotalElapsed)
 			},
-			next_event: this._manager.scheduledAt,
+			next_event: scheduledAt,
 			count: {
-				fetched: this._manager.fetched,
-				consumed: this._manager.consumed,
-				available: this._manager.available
+				fetched,
+				consumed,
+				available
 			},
 			throughput: {
-				fetch: this._throughput(this._manager.fetched, msecFetchElapsed),
-				consume: this._throughput(this._manager.consumed, msecConsumeElapsed)
+				fetch: TaskService._throughput(fetched, msecFetchElapsed),
+				consume: TaskService._throughput(consumed, msecConsumeElapsed)
 			}
 		};
 	}
 
+	getStatsAsync(agent) {
+		return new Promise((resolve) => {
+			resolve(this.getStatsSync(agent));
+		});
+	}
+
 	getClientVersion() {
 		return new Promise((resolve, reject) => {
-			this._memcached.get('clientVersion', (err, data) => {
-				if (err) {
-					err.name = 'Memcached error';
-					reject(err);
-				}
+			this._memcached.get('clientVersion', (err, data = 1) => {
+				if (err) reject(new CustomError.ServerError(err.message, err.name));
 				else resolve(data);
 			});
 		});
@@ -257,16 +268,13 @@ class TaskService {
 
 		return new Promise((resolve, reject) => {
 			this._memcached.set('clientVersion', version, expired, (err) => {
-				if (err) {
-					err.name = 'Memcached error';
-					reject(err);
-				}
+				if (err) reject(new CustomError.ServerError(err.message, err.name));
 				else resolve();
 			});
 		});
 	}
 
-	_msToString(time) {
+	static _msToString(time) {
 		const pad = (num, space = 2) => {
 			let padded = String(num);
 			while (padded.length < space) padded = '0' + padded;
@@ -284,8 +292,8 @@ class TaskService {
 		return `${pad(h)}:${pad(m)}:${pad(s)}.${pad(ms, 3)}`;
 	}
 
-	_throughput(count, msec) {
-		const throughput = Math.round(count / msec * 1000 * 100) / 100;
+	static _throughput(count, msec) {
+		const throughput = (msec ? Math.round(count / msec * 1000 * 100) / 100 : 0);
 		return `${throughput} processed/sec`;
 	}
 }
@@ -330,12 +338,10 @@ class TaskServiceTester {
 		const requestTasks = (agent) => {
 			return setInterval(() => {
 				taskService.requestTasks(agent, 12)
-				.then((tasks) => {
-					if (tasks.length) {
-						const stats = taskService.getStats();
-						console.log(`---------------------------------------------`);
-						console.log(`${JSON.stringify(stats, null, 4)}`);
-					}
+				.then(() => {
+					const stats = taskService.getStatsSync();
+					console.log(`---------------------------------------------`);
+					console.log(`${JSON.stringify(stats, null, 4)}`);
 				});
 			}, 200);
 		};

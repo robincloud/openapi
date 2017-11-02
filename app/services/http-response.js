@@ -88,8 +88,8 @@ class HttpResponse {
 	get statusCode()    { return this._statusCode; }
 	get body()          { return this._body; }
 
-	setData(data) {
-		this._statusCode = 200;
+	setData(data, statusCode = 200) {
+		this._statusCode = statusCode;
 		this._body = data;
 	}
 

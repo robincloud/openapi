@@ -8,8 +8,8 @@ const signup = (req, res) => {
 
 	AuthService.signup(email, passphrase)
 	.then((user) => {
-		httpResponse.setData(user);
-		res.json(httpResponse.body);
+		httpResponse.setData(user, 201);
+		res.status(httpResponse.statusCode).json(httpResponse.body);
 	})
 	.catch((err) => {
 		httpResponse.setError(err);
@@ -24,7 +24,7 @@ const login = (req, res) => {
 	AuthService.login(email, passphrase)
 	.then((token) => {
 		httpResponse.setData({access_token: token});
-		res.json(httpResponse.body);
+		res.status(httpResponse.statusCode).json(httpResponse.body);
 	})
 	.catch((err) => {
 		httpResponse.setError(err);
@@ -39,7 +39,7 @@ const verify = (req, res) => {
 	AuthService.verify(token)
 	.then((payload) => {
 		httpResponse.setData(payload);
-		res.json(httpResponse.body);
+		res.status(httpResponse.statusCode).json(httpResponse.body);
 	})
 	.catch((err) => {
 		httpResponse.setError(err);
