@@ -29,10 +29,11 @@ MANDATORY_CONFIGS.concat(CONFIGS).forEach((envName) => {
 
 // Command line arguments
 const optionDefinitions = [
-    {name: 'server', alias: 's', type: String, defaultValue: 'localhost'},
-    {name: 'port', alias: 'p', type: Number, defaultValue: '8090'},
+    {name: 'server', alias: 's', type: String, defaultValue: 'localhost:8081'},
+    {name: 'port', alias: 'p', type: Number, defaultValue: '8081'},
 	{name: 'verbose', alias: 'v', type: Boolean, defaultValue: false}
 ];
+
 MANDATORY_CONFIGS.forEach((envName) => {
 	optionDefinitions.push({
 		name: envName,

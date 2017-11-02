@@ -5,6 +5,7 @@ const Mall = require('../models/mall');
 class ItemSerivce {
     static saveItem(req) {
         // handle data
+        console.log(req);
 
         if (!req.id)
             throw new Error(`ID is not provided for the data`);
