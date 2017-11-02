@@ -1,6 +1,6 @@
 const router = require('express').Router();
-const AuthMiddleware = require('../middlewares/auth');
 const controller = require('../api/tasks.controller');
+const AuthMiddleware = require('../middlewares/auth');
 
 
 /**
@@ -265,7 +265,7 @@ router.get('/tasks/client/version', AuthMiddleware.isLoggedIn, controller.getCli
  *               type: string
  *               example: "empty or wrong x-access-token header"
  *       403:
- *         description: Have no permission to this operation
+ *         description: No permission to this operation
  *         schema:
  *           type: object
  *           properties:

@@ -1,5 +1,7 @@
 const router = require('express').Router();
 const controller = require('../api/items.controller');
+const AuthMiddleware = require('../middlewares/auth');
+
 
 /**
  * @swagger
@@ -109,6 +111,12 @@ router.get('/items/test', controller.test);
  *     produces:
  *      - application/json
  *     parameters:
+ *      - in: header
+ *        name: x-access-token
+ *        type: string
+ *        required: true
+ *        description: JSON Web Token which can be obtained by logging in
+ *        example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im5ld19hY2NvdW50QHNvbWVkb21haW4uY29tIiwiYWRtaW4iOmZhbHNlLCJpYXQiOjE1MDk1MjU2NzAsImV4cCI6MTUwOTYxMjA3MCwiaXNzIjoidGhlY29tbWVyY2UuY28ua3IifQ.O7yR4Tr26737xM3rp-ko5E-xhxhAzKQAsGP-cJN2190"
  *      - in: query
  *        name: mall_name
  *        description: item's mall name
@@ -133,8 +141,22 @@ router.get('/items/test', controller.test);
  *         description: the description of the item
  *         schema:
  *           $ref: '#/definitions/ItemDescription'
+ *       401:
+ *         description: Unauthorized access with invalid access token
+ *         schema:
+ *           type: object
+ *           properties:
+ *             status:
+ *               type: string
+ *               example: "Unauthorized"
+ *             title:
+ *               type: string
+ *               example: "JsonWebTokenError"
+ *             detail:
+ *               type: string
+ *               example: "empty or wrong x-access-token header"
  */
-router.get('/items', controller.query);
+router.get('/items', AuthMiddleware.isLoggedIn, controller.query);
 
 /**
  * @swagger
