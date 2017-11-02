@@ -83,7 +83,7 @@ router.get('/tasks/', controller.requestTasks);
  *         type: string
  *         required: true
  *         description: JSON Web Token which can be obtained by logging in
- *         example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im5ld19hY2NvdW50QHNvbWVkb21haW4uY29tIiwiYWRtaW4iOmZhbHNlLCJpYXQiOjE1MDk1MjU2NzAsImV4cCI6MTUwOTYxMjA3MCwiaXNzIjoidGhlY29tbWVyY2UuY28ua3IifQ.O7yR4Tr26737xM3rp-ko5E-xhxhAzKQAsGP-cJN2190"
+ *         example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNvbWVvbmVAc29tZWRvbWFpbi5jb20iLCJhZG1pbiI6ZmFsc2UsImlhdCI6MTUwOTYwODU5MCwiZXhwIjoxNTA5Njk0OTkwLCJpc3MiOiJ0aGVjb21tZXJjZS5jby5rciJ9.JaTmb0VxyPr2jfoFKzEOCUD5m6KI6c2Xkk0IYbdWAfE"
  *       - in: path
  *         name: agent
  *         type: string
@@ -179,7 +179,7 @@ router.get('/tasks/stat/(:agent)?', AuthMiddleware.isLoggedIn, controller.getSta
  *         type: string
  *         required: true
  *         description: JSON Web Token which can be obtained by logging in
- *         example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im5ld19hY2NvdW50QHNvbWVkb21haW4uY29tIiwiYWRtaW4iOmZhbHNlLCJpYXQiOjE1MDk1MjU2NzAsImV4cCI6MTUwOTYxMjA3MCwiaXNzIjoidGhlY29tbWVyY2UuY28ua3IifQ.O7yR4Tr26737xM3rp-ko5E-xhxhAzKQAsGP-cJN2190"
+ *         example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNvbWVvbmVAc29tZWRvbWFpbi5jb20iLCJhZG1pbiI6ZmFsc2UsImlhdCI6MTUwOTYwODU5MCwiZXhwIjoxNTA5Njk0OTkwLCJpc3MiOiJ0aGVjb21tZXJjZS5jby5rciJ9.JaTmb0VxyPr2jfoFKzEOCUD5m6KI6c2Xkk0IYbdWAfE"
  *     responses:
  *       200:
  *         description: OK
@@ -225,7 +225,7 @@ router.get('/tasks/client/version', AuthMiddleware.isLoggedIn, controller.getCli
  * @swagger
  * /tasks/client/version/{clientVersion}:
  *   post:
- *     description: Changes the client version (Only admin users have a permission to modify)
+ *     description: Changes the client version (Only admin users have a permission)
  *     produces:
  *       -application/json
  *     parameters:
@@ -234,7 +234,7 @@ router.get('/tasks/client/version', AuthMiddleware.isLoggedIn, controller.getCli
  *         type: string
  *         required: true
  *         description: JSON Web Token which can be obtained by logging in
- *         example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im5ld19hY2NvdW50QHNvbWVkb21haW4uY29tIiwiYWRtaW4iOmZhbHNlLCJpYXQiOjE1MDk1MjU2NzAsImV4cCI6MTUwOTYxMjA3MCwiaXNzIjoidGhlY29tbWVyY2UuY28ua3IifQ.O7yR4Tr26737xM3rp-ko5E-xhxhAzKQAsGP-cJN2190"
+ *         example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNvbWVvbmVAc29tZWRvbWFpbi5jb20iLCJhZG1pbiI6ZmFsc2UsImlhdCI6MTUwOTYwODU5MCwiZXhwIjoxNTA5Njk0OTkwLCJpc3MiOiJ0aGVjb21tZXJjZS5jby5rciJ9.JaTmb0VxyPr2jfoFKzEOCUD5m6KI6c2Xkk0IYbdWAfE"
  *       - in: path
  *         name: clientVersion
  *         type: number
@@ -265,7 +265,7 @@ router.get('/tasks/client/version', AuthMiddleware.isLoggedIn, controller.getCli
  *               type: string
  *               example: "empty or wrong x-access-token header"
  *       403:
- *         description: No permission to this operation
+ *         description: No permission for this operation
  *         schema:
  *           type: object
  *           properties:

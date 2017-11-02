@@ -13,7 +13,8 @@ const controller = require('../api/auth.controller');
  *       - application/json
  *     parameters:
  *       - in: body
- *         name: account
+ *         name: (JSON request)
+ *         required: true
  *         schema:
  *           type: object
  *           required:
@@ -23,7 +24,7 @@ const controller = require('../api/auth.controller');
  *             email:
  *               type: string
  *               description: Name of this account (Should be a valid email address)
- *               example: "new_account@somedomain.com"
+ *               example: "someone@somedomain.com"
  *             passphrase:
  *               type: string
  *               description: Passphrase for this account
@@ -36,7 +37,7 @@ const controller = require('../api/auth.controller');
  *           properties:
  *             email:
  *               type: string
- *               example: "new_account@somedomain.com"
+ *               example: "someone@somedomain.com"
  *             passphrase:
  *               type: string
  *               example: "iElFc3iL/VybmgLZeOPauq9Lot0="
@@ -71,7 +72,7 @@ const controller = require('../api/auth.controller');
  *               example: "UserExistsError"
  *             detail:
  *               type: string
- *               example: "email address (new_account@somedomain.com) already exists"
+ *               example: "email address (someone@somedomain.com) already exists"
  */
 router.post('/auth/signup', controller.signup);
 
@@ -86,7 +87,8 @@ router.post('/auth/signup', controller.signup);
  *       - application/json
  *     parameters:
  *       - in: body
- *         name: account
+ *         name: (JSON request)
+ *         required: true
  *         schema:
  *           type: object
  *           required:
@@ -96,7 +98,7 @@ router.post('/auth/signup', controller.signup);
  *             email:
  *               type: string
  *               description: Email address to log in
- *               example: "new_account@somedomain.com"
+ *               example: "someone@somedomain.com"
  *             passphrase:
  *               type: string
  *               description: Passphrase for this account
@@ -110,7 +112,7 @@ router.post('/auth/signup', controller.signup);
  *             access_token:
  *               type: string
  *               description: JSON Web Token used for authentication of further operations
- *               example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im5ld19hY2NvdW50QHNvbWVkb21haW4uY29tIiwiYWRtaW4iOmZhbHNlLCJpYXQiOjE1MDk1MjU2NzAsImV4cCI6MTUwOTYxMjA3MCwiaXNzIjoidGhlY29tbWVyY2UuY28ua3IifQ.O7yR4Tr26737xM3rp-ko5E-xhxhAzKQAsGP-cJN2190"
+ *               example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNvbWVvbmVAc29tZWRvbWFpbi5jb20iLCJhZG1pbiI6ZmFsc2UsImlhdCI6MTUwOTYwODU5MCwiZXhwIjoxNTA5Njk0OTkwLCJpc3MiOiJ0aGVjb21tZXJjZS5jby5rciJ9.JaTmb0VxyPr2jfoFKzEOCUD5m6KI6c2Xkk0IYbdWAfE"
  *       401:
  *         description: Log in failed
  *         schema:
@@ -138,7 +140,7 @@ router.post('/auth/signup', controller.signup);
  *               example: "UserNotFoundError"
  *             detail:
  *               type: string
- *               example: "unable to find email address (new_account@somedomain.com)"
+ *               example: "unable to find email address (someone@somedomain.com)"
  */
 router.post('/auth/login', controller.login);
 
@@ -146,9 +148,7 @@ router.post('/auth/login', controller.login);
  * @swagger
  * /auth/verify:
  *   get:
- *     description: Verifies access token
- *     consumes:
- *       - application/json
+ *     description: Verifies access token (Invoking this API is usually not required)
  *     produces:
  *       - application/json
  *     parameters:
@@ -157,7 +157,7 @@ router.post('/auth/login', controller.login);
  *         type: string
  *         required: true
  *         description: JSON Web Token which can be obtained by logging in
- *         example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im5ld19hY2NvdW50QHNvbWVkb21haW4uY29tIiwiYWRtaW4iOmZhbHNlLCJpYXQiOjE1MDk1MjU2NzAsImV4cCI6MTUwOTYxMjA3MCwiaXNzIjoidGhlY29tbWVyY2UuY28ua3IifQ.O7yR4Tr26737xM3rp-ko5E-xhxhAzKQAsGP-cJN2190"
+ *         example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNvbWVvbmVAc29tZWRvbWFpbi5jb20iLCJhZG1pbiI6ZmFsc2UsImlhdCI6MTUwOTYwODU5MCwiZXhwIjoxNTA5Njk0OTkwLCJpc3MiOiJ0aGVjb21tZXJjZS5jby5rciJ9.JaTmb0VxyPr2jfoFKzEOCUD5m6KI6c2Xkk0IYbdWAfE"
  *     responses:
  *       200:
  *         description: JWT successfully verified
@@ -166,7 +166,7 @@ router.post('/auth/login', controller.login);
  *           properties:
  *             email:
  *               type: string
- *               example: "new_account@somedomain.com"
+ *               example: "someone@somedomain.com"
  *             admin:
  *               type: boolean
  *               example: false

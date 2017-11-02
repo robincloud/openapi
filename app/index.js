@@ -37,6 +37,7 @@ app.use(bodyParser.json({limit: '50mb'}));
 // Routings
 app.use('/', require('./routes/basic'));
 app.use('/', require('./routes/auth'));
+app.use('/', require('./routes/account'));
 app.use('/', require('./routes/items'));
 app.use('/', require('./routes/tasks'));
 

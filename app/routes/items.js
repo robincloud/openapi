@@ -116,7 +116,7 @@ router.get('/items/test', controller.test);
  *        type: string
  *        required: true
  *        description: JSON Web Token which can be obtained by logging in
- *        example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im5ld19hY2NvdW50QHNvbWVkb21haW4uY29tIiwiYWRtaW4iOmZhbHNlLCJpYXQiOjE1MDk1MjU2NzAsImV4cCI6MTUwOTYxMjA3MCwiaXNzIjoidGhlY29tbWVyY2UuY28ua3IifQ.O7yR4Tr26737xM3rp-ko5E-xhxhAzKQAsGP-cJN2190"
+ *        example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNvbWVvbmVAc29tZWRvbWFpbi5jb20iLCJhZG1pbiI6ZmFsc2UsImlhdCI6MTUwOTYwODU5MCwiZXhwIjoxNTA5Njk0OTkwLCJpc3MiOiJ0aGVjb21tZXJjZS5jby5rciJ9.JaTmb0VxyPr2jfoFKzEOCUD5m6KI6c2Xkk0IYbdWAfE"
  *      - in: query
  *        name: mall_name
  *        description: item's mall name
