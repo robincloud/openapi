@@ -46,6 +46,8 @@ const options = commandLineArgs(optionDefinitions);
 // Merge configurations from environment variables to options
 const config = Object.assign(options, environment);
 
+console.log(config);
+
 // MANDATORY_CONFIGS.forEach((envName) => {
 // 	if (!config[envName]) {
 // 		throw new Error(`Required configuration value (${envName}) is missing.`);
