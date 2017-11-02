@@ -312,10 +312,9 @@ class DummyDataSource extends DataSource {
 		// Initialize dummy items
 		this._items = [];
 		for (let i = 1000; i < 3000; ++i) {
-			this._items.push({
-				id: String(i),
-				name: `Item_${i}`
-			});
+			this._items.push(new Item({
+				id: `nv_${i}`
+			}));
 		}
 	}
 
@@ -343,6 +342,7 @@ class TaskServiceTester {
 					const stats = taskService.getStatsSync(null);
 					console.log(`---------------------------------------------`);
 					console.log(`${JSON.stringify(stats, null, 4)}`);
+					console.log(items);
 				});
 			}, 200);
 		};
