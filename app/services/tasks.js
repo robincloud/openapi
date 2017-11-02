@@ -206,8 +206,9 @@ class TaskService {
 		return this._manager.popTasks(size)
 		.then((items) => {
 			return items.map((item) => {
-				const mid = item.id;
-				return {id: `nv_${mid}`, mid};
+				const id = item.get('id');
+				const mid = (id.split('_')[1] || '');
+				return {id, mid};
 			});
 		});
 	}
@@ -338,8 +339,8 @@ class TaskServiceTester {
 		const requestTasks = (agent) => {
 			return setInterval(() => {
 				taskService.requestTasks(agent, 12)
-				.then(() => {
-					const stats = taskService.getStatsSync();
+				.then((items) => {
+					const stats = taskService.getStatsSync(null);
 					console.log(`---------------------------------------------`);
 					console.log(`${JSON.stringify(stats, null, 4)}`);
 				});

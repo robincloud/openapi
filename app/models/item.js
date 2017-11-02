@@ -67,7 +67,7 @@ class Item extends AbstractModel {
     		params['ExclusiveStartKey'] = fromId;
 	    }
 
-	    return DB.dynamodb.scan(params).promise()
+	    return DB.docClient.scan(params).promise()
 	        .then((data) => {
     		    const result = {
     		    	count: data['Count'],
@@ -75,7 +75,7 @@ class Item extends AbstractModel {
 		        };
     		    if ('LastEvaluatedKey' in data) {
     		    	result['final'] = false;
-			        result['nextId'] = data['LastEvaluatedKey'];
+			        result['nextId'] = data['LastEvaluatedKey'].id;
 		        } else {
 			        result['final'] = true;
 		        }
