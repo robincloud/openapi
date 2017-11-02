@@ -36,9 +36,9 @@ class ItemSerivce {
                 name: data.item_name,
                 option: data.option_name,
                 malls: currentMalls.map( (m) => m.get("id")),
-                refId: '1234',
-                vector: '1234',
+                vector: [1,2,3,4,5,6,7,8,9,10],
                 cat: data.cat,
+                image: data.meta.thumbnail,
             };
             return new Item(item);
         });
