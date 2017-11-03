@@ -78,7 +78,7 @@ class Item extends AbstractModel {
 		        };
     		    if ('LastEvaluatedKey' in data) {
     		    	result['final'] = false;
-			        result['nextId'] = data['LastEvaluatedKey'].id;
+			        result['nextId'] = data['LastEvaluatedKey'];
 		        } else {
 			        result['final'] = true;
 		        }
