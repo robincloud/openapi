@@ -59,13 +59,17 @@ class Item extends AbstractModel {
 
     // Limit = 0 means there is no limitation of number of items to evaluate.
 	// However, DynamoDB limits maximum data set size to 1 MB. In this case the results are returned immediately.
-    static scan(size = 0, fromId = null) {
+    static scan(size = 0, projection = null, fromId = null) {
     	const params = {
     		TableName: Item.tableName,
 	    };
     	if (size) {
     		params['Limit'] = size;
 	    }
+	    if (projection) {
+		    if (Array.isArray(projection)) projection = projection.join(',');
+    	    params['ProjectionExpression'] = projection;
+        }
     	if (fromId) {
     		params['ExclusiveStartKey'] = fromId;
 	    }

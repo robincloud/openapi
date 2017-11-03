@@ -35,8 +35,9 @@ class ItemModelDataSource extends DataSource {
 
 	get(size) {
 		const fromId = this._idScanFrom;
+		const projection = 'id';
 
-		return Item.scan(size, fromId)
+		return Item.scan(size, projection, fromId)
 		.then((result) => {
 			// Verify count of items
 			if (result.count !== result.items.length) {
@@ -419,17 +420,16 @@ class TaskServiceTester {
 	static launch() {
 		// Start producer
 		const taskService = new TaskService();
-		taskService._manager.forceTrigger(new ItemModelDataSource());
+		taskService._manager.forceTrigger(new DummyDataSource());
 
 		// Start 5 consumers
 		const requestTasks = (agent) => {
 			return setInterval(() => {
 				taskService.requestTasks(agent, 12)
-				.then((items) => {
-					const stats = taskService.getStatsSync('agent1');
+				.then(() => {
+					const stats = taskService.getStatsSync();
 					console.log(`---------------------------------------------`);
 					console.log(`${JSON.stringify(stats, null, 4)}`);
-					console.log(items);
 				});
 			}, 200);
 		};
