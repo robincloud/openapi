@@ -158,6 +158,9 @@ class TaskManager extends EventEmitter {
 				if (dataSource.isEmpty()) {
 					this._suspend();
 				}
+			}).catch((err) => {
+				console.error(err);
+				this._suspend();
 			});
 		}, SCAN_INTERVAL_MSEC);
 	}
