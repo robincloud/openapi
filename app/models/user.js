@@ -1,6 +1,6 @@
 const DB = require('../database');
 const CustomError = require('../services/custom-error');
-const AbstractModel = require('./AbstractModel');
+const AbstractModel = require('./abstract-model');
 
 
 class User extends AbstractModel {

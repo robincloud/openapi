@@ -1,5 +1,5 @@
 const DB = require('../database');
-const AbstractModel = require('./AbstractModel');
+const AbstractModel = require('./abstract-model');
 
 
 class Mall extends AbstractModel {
