@@ -139,7 +139,7 @@ class Item extends AbstractModel {
     }
 
     static getId(data) {
-        const id = data.mall_name + "_" + data.mall_id + (data.pkey ? "_"+data.pkey : "");
+        const id = `${data.sid}_${data.pid}${(data.oid ? "_"+data.oid: "")}`;
         console.log(id);
         return id;
     }

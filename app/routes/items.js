@@ -134,6 +134,7 @@ router.get('/items/test', controller.test);
  *        description: item's option id
  *        required: false
  *        type: number
+ *        example: 20041523
  *
  *     responses:
  *       200:

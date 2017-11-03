@@ -18,7 +18,7 @@ class ItemSerivce {
             // make nodes array to malls
             const currentMalls = data.nodes.map( (node) => {
                 var mall = {
-                    id: sid + '_' + node.id,
+                    id: `${sid}_${node.id}`,
                     sid: sid,
                     mall: node.mall,
                     name: node.name,
