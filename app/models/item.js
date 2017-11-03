@@ -11,12 +11,13 @@ class Item extends AbstractModel {
     save() {
         const params = {
             TableName: Item.tableName,
-            Key: {
-                id: this.get('id')
-            },
+            // Key: {
+            //     id: this.get('id')
+            // },
             Item: this._object
         };
-        return DB.docClient.update(params).promise()
+        //return DB.docClient.update(params).promise()
+        return DB.docClient.put(params).promise()
             .then(() => this);
     }
 
