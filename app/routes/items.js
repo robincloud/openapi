@@ -107,7 +107,7 @@ router.get('/items/test', controller.test);
  * @swagger
  * /items:
  *   get:
- *     description: Returns a single item
+ *     description: Returns items
  *     produces:
  *      - application/json
  *     parameters:
@@ -118,23 +118,22 @@ router.get('/items/test', controller.test);
  *        description: JSON Web Token which can be obtained by logging in
  *        example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNvbWVvbmVAc29tZWRvbWFpbi5jb20iLCJhZG1pbiI6ZmFsc2UsImlhdCI6MTUwOTYwODU5MCwiZXhwIjoxNTA5Njk0OTkwLCJpc3MiOiJ0aGVjb21tZXJjZS5jby5rciJ9.JaTmb0VxyPr2jfoFKzEOCUD5m6KI6c2Xkk0IYbdWAfE"
  *      - in: query
- *        name: mall_name
+ *        name: sid
  *        description: item's mall name
  *        required: true
  *        type: string
  *        example: nv
  *      - in: query
- *        name: mall_id
+ *        name: pid
  *        description: item's mall id
  *        required: true
  *        type: number
- *        example: 1111111111
+ *        example: 5639964597
  *      - in: query
- *        name: pkey
+ *        name: oid
  *        description: item's option id
  *        required: false
  *        type: number
- *        example: 111
  *
  *     responses:
  *       200:
