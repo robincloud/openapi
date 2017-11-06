@@ -7,8 +7,8 @@ class Database {
         // Open connection with DynamoDB
         AWS.config.update({
             region: "ap-northeast-2",
-            accessKeyId: config['accessKeyId'],
-            secretAccessKey: config['secretAccessKey']
+            accessKeyId: config['awsAccessKeyId'],
+            secretAccessKey: config['awsSecretAccessKey']
         });
 
         this._dynamodb = new AWS.DynamoDB();

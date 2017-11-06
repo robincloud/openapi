@@ -86,8 +86,8 @@ class Email {
 // AWS configuration for SES
 AWS.config.update({
 	region: 'us-east-1',
-	accessKeyId: config['accessKeyId'],
-	secretAccessKey: config['secretAccessKey']
+	accessKeyId: config['awsAccessKeyId'],
+	secretAccessKey: config['awsSecretAccessKey']
 });
 Email.SES = new AWS.SES();
 
