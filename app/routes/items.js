@@ -16,6 +16,10 @@ const AuthMiddleware = require('../middlewares/auth');
  *          type: string
  *      api:
  *          type: string
+ *      agent:
+ *          type: string
+ *          description: Unique identifier of the crawling agent
+ *          example: agent_01
  *      id:
  *          type: string
  *          description: id from server

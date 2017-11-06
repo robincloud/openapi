@@ -10,6 +10,9 @@ class ItemSerivce {
 
         if (!req.id)
             throw new Error(`ID is not provided for the data`);
+        if (!req.agent)
+            throw new Error(`agent is not provided for the data`);
+
         const sid = req.id.split('_')[0]||'';
         const pid = req.id.split('_')[1]||'';
 
