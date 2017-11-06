@@ -21,6 +21,33 @@ $ npm install
 $ npm start
 ```
 
+# Deploy
+How to deploy to cloud service
+
+ex) AWS Beanstalk
+```bash
+$ git glone git@github.com:robincloud/openapi.git
+$ pip install awsebcli --upgrade --user
+$ eb create
+Enter Environment Name
+(default is eb-dev): openapi
+Enter DNS CNAME prefix
+(default is eb-dev): openapi
+WARNING: The current directory does not contain any source code. Elastic Beanstalk is launching the sample application instead.
+Environment details for: elasticBeanstalkExa-env
+  Application name: elastic-beanstalk-example
+  Region: us-west-2
+  Deployed Version: Sample Application
+  Environment ID: e-j3pmc8tscn
+  Platform: 64bit Amazon Linux 2015.03 v1.4.3 running Docker 1.6.2
+  Tier: WebServer-Standard
+  CNAME: openapi.elasticbeanstalk.com
+  Updated: 2017-06-27 01:02:24.813000+00:00
+Printing Status:
+INFO: createEnvironment is starting.
+ -- Events -- (safe to Ctrl+C) Use "eb abort" to cancel the command.
+$ eb deploy
+```
 
 
 # Document (문서)
