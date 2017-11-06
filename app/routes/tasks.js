@@ -68,7 +68,7 @@ const AuthMiddleware = require('../middlewares/auth');
  *               type: string
  *               example: "no handler for 'consume' event"
  */
-router.get('/tasks', controller.requestTasks);
+router.get('/tasks', controller.getTasks);
 
 /**
  * @swagger

@@ -1,5 +1,6 @@
 const Item = require('../models/item');
 const Mall = require('../models/mall');
+const TaskService = require('./tasks');
 
 
 class ItemSerivce {
@@ -14,6 +15,7 @@ class ItemSerivce {
 
         // make data array to items
         var malls = [];
+        const agent = req.agent;
         const items = req.data.map( (data) => {
             // make nodes array to malls
             const currentMalls = data.nodes.map( (node) => {
@@ -50,6 +52,7 @@ class ItemSerivce {
         promises = promises.concat(items.map((i) => i.save()));
         promises = promises.concat(malls.map((m) => m.save()));
         return Promise.all(promises)
+            .then(() => TaskService.releaseTasks(agent, items))
             .then(() => new Item(req).toObject());
     }
 

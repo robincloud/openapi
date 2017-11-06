@@ -5,10 +5,14 @@ const Config = require('../config');
 const CustomError = require('./custom-error');
 const Item = require('../models/item');
 
+
 // Scan 200 items per every 0.5 second whenever queued items are less than (1000 - 200)
 const MAX_QUEUE_SIZE = 1000;
 const SCAN_SIZE = 200;
 const SCAN_INTERVAL_MSEC = 500;
+
+// Fetched items(tasks) will be regarded as dropped after timed out. Dropped items are queued again to processed later.
+const PROCESSING_TIMEOUT_MSEC = 15000;
 
 
 // DataSource interface
@@ -71,22 +75,28 @@ class TaskManager extends EventEmitter {
 		this.on('scan', this._onScan);
 		this.on('fetch', this._onFetch);
 		this.on('process', this._onProcess);
+		this.on('timeout', this._onTimeout);
 
 		// Scheduling (cron-based) - Default schedule is 'AT EVERY HOUR ON THE HOUR'
-		const scheduleHandler = this._wakeup.bind(this);
-		this._scheduledJob = schedule.scheduleJob('00 * * * *', scheduleHandler);
+		const scheduleCallback = () => { this._wakeup(); };
+		this._scheduledJob = schedule.scheduleJob('00 * * * *', scheduleCallback);
 
 		// For scanning items
 		this._tScanItems = null;
-		this._itemQueue = [];
+		this._scannedQueue = [];
+		this._retryQueue = [];
 		this._idScanFrom = null;
+
+		// For retry mechanism
+		const timeoutCallback = (agent, items) => { this.emit('timeout', agent, items); };
+		this._timeout = new TaskTimeoutHandler(PROCESSING_TIMEOUT_MSEC, timeoutCallback);
 
 		// For statistics
 		const nextSchedule = this._scheduledJob.nextInvocation();
 		this._stats = new TaskStatistics(nextSchedule);
 	}
 
-	get available() { return this._itemQueue.length; }
+	get available() { return (this._scannedQueue.length + this._retryQueue.length); }
 
 	isBusy() {
 		return (this._tScanItems || this.available);
@@ -102,13 +112,19 @@ class TaskManager extends EventEmitter {
 
 	fetchItems(agent, size = 1) {
 		return new Promise((resolve, reject) => {
-			const haveListeners = this.emit('fetch', agent, size, (err, items) => {
+			this.emit('fetch', agent, size, (err, items) => {
 				if (err) reject(err);
 				else resolve(items);
 			});
-			if (!haveListeners) {
-				reject(new CustomError.ServerError(`no handler for 'fetch' event`, 'TaskManagerError'));
-			}
+		});
+	}
+
+	returnItems(agent, items) {
+		return new Promise((resolve, reject) => {
+			this.emit('process', agent, items, (err) => {
+				if (err) reject(err);
+				else resolve();
+			});
 		});
 	}
 
@@ -125,7 +141,8 @@ class TaskManager extends EventEmitter {
 		if (this.isBusy()) return;
 
 		// Initialize
-		this._itemQueue = [];
+		this._scannedQueue = [];
+		this._retryQueue = [];
 		this._idScanFrom = null;
 
 		// Mark as started and update next schedule
@@ -140,16 +157,14 @@ class TaskManager extends EventEmitter {
 			dataSource.get(SCAN_SIZE)
 			.then((items) => {
 				// Emit 'scan' event - TaskManager._onScan() will be invoked
-				const haveListeners = this.emit('scan', items);
-				if (!haveListeners) {
-					throw new CustomError.ServerError(`no handler for 'scan' event`, 'TaskManagerError');
-				}
+				this.emit('scan', items);
 
 				// Suspend fetch task if no more items are left
 				if (dataSource.isEmpty()) {
 					this._suspend();
 				}
-			}).catch((err) => {
+			})
+			.catch((err) => {
 				console.error(err);
 				this._suspend();
 			});
@@ -166,24 +181,132 @@ class TaskManager extends EventEmitter {
 	}
 
 	_onScan(items) {
-		this._itemQueue = this._itemQueue.concat(items);
+		this._scannedQueue = this._scannedQueue.concat(items);
 		this._stats.addScanned(items.length);
 	}
 
 	_onFetch(agent, size, callback) {
-		const itemsToProcess = this._itemQueue.splice(0, size);
-		this._stats.addFetched(agent, itemsToProcess.length);
+		let items = [];
+
+		// First get items from retry queue
+		if (this._retryQueue.length) {
+			const retryItems = this._retryQueue.splice(0, size);
+			items = items.concat(retryItems);
+			size -= retryItems.length;
+		}
+		// Next get items from scanned queue
+		if (size > 0) {
+			const normalItems = this._scannedQueue.splice(0, size);
+			items = items.concat(normalItems);
+			this._stats.addFetched(agent, normalItems.length);
+		}
+
+		this._timeout.watch(agent, items);  // Enable timeout timer
 
 		// Mark as fetching finished
-		if (itemsToProcess.length && !this.available) {
+		if (items.length && !this.available) {
 			this._stats.markAsFetchFinished();
 		}
 
-		callback(null, itemsToProcess);
+		callback(null, items);
 	}
 
-	_onProcess(agent, id) {
-		// TODO
+	_onProcess(agent, items, callback) {
+		if (!Array.isArray(items)) items = new Array(items);
+
+		this._timeout.unwatch(agent, items);    // Disable timeout timer
+		this._stats.addProcessed(agent, items.length);
+
+		// Mark as processing finished
+		if (!this.available && this._timeout.isEmpty()) {
+			this._stats.markAsProcessFinished();
+		}
+
+		callback(null);
+	}
+
+	_onTimeout(agent, items) {
+		this._retryQueue = this._retryQueue.concat(items);
+		this._stats.addTimeout(agent, items.length);
+	}
+}
+
+
+// TaskTimeoutHandler class
+class TaskTimeoutHandler {
+	constructor(msTimeout, callback) {
+		const msCheckInterval = 1000;    // Check timeout every 1 sec
+
+		this.maxWindows = Math.ceil(msTimeout / msCheckInterval);
+		this.windows = [{}];
+
+		const checkCallback = (callback) => { this._check(callback); };
+		setInterval(checkCallback, msCheckInterval, callback);
+	}
+
+	isEmpty() {
+		return this.windows.reduce((empty, window) => {
+			const isWindowEmpty = Object.values(window).every((agentMap) => agentMap.size === 0);
+			return (empty && isWindowEmpty);
+		}, true);
+	}
+
+	watch(agent, items) {
+		const getAgentMap = (agent) => {
+			let agentMap;
+			const curWindow = this.windows[this.windows.length - 1];
+
+			if (agent in curWindow) {
+				agentMap = curWindow[agent];
+			} else {
+				agentMap = new Map();
+				curWindow[agent] = agentMap;
+			}
+
+			return agentMap;
+		};
+
+		setImmediate(() => {
+			const agentMap = getAgentMap(agent);
+			items.forEach((item) => {
+				agentMap.set(item.get('id'), item);
+			});
+		});
+	}
+
+	unwatch(agent, items) {
+		setImmediate(() => {
+			items.forEach((item) => {
+				for (const window of this.windows) {
+					if (!(agent in window)) continue;
+
+					const agentMap = window[agent];
+					const id = item.get('id');
+					if (agentMap.has(id)) {
+						agentMap.delete(id);
+						break;
+					}
+				}
+			});
+		});
+	}
+
+
+	_check(callback) {
+		const fMapValues = (map) => { return Array.from(map.values()); };
+
+		if (this.windows.length === this.maxWindows) {
+			const expiredWindow = this.windows.shift();
+
+			Object.entries(expiredWindow).forEach(([agent, agentMap]) => {
+				const items = fMapValues(agentMap);
+				if (items.length) {
+					callback(agent, items);
+				}
+			});
+		}
+
+		this.windows.push({});    // Insert a new window
 	}
 }
 
@@ -210,15 +333,21 @@ class TaskStatistics {
 	}
 
 	markAsScanFinished() {
-		this.events.finishedScan = new Date();
+		if (this.events.started > this.events.finishedScan) {
+			this.events.finishedScan = new Date();
+		}
 	}
 
 	markAsFetchFinished() {
-		this.events.finishedFetch = new Date();
+		if (this.events.finishedScan > this.events.finishedFetch) {
+			this.events.finishedFetch = new Date();
+		}
 	}
 
 	markAsProcessFinished() {
-		this.events.finishedFetch = new Date();
+		if (this.events.finishedFetch > this.events.finishedProcess) {
+			this.events.finishedProcess = new Date();
+		}
 	}
 
 	addScanned(count) {
@@ -230,7 +359,8 @@ class TaskStatistics {
 		if (!(agent in agents)) {
 			agents[agent] = {
 				fetched: 0,
-				processed: 0
+				processed: 0,
+				timeout: 0
 			}
 		}
 		agents[agent].fetched += count;
@@ -239,6 +369,11 @@ class TaskStatistics {
 	addProcessed(agent, count) {
 		const agents = this.counter.agents;
 		agents[agent].processed += count;
+	}
+
+	addTimeout(agent, count) {
+		const agents = this.counter.agents;
+		agents[agent].timeout += count;
 	}
 
 	getOverview() {
@@ -258,11 +393,13 @@ class TaskStatistics {
 		const counts = {
 			scanned: this.counter.totalScanned,
 			fetched: 0,
-			processed: 0
+			processed: 0,
+			timeout: 0
 		};
 		Object.values(this.counter.agents).forEach((agent) => {
 			counts.fetched += agent.fetched;
 			counts.processed += agent.processed;
+			counts.timeout += agent.timeout;
 		});
 
 		// Calculate throughput
@@ -337,7 +474,7 @@ class TaskService {
 		this._memcached = new Memcached(memcachedServer, {retries: 1});
 	}
 
-	requestTasks(agent, size = 1) {
+	getTasks(agent, size = 1) {
 		if (!agent) {
 			const err = new CustomError.InvalidArgument('missing required parameter (agent)');
 			return Promise.reject(err);
@@ -351,6 +488,15 @@ class TaskService {
 				return {id, mid};
 			});
 		});
+	}
+
+	releaseTasks(agent, items) {
+		if (!agent) {
+			const err = new CustomError.InvalidArgument('missing required parameter (agent)');
+			return Promise.reject(err);
+		}
+
+		return this._manager.returnItems(agent, items);
 	}
 
 	getStatsSync(agent = null) {
@@ -423,18 +569,21 @@ class TaskServiceTester {
 		taskService._manager.forceTrigger(new DummyDataSource());
 
 		// Start 5 consumers
-		const requestTasks = (agent) => {
+		const fTask = (agent) => {
 			return setInterval(() => {
-				taskService.requestTasks(agent, 12)
-				.then(() => {
+				taskService.getTasks(agent, 12)
+				.then((items) => {
 					const stats = taskService.getStatsSync();
 					console.log(`---------------------------------------------`);
 					console.log(`${JSON.stringify(stats, null, 4)}`);
+
+					items = items.map((item) => new Item(item));
+					taskService.releaseTasks(agent, items);
 				});
 			}, 200);
 		};
 		const tasks = [1, 2, 3, 4, 5].map((num) => {
-			return requestTasks(`agent${num}`);
+			return fTask(`agent${num}`);
 		});
 
 		setTimeout(() => {

@@ -2,11 +2,11 @@ const TaskService = require('../services/tasks');
 const HttpResponse = require('../services/http-response');
 
 
-const requestTasks = (req, res) => {
+const getTasks = (req, res) => {
 	const {agent, size = 1} = (req.query || {});
 	const httpResponse = new HttpResponse();
 
-	TaskService.requestTasks(agent, size)
+	TaskService.getTasks(agent, size)
 	.then((tasks) => {
 		httpResponse.setData(tasks);
 		res.status(httpResponse.statusCode).json(httpResponse.body);
@@ -67,7 +67,7 @@ const setClientVersion = (req, res) => {
 
 
 module.exports = {
-	requestTasks,
+	getTasks,
 	getStats,
 	getClientVersion,
 	setClientVersion
