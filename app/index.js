@@ -50,6 +50,12 @@ app.get('/swagger.json', function(req, res) {
 // Swagger-ui routes
 app.use('/swagger-ui', express.static(path.join(__dirname, 'swagger-ui')));
 
+// favicon image.
+app.get('/favicon.ico', function(req, res) {
+    res.setHeader('Content-Type', 'image/x-icon');
+    res.sendFile(path.join(__dirname, 'favicon.ico'));
+});
+
 
 // Launching application after models are initialized
 Promise.all([
