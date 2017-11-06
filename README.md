@@ -28,7 +28,7 @@ See [wiki](https://github.com/robincloud/openapi/wiki)
 
 
 # API specification
-http://{server-address}/swagger-ui/
+https://robin-api.oneprice.co.kr/swagger-ui/
 
 # Demo (데모)
 실제 실행 환경의 데모. 
