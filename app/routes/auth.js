@@ -6,7 +6,7 @@ const controller = require('../api/auth.controller');
  * @swagger
  * /auth/issue:
  *   post:
- *     description: Creates a new account
+ *     description: Issues an access token and sends it to the specified email address
  *     consumes:
  *       - application/json
  *     produces:
@@ -31,7 +31,6 @@ const controller = require('../api/auth.controller');
  *           type: object
  *           properties:
  *             ResponseMetadata:
- *               schema:
  *                 type: object
  *                 properties:
  *                   RequestId:
