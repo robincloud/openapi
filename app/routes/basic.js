@@ -11,7 +11,9 @@ const router = require('express').Router();
  *          description: Success
  */
 router.get('/', (req, res) => {
-    res.send('RobinCloud Open API');
+    //res.send('RobinCloud Open API');
+    const path = __dirname + '/default.html';
+    res.sendFile(path);
 });
 
 

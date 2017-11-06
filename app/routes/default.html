@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>AT-UI Example</title>
+  <link rel="stylesheet" href="//unpkg.com/at-ui-style/css/at.min.css">
+  <script src="//vuejs.org/js/vue.min.js"></script>
+  <script src="//unpkg.com/at-ui/dist/at.min.js"></script>
+  <style>
+    #app {
+      display: flex;
+      height: 100%;
+      justify-content: center;
+      align-items: center;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <at-button @click="showMessage">Hi Robin's OpenAPI Service</at-button>
+  </div>
+
+  <script>
+    new Vue({
+      el: '#app',
+      methods: {
+        showMessage: function () {
+          this.$Message('Thanks for using RobinCloud')
+        }
+      }
+    })
+  </script>
+</body>
+</html>
