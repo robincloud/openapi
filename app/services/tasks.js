@@ -298,7 +298,8 @@ class TaskTimeoutHandler {
 		if (this.windows.length === this.maxWindows) {
 			const expiredWindow = this.windows.shift();
 
-			Object.entries(expiredWindow).forEach(([agent, agentMap]) => {
+			Object.keys(expiredWindow).forEach((agent) => {
+				const agentMap = expiredWindow[agent];
 				const items = fMapValues(agentMap);
 				if (items.length) {
 					callback(agent, items);
