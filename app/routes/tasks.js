@@ -164,7 +164,7 @@ router.get('/tasks', controller.getTasks);
  *               type: string
  *               example: "empty or wrong x-access-token header"
  */
-router.get('/tasks/stat/(:agent)?', AuthMiddleware.isLoggedIn, controller.getStats);
+router.get('/tasks/stat/(:agent)?', AuthMiddleware.verifyJWT, controller.getStats);
 
 /**
  * @swagger
@@ -272,7 +272,7 @@ router.get('/tasks/client/version', controller.getClientVersion);
  *               type: string
  *               example: "connect ECONNREFUSED 127.0.0.1:11211"
  */
-router.post('/tasks/client/version/:version', AuthMiddleware.isAdmin, controller.setClientVersion);
+router.post('/tasks/client/version/:version', AuthMiddleware.verifyJWT, controller.setClientVersion);
 
 
 module.exports = router;

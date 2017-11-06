@@ -37,7 +37,6 @@ app.use(bodyParser.json({limit: '50mb'}));
 // Routings
 app.use('/', require('./routes/basic'));
 app.use('/', require('./routes/auth'));
-app.use('/', require('./routes/account'));
 app.use('/', require('./routes/items'));
 app.use('/', require('./routes/tasks'));
 
@@ -60,8 +59,7 @@ app.get('/favicon.ico', function(req, res) {
 // Launching application after models are initialized
 Promise.all([
 	require('./models/item').initialize(),
-	require('./models/mall').initialize(),
-	require('./models/user').initialize()
+	require('./models/mall').initialize()
 ])
 .then(() => {
 	const listener = app.listen(config['port'], () => {

@@ -1,44 +1,31 @@
 const AuthService = require('../services/auth');
+const EmailService = require('../services/email');
 const HttpResponse = require('../services/http-response');
 
 
-const signup = (req, res) => {
-	const {email, passphrase} = req.body;
+const issueToken = (req, res) => {
+	const {email} = req.body;
 	const httpResponse = new HttpResponse();
 
-	AuthService.signup(email, passphrase)
-	.then((user) => {
-		httpResponse.setData(user, 201);
-		res.status(httpResponse.statusCode).json(httpResponse.body);
-	})
-	.catch((err) => {
-		httpResponse.setError(err);
-		res.status(httpResponse.statusCode).json(httpResponse.body);
-	});
-};
-
-const login = (req, res) => {
-	const {email, passphrase} = req.body;
-	const httpResponse = new HttpResponse();
-
-	AuthService.login(email, passphrase)
+	AuthService.issue(email)
 	.then((token) => {
-		httpResponse.setData({access_token: token});
-		res.status(httpResponse.statusCode).json(httpResponse.body);
+		const authMail  = EmailService.create();
+		authMail.source = 'no-reply@oneprice.co.kr';
+		authMail.to = email;
+		authMail.subject = '자동 회신: [RobinCloud] Open API 인증 토큰';
+		authMail.bodyText =
+`
+	RobinCloud Open API 인증이 활성화되었습니다.
+			
+	아래 발급된 token 값을 Open API 호출 시 x-access-token 헤더나 access_token 쿼리에 설정 해주시기 바랍니다.
+	이 token은 최대 30일 간 유효하며, 30일 경과 후 재발급 받으시기 바랍니다.
+			
+	${token}
+`;
+		return authMail.send();
 	})
-	.catch((err) => {
-		httpResponse.setError(err);
-		res.status(httpResponse.statusCode).json(httpResponse.body);
-	});
-};
-
-const verify = (req, res) => {
-	const token = (req.headers['x-access-token'] || req.query['access_token']);
-	const httpResponse = new HttpResponse();
-
-	AuthService.verify(token)
-	.then((payload) => {
-		httpResponse.setData(payload);
+	.then((data) => {
+		httpResponse.setData(data);
 		res.status(httpResponse.statusCode).json(httpResponse.body);
 	})
 	.catch((err) => {
@@ -49,8 +36,6 @@ const verify = (req, res) => {
 
 
 module.exports = {
-	signup,
-	login,
-	verify
+	issueToken
 };
 

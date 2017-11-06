@@ -2,12 +2,12 @@ const AuthService = require('../services/auth');
 const HttpResponse = require('../services/http-response');
 
 
-const _authMiddleware = (req, res, next, checkAdmin) => {
+const verifyJWT = (req, res, next) => {
 	const token = (req.headers['x-access-token'] || req.query['access_token']);
 
-	AuthService.verify(token, checkAdmin)
+	AuthService.verify(token)
 	.then((payload) => {
-		req.user = payload;
+		req.user = payload['email'];    // Set the email address as user
 		next();
 	})
 	.catch((err) => {
@@ -17,17 +17,6 @@ const _authMiddleware = (req, res, next, checkAdmin) => {
 };
 
 
-const isLoggedIn = (req, res, next) => {
-	_authMiddleware(req, res, next, false);
-};
-
-
-const isAdmin = (req, res, next) => {
-	_authMiddleware(req, res, next, true);
-};
-
-
 module.exports = {
-	isLoggedIn,
-	isAdmin
+	verifyJWT
 };

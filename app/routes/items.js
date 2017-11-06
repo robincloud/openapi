@@ -160,7 +160,7 @@ router.get('/items/test', controller.test);
  *               type: string
  *               example: "empty or wrong x-access-token header"
  */
-router.get('/items', AuthMiddleware.isLoggedIn, controller.query);
+router.get('/items', AuthMiddleware.verifyJWT, controller.query);
 
 /**
  * @swagger
