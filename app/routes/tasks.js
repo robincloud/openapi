@@ -170,16 +170,9 @@ router.get('/tasks/stat/(:agent)?', AuthMiddleware.isLoggedIn, controller.getSta
  * @swagger
  * /tasks/client/version:
  *   get:
- *     description: Obtains the client version (Login required)
+ *     description: Obtains the client version
  *     produces:
  *       - application/json
- *     parameters:
- *       - in: header
- *         name: x-access-token
- *         type: string
- *         required: true
- *         description: JSON Web Token which can be obtained by logging in
- *         example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNvbWVvbmVAc29tZWRvbWFpbi5jb20iLCJhZG1pbiI6ZmFsc2UsImlhdCI6MTUwOTYwODU5MCwiZXhwIjoxNTA5Njk0OTkwLCJpc3MiOiJ0aGVjb21tZXJjZS5jby5rciJ9.JaTmb0VxyPr2jfoFKzEOCUD5m6KI6c2Xkk0IYbdWAfE"
  *     responses:
  *       200:
  *         description: OK
@@ -190,20 +183,6 @@ router.get('/tasks/stat/(:agent)?', AuthMiddleware.isLoggedIn, controller.getSta
  *               type: number
  *               description: Current client version number
  *               example: 1
- *       401:
- *         description: Unauthorized access with invalid access token
- *         schema:
- *           type: object
- *           properties:
- *             status:
- *               type: string
- *               example: "Unauthorized"
- *             title:
- *               type: string
- *               example: "JsonWebTokenError"
- *             detail:
- *               type: string
- *               example: "empty or wrong x-access-token header"
  *       500:
  *         description: Server error occurred (probably by the connection failure to memcached server)
  *         schema:
@@ -219,7 +198,7 @@ router.get('/tasks/stat/(:agent)?', AuthMiddleware.isLoggedIn, controller.getSta
  *               type: string
  *               example: "connect ECONNREFUSED 127.0.0.1:11211"
  */
-router.get('/tasks/client/version', AuthMiddleware.isLoggedIn, controller.getClientVersion);
+router.get('/tasks/client/version', controller.getClientVersion);
 
 /**
  * @swagger
