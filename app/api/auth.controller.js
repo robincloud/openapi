@@ -15,12 +15,12 @@ const issueToken = (req, res) => {
 		authMail.subject = '자동 회신: [RobinCloud] Open API 인증 토큰';
 		authMail.bodyText =
 `
-	RobinCloud Open API 인증이 활성화되었습니다.
-			
-	아래 발급된 token 값을 Open API 호출 시 x-access-token 헤더나 access_token 쿼리에 설정 해주시기 바랍니다.
-	이 token은 최대 30일 간 유효하며, 30일 경과 후 재발급 받으시기 바랍니다.
-			
-	${token}
+RobinCloud Open API 인증이 활성화되었습니다.
+
+아래 발급된 token 값을 Open API 호출 시 x-access-token 헤더나 access_token 쿼리에 설정 해주시기 바랍니다.
+이 token은 최대 30일 간 유효하며, 30일 경과 후 재발급 받으시기 바랍니다.
+
+${token}
 `;
 		return authMail.send();
 	})
