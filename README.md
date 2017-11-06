@@ -20,10 +20,11 @@ $ cd openapi
 $ npm install
 $ npm start
 
-# now open browser 'http://localhost:8081'
+# 로컬 개발 환경에서는 다음과 같은 주소로 접속 가능.
+# open browser 'http://localhost:8081'
 ```
 
-# Deploy
+# Deploy (배포)
 How to deploy to cloud service
 
 ex) AWS Beanstalk
@@ -53,7 +54,7 @@ $ eb deploy
 
 
 # Document (문서)
-See [wiki](https://github.com/robincloud/openapi/wiki) 
+깃허브 위키 문서 [wiki](https://github.com/robincloud/openapi/wiki) 
 
 
 # API specification (API 스펙 문서)
