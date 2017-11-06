@@ -19,6 +19,8 @@ $ git clone https://github.com/robincloud/openapi
 $ cd openapi
 $ npm install
 $ npm start
+
+# now open browser 'http://localhost:8081'
 ```
 
 # Deploy
@@ -54,11 +56,12 @@ $ eb deploy
 See [wiki](https://github.com/robincloud/openapi/wiki) 
 
 
-# API specification
-https://robin-api.oneprice.co.kr/swagger-ui/
+# API specification (API 스펙 문서)
+상세 API 문서: [swagger-ui](https://robin-api.oneprice.co.kr/swagger-ui/)
 
-# Demo (데모)
-실제 실행 환경의 데모. 
+
+# Live Operation (운영환경)
+운영서버: [robin-api](https://robin-api.oneprice.co.kr)
 
 
 # Test Data (테스트 데이터)
