@@ -16,5 +16,14 @@ router.get('/', (req, res) => {
     res.sendFile(path);
 });
 
+router.get('/robin.png', (req, res) => {
+    const path = __dirname + '/robin.png';
+    res.sendFile(path);
+});
+
+router.get('/favicon.ico', (req, res) => {
+    const path = __dirname + '/favicon.ico';
+    res.sendFile(path);
+});
 
 module.exports = router;

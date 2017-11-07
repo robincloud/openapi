@@ -1,37 +1,123 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width">
-  <title>AT-UI Example</title>
-  <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
-  <link rel="icon" href="/favicon.ico" type="image/x-icon">  
-  <link rel="stylesheet" href="//unpkg.com/at-ui-style/css/at.min.css">
-  <script src="//vuejs.org/js/vue.min.js"></script>
-  <script src="//unpkg.com/at-ui/dist/at.min.js"></script>
-  <style>
-    #app {
-      display: flex;
-      height: 100%;
-      justify-content: center;
-      align-items: center;
-    }
-  </style>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="googlebot" content="noindex, nofollow">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.2.1/vue.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/at-ui@1.2.1/dist/at.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/at-ui-style@1.4.0/css/at.min.css">
+    <script type="text/javascript" src="https://unpkg.com/vee-validate@2.0.0-beta.25"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.16.2/axios.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/semantic-ui-css@2.2.9/semantic.css">
+    <link rel="shortcut icon" href="favicon.ico">
+
+    <style type="text/css">
+        body {
+            background: #fafafa;
+        }
+
+        .robin {
+            width: 200px;
+            margin: 100px auto 40px;
+        }
+
+        .robin img {
+            width: 200px;
+        }
+
+        .robin div {
+            font-size: 25px;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .robin div span {
+            font-weight: normal;
+            color: #505050;
+        }
+
+        #app {
+            width: 400px;
+            margin: 0 auto;
+        }
+
+        #app label {
+            display: none;
+        }
+
+        .at-btn {
+            width: 100%;
+        }
+
+        span.error {
+            color: #9F3A38;
+        }
+
+    </style>
+    <title>Robin-api</title>
+    <script type='text/javascript'>//<![CDATA[
+    window.onload = function () {
+        Vue.use(VeeValidate)
+
+        new Vue({
+            el: '#app',
+            data() {
+                return {
+                    email: ''
+                }
+            },
+            methods: {
+                onSubmit() {
+                    this.$validator.validateAll()
+                        .then(() => {
+                            axios.post('https://robin-api.oneprice.co.kr/auth/issue', {
+                                "email": this.email,
+                            })
+                                .then(response => {
+                                    this.$Message('Key has sent to your email.')
+                                })
+                                .catch(error => {
+                                    this.$Message(error.response.statusText)
+                                });
+                        })
+                        .catch(() => {
+                            this.$Message('Please confirm your input.')
+                        });
+                }
+            }
+        })
+
+    }//]]>
+
+    </script>
+
 </head>
 <body>
-  <div id="app">
-    <at-button @click="showMessage">Hi Robin's OpenAPI Service</at-button>
-  </div>
+<div class="robin">
+    <img src="robin.png"/>
+    <div>Robin <span>api</span></div>
+</div>
+<div id="app">
+    <form class="ui form" @submit.prevent="onSubmit">
+        <div class="field" :class="{error: errors.has('email')}">
+            <label>Email</label>
+            <input type="email" name="email" placeholder="Email" v-validate="'required|email'" v-model="email">
+            <span class="error" v-if="errors.has('email')">{{errors.first('email')}}</span>
+        </div>
+        <at-button v-on:click="onSubmit">Submit</at-button>
+    </form>
+</div>
 
-  <script>
-    new Vue({
-      el: '#app',
-      methods: {
-        showMessage: function () {
-          this.$Message('Thanks for using RobinCloud')
-        }
-      }
-    })
-  </script>
+<script>
+    // tell the embed parent frame the height of the content
+    if (window.parent && window.parent.parent) {
+        window.parent.parent.postMessage(["resultsFrame", {
+            height: document.body.getBoundingClientRect().height,
+            slug: "n4jt40cq"
+        }], "*")
+    }
+</script>
 </body>
 </html>
