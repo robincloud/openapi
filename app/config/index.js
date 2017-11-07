@@ -54,16 +54,19 @@ const config = Object.assign(envs, options);
 if (!config['jwtSecret']) {
 	throw new Error(`JWT secret is required (Set environment variable 'JWT_SECRET'.)`);
 }
-if (!config['serverUrl']) {
-	if (config['host']) {
-		if (config['port']) {
-			config['serverUrl'] = `${config['host']}:${config['port']}`;
-		} else {
-			config['serverUrl'] = config['host'];
-		}
+
+if (config['serverUrl']) {
+	const [host, port] = config['serverUrl'].split(':');
+	config['host'] = host;
+	if (port && !isNaN(Number(port))) config['port'] = Number(port);
+} else if (config['host']) {
+	if (config['port']) {
+		config['serverUrl'] = `${config['host']}:${config['port']}`;
 	} else {
-		throw new Error(`Server URL is required (Set environment variable 'SERVER_URL'.)`);
+		config['serverUrl'] = config['host'];
 	}
+} else {
+	throw new Error(`Server URL is required (Set environment variable 'SERVER_URL'.)`);
 }
 
 
