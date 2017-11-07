@@ -70,6 +70,10 @@ $ eb deploy
 TBD..
 
 
+# Slack Workspace (커뮤니티 환경)
+슬랙: http://robincloud.slack.com
+
+
 ---
 
 
