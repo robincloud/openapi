@@ -41,7 +41,7 @@ CONFIGS.forEach(({name, defaultValue}) => {
 const optionDefinitions = [
 	{name: 'jwtSecret', type: String},
     {name: 'host', alias: 'h', type: String},
-    {name: 'port', alias: 'p', type: Number},
+    {name: 'port', alias: 'p', type: Number, defaultValue: 8081},
 	{name: 'verbose', alias: 'v', type: Boolean, defaultValue: false}
 ];
 const options = commandLineArgs(optionDefinitions);
