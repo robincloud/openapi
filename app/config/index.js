@@ -3,9 +3,12 @@ const commandLineArgs = require('command-line-args');
 
 
 // Check the existence of AWS credentials
-if (!AWS.config.credentials || !AWS.config.credentials.accessKeyId) {
-	throw new Error('AWS credentials are required.');
-}
+AWS.config.getCredentials((err) => {
+	if (err) throw err;
+	if (!AWS.config.credentials || !AWS.config.credentials.accessKeyId) {
+		throw new Error('AWS credentials are required.');
+	}
+});
 
 // Configuration values
 const CONFIGS = [
