@@ -6,7 +6,7 @@ const TaskService = require('./tasks');
 class ItemSerivce {
     static saveItem(req) {
         // handle data
-        console.log(req);
+        //console.log(req);
 
         if (!req.id)
             throw new Error(`ID is not provided for the data`);
@@ -47,8 +47,8 @@ class ItemSerivce {
             };
             return new Item(item);
         });
-        console.log(malls);
-        console.log(items);
+        // console.log(malls);
+        // console.log(items);
 
         // save items and malls to db
         let promises = [];
