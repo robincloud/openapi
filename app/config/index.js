@@ -12,54 +12,58 @@ AWS.config.getCredentials((err) => {
 
 // Configuration values
 const CONFIGS = [
-	'jwtSecret',
-    'server',
-    'endpoint',
-    'port',
+	{name: 'jwtSecret'},
+	{name: 'serverUrl', defaultValue: 'localhost:8081'}
 ];
 
 // Runtime user environment
-const environment = {};
-CONFIGS.forEach((envName) => {
+const envs = {};
+CONFIGS.forEach(({name, defaultValue}) => {
+	let value;
+
 	// Proceed with camel case first
-	let envValue = process.env[envName];
+	value = process.env[name];
 	// Proceed with underscored case again if not found
-	if (!envValue) {
-		envValue = process.env[envName.replace(/([A-Z])/g, "_$1").toUpperCase()];
+	if (value === undefined) {
+		value = process.env[name.replace(/([A-Z])/g, "_$1").toUpperCase()];
+	}
+	// Finally Set default value
+	if (value === undefined) {
+		value = defaultValue;
 	}
 
-	if (envValue) environment[envName] = envValue;
+	if (value !== undefined) {
+		envs[name] = value;
+	}
 });
-
 
 // Command line arguments
 const optionDefinitions = [
-    {name: 'server', alias: 's', type: String, defaultValue: 'localhost:8081'},
-    {name: 'port', alias: 'p', type: Number, defaultValue: '8081'},
+	{name: 'jwtSecret', type: String},
+    {name: 'host', alias: 'h', type: String},
+    {name: 'port', alias: 'p', type: Number},
 	{name: 'verbose', alias: 'v', type: Boolean, defaultValue: false}
 ];
-CONFIGS
-.filter((envName) => {
-	// Filter out configurations that are already in option definitions
-	const found = optionDefinitions.find((optionDefinition) => {
-		return (optionDefinition.name === envName);
-	});
-	return (found === undefined);
-})
-.forEach((envName) => {
-	optionDefinitions.push({
-		name: envName,
-		type: String
-	});
-});
 const options = commandLineArgs(optionDefinitions);
 
-// Merge configurations from environment variables to options
-const config = Object.assign(environment, options);
+// Merge environment variables and command line arguments
+// Command line arguments can override environment variables
+const config = Object.assign(envs, options);
 
 // Check mandatory parameter is properly set
 if (!config['jwtSecret']) {
-	throw new Error('JWT secret is required.');
+	throw new Error(`JWT secret is required (Set environment variable 'JWT_SECRET'.)`);
+}
+if (!config['serverUrl']) {
+	if (config['host']) {
+		if (config['port']) {
+			config['serverUrl'] = `${config['host']}:${config['port']}`;
+		} else {
+			config['serverUrl'] = config['host'];
+		}
+	} else {
+		throw new Error(`Server URL is required (Set environment variable 'SERVER_URL'.)`);
+	}
 }
 
 

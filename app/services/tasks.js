@@ -1,7 +1,7 @@
 const EventEmitter = require('events');
 const Memcached = require('memcached');
 const schedule = require('node-schedule');
-const Config = require('../config');
+const config = require('../config');
 const CustomError = require('./custom-error');
 const Item = require('../models/item');
 
@@ -487,7 +487,7 @@ class TaskService {
 	constructor() {
 		this._manager = new TaskManager();
 
-		const memcachedServer = `${Config['server']}:11211`;
+		const memcachedServer = `${config['serverUrl']}:11211`;
 		this._memcached = new Memcached(memcachedServer, {retries: 1});
 	}
 
