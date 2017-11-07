@@ -369,11 +369,27 @@ class TaskStatistics {
 
 	addProcessed(agent, count) {
 		const agents = this.counter.agents;
+		if (!(agent in agents)) {
+			// WARNING: Could not be here if agent name is correct!
+			agents[agent] = {
+				fetched: 0,
+				processed: 0,
+				timeout: 0
+			}
+		}
 		agents[agent].processed += count;
 	}
 
 	addTimeout(agent, count) {
 		const agents = this.counter.agents;
+		if (!(agent in agents)) {
+			// WARNING: Could not be here if agent name is correct!
+			agents[agent] = {
+				fetched: 0,
+				processed: 0,
+				timeout: 0
+			}
+		}
 		agents[agent].timeout += count;
 	}
 
