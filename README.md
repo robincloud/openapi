@@ -62,7 +62,7 @@ $ eb deploy
 
 
 # Live Operation (운영환경)
-운영서버: [robin-api](https://robin-api.oneprice.co.kr)
+운영서버: [robin-api](https://robin-api.oneprice.co.kr)
 
 
 # Test Data (테스트 데이터)
