@@ -17,12 +17,12 @@ class ItemSerivce {
         const pid = req.id.split('_')[1]||'';
 
         // make data array to items
-        var malls = [];
+        let malls = [];
         const agent = req.agent;
         const items = req.data.map( (data) => {
             // make nodes array to malls
             const currentMalls = data.nodes.map( (node) => {
-                var mall = {
+                let mall = {
                     id: `${sid}_${node.id}`,
                     sid: sid,
                     mall: node.mall,
@@ -51,7 +51,7 @@ class ItemSerivce {
         console.log(items);
 
         // save items and malls to db
-        var promises = [];
+        let promises = [];
         promises = promises.concat(items.map((i) => i.save()));
         promises = promises.concat(malls.map((m) => m.save()));
         return Promise.all(promises)
@@ -59,15 +59,48 @@ class ItemSerivce {
             .then(() => new Item(req).toObject());
     }
 
-    static get(data) {
-        data.id = Item.getId(data);
-        return Item.findById(data.id)
+    static getItem(id) {
+        return Item.findById(id)
             .then((item) => {
                 if (!item) {
-                    throw new Error(`An item with id (${data.id}) does not exist.`);
+                    throw new Error(`An item with id (${id}) does not exist.`);
                 }
-                return item.toObject();
+                const result = {
+                    count: 1,
+                    items: item.toObject()
+                };
+                return result;
             })
+    }
+
+    static getAllItems() {
+        return Item.scan(10)
+            .then((result) => {
+                result.items = result.items.map((item) => item.toObject());
+                return result;
+            });
+    }
+
+    static getMall(id) {
+        return Mall.findById(id)
+            .then((mall) => {
+                if (!mall) {
+                    throw new Error(`A mall with id (${id}) does not exist.`);
+                }
+                const result = {
+                    count: 1,
+                    malls: mall.toObject()
+                };
+                return result;
+            })
+    }
+
+    static getAllMalls() {
+        return Mall.scan(10)
+            .then((result) => {
+                result.malls = result.malls.map((mall) => mall.toObject());
+                return result;
+            });
     }
 
     static test() {

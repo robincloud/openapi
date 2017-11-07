@@ -17,21 +17,68 @@ const saveItem = (req, res) => {
             });
         });
 };
-const query = (req, res) => {
-    const data = req.query;
+const getItem = (req, res) => {
+    const id = req.params.id;
 
-    ItemService.get(data)
-        .then((item) => {
-            res.json({
-                message: 'Item found',
-                item
+    if (id) {
+        ItemService.getItem(id)
+            .then((item) => {
+                res.json({
+                    message: 'Item found',
+                    data: item
+                });
+            })
+            .catch((err) => {
+                res.status(404).json({
+                    message: err.message
+                });
             });
-        })
-        .catch((err) => {
-            res.status(404).json({
-                message: err.message
+    } else {
+        ItemService.getAllItems()
+            .then((result) => {
+                res.json({
+                    message: 'Items found',
+                    data: result
+                });
+            })
+            .catch((err) => {
+                res.status(404).json({
+                    message: err.message
+                });
             });
-        });
+    }
+};
+
+const getMall = (req, res) => {
+    const id = req.params.id;
+
+    if (id) {
+        ItemService.getMall(id)
+            .then((mall) => {
+                res.json({
+                    message: 'Mall found',
+                    data: mall
+                });
+            })
+            .catch((err) => {
+                res.status(404).json({
+                    message: err.message
+                });
+            });
+    } else {
+        ItemService.getAllMalls()
+            .then((result) => {
+                res.json({
+                    message: 'Malls found',
+                    data: result
+                });
+            })
+            .catch((err) => {
+                res.status(404).json({
+                    message: err.message
+                });
+            });
+    }
 };
 
 const test = (req, res) => {
@@ -51,6 +98,7 @@ const test = (req, res) => {
 
 module.exports = {
     saveItem,
-    query,
+    getItem,
+    getMall,
     test
 };

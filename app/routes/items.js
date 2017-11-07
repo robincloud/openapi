@@ -97,70 +97,81 @@ const AuthMiddleware = require('../middlewares/auth');
  * definitions:
  *   ItemDescription:
  *     properties:
- *       id:
- *         type: string
- *       name:
- *         type: string
- *       price:
- *         type: number
+ *       message:
+ *          type: string
+ *       data:
+ *          type: object
+ *          properties:
+ *              count:
+ *                  description: # of returned items
+ *                  type: number
+ *              items:
+ *                  type: array
+ *                  items:
+ *                      type: object
+ *                      properties:
+ *                          cat:
+ *                              type: string
+ *                          vector:
+ *                              type: array
+ *                              items:
+ *                                  type: number
+ *                                  example: 1
+ *                          image:
+ *                              type: string
+ *                          option:
+ *                              type: string
+ *                          malls:
+ *                              type: array
+ *                              items:
+ *                                  description: mall's id
+ *                                  type: string
+ *                                  example: "nv_107203229047"
+ *                          id:
+ *                              type: string
+ *                          name:
+ *                              type: string
+ *                          sid:
+ *                              type: string
  */
-
-router.get('/items/test', controller.test);
 
 /**
  * @swagger
- * /items:
- *   get:
- *     description: Returns items
- *     produces:
- *      - application/json
- *     parameters:
- *      - in: header
- *        name: x-access-token
- *        type: string
- *        required: true
- *        description: JSON Web Token which can be obtained by logging in
- *        example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNvbWVvbmVAc29tZWRvbWFpbi5jb20iLCJhZG1pbiI6ZmFsc2UsImlhdCI6MTUwOTYwODU5MCwiZXhwIjoxNTA5Njk0OTkwLCJpc3MiOiJ0aGVjb21tZXJjZS5jby5rciJ9.JaTmb0VxyPr2jfoFKzEOCUD5m6KI6c2Xkk0IYbdWAfE"
- *      - in: query
- *        name: sid
- *        description: item's mall name
- *        required: true
- *        type: string
- *        example: nv
- *      - in: query
- *        name: pid
- *        description: item's mall id
- *        required: true
- *        type: number
- *        example: 5639964597
- *      - in: query
- *        name: oid
- *        description: item's option id
- *        required: false
- *        type: number
- *        example: 20041523
- *
- *     responses:
- *       200:
- *         description: the description of the item
- *         schema:
- *           $ref: '#/definitions/ItemDescription'
- *       401:
- *         description: Unauthorized access with invalid access token
- *         schema:
- *           type: object
- *           properties:
- *             status:
- *               type: string
- *               example: "Unauthorized"
- *             title:
- *               type: string
- *               example: "JsonWebTokenError"
- *             detail:
- *               type: string
- *               example: "empty or wrong x-access-token header"
+ * definitions:
+ *   MallDescription:
+ *     properties:
+ *       message:
+ *          type: string
+ *       data:
+ *          type: object
+ *          properties:
+ *              count:
+ *                  description: # of returned items
+ *                  type: number
+ *              items:
+ *                  type: array
+ *                  items:
+ *                      type: object
+ *                      properties:
+ *                          mall:
+ *                              type: string
+ *                          npay:
+ *                              type: number
+ *                              description: whether it's npay(1) or not(0)
+ *                              example: 1
+ *                          delivery:
+ *                              type: number
+ *                              example: 2500
+ *                          price:
+ *                              type: number
+ *                              example: 10000
+ *                          id:
+ *                              type: string
+ *                          name:
+ *                              type: string
+ *                          sid:
+ *                              type: string
  */
-router.get('/items', AuthMiddleware.verifyJWT, controller.query);
 
 /**
  * @swagger
@@ -183,5 +194,92 @@ router.get('/items', AuthMiddleware.verifyJWT, controller.query);
  */
 router.post('/items', controller.saveItem);
 
+/**
+ * @swagger
+ * /items/{id}:
+ *   get:
+ *     description: Returns an item when id is given, otherwise returns list of items
+ *     produces:
+ *      - application/json
+ *     parameters:
+ *      - in: header
+ *        name: x-access-token
+ *        type: string
+ *        required: true
+ *        description: JSON Web Token which can be obtained by logging in
+ *        example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNvbWVvbmVAc29tZWRvbWFpbi5jb20iLCJhZG1pbiI6ZmFsc2UsImlhdCI6MTUxMDAyNDUxOSwiZXhwIjoxNTEwMTEwOTE5LCJpc3MiOiJ0aGVjb21tZXJjZS5jby5rciJ9.t5P7as2XWBXZf7HB8b-pQXcsPHqVtDmNSQLmTG_9dL4"
+ *      - in: path
+ *        name: id
+ *        required: false
+ *        description: item's id ({sid}_{pid}_{oid})
+ *        type: string
+ *        example: nv_5639964597_20041523
+ *
+ *     responses:
+ *       200:
+ *         description: the description of the item
+ *         schema:
+ *           $ref: '#/definitions/ItemDescription'
+ *       401:
+ *         description: Unauthorized access with invalid access token
+ *         schema:
+ *           type: object
+ *           properties:
+ *             status:
+ *               type: string
+ *               example: "Unauthorized"
+ *             title:
+ *               type: string
+ *               example: "JsonWebTokenError"
+ *             detail:
+ *               type: string
+ *               example: "empty or wrong x-access-token header"
+ */
+router.get('/items/:id?', AuthMiddleware.verifyJWT, controller.getItem);
+
+/**
+ * @swagger
+ * /malls/{id}:
+ *   get:
+ *     description: Returns a mall when id is given, otherwise returns list of malls
+ *     produces:
+ *      - application/json
+ *     parameters:
+ *      - in: header
+ *        name: x-access-token
+ *        type: string
+ *        required: true
+ *        description: JSON Web Token which can be obtained by logging in
+ *        example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNvbWVvbmVAc29tZWRvbWFpbi5jb20iLCJhZG1pbiI6ZmFsc2UsImlhdCI6MTUxMDAyNDUxOSwiZXhwIjoxNTEwMTEwOTE5LCJpc3MiOiJ0aGVjb21tZXJjZS5jby5rciJ9.t5P7as2XWBXZf7HB8b-pQXcsPHqVtDmNSQLmTG_9dL4"
+ *      - in: path
+ *        name: id
+ *        required: false
+ *        description: mall's id ({sid}_{pid})
+ *        type: string
+ *        example: nv_11900885999
+ *
+ *     responses:
+ *       200:
+ *         description: the description of the mall
+ *         schema:
+ *           $ref: '#/definitions/MallDescription'
+ *       401:
+ *         description: Unauthorized access with invalid access token
+ *         schema:
+ *           type: object
+ *           properties:
+ *             status:
+ *               type: string
+ *               example: "Unauthorized"
+ *             title:
+ *               type: string
+ *               example: "JsonWebTokenError"
+ *             detail:
+ *               type: string
+ *               example: "empty or wrong x-access-token header"
+ */
+router.get('/malls/:id?', AuthMiddleware.verifyJWT, controller.getMall);
+
+router.get('/items/test', controller.test);
 
 module.exports = router;
