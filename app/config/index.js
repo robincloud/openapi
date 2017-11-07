@@ -8,7 +8,6 @@ AWS.config.getCredentials((err) => {
 	if (!AWS.config.credentials || !AWS.config.credentials.accessKeyId) {
 		throw new Error('AWS credentials are required.');
 	}
-	console.log(AWS.config.credentials);
 });
 
 // Configuration values
