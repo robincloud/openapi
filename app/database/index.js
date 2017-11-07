@@ -1,16 +1,8 @@
 const AWS = require('aws-sdk');
-const config = require('../config');
 
 
 class Database {
     constructor() {
-        // Open connection with DynamoDB
-        AWS.config.update({
-            region: "ap-northeast-2",
-            accessKeyId: config['awsAccessKeyId'],
-            secretAccessKey: config['awsSecretAccessKey']
-        });
-
         this._dynamodb = new AWS.DynamoDB();
         this._docClient = new AWS.DynamoDB.DocumentClient();
     }

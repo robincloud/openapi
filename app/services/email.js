@@ -1,5 +1,4 @@
 const AWS = require('aws-sdk');
-const config = require('../config');
 
 
 class Email {
@@ -83,11 +82,9 @@ class Email {
 	}
 }
 
-// AWS configuration for SES
+// AWS configuration for SES (SES currently does not support 'ap-northeast-2' region)
 AWS.config.update({
-	region: 'us-east-1',
-	accessKeyId: config['awsAccessKeyId'],
-	secretAccessKey: config['awsSecretAccessKey']
+	region: 'us-east-1'
 });
 Email.SES = new AWS.SES();
 

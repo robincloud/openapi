@@ -1,15 +1,15 @@
+const AWS = require('aws-sdk');
 const commandLineArgs = require('command-line-args');
 
 
-// Following config values must be provided for launch
-const MANDATORY_CONFIGS = [
-	'awsAccessKeyId',
-	'awsSecretAccessKey',
-	'jwtSecret',
-];
+// Check the existence of AWS credentials
+if (!AWS.config.credentials || !AWS.config.credentials.accessKeyId) {
+	throw new Error('AWS credentials are required.');
+}
 
-// Following config values are optional with default value
+// Configuration values
 const CONFIGS = [
+	'jwtSecret',
     'server',
     'endpoint',
     'port',
@@ -17,8 +17,10 @@ const CONFIGS = [
 
 // Runtime user environment
 const environment = {};
-MANDATORY_CONFIGS.concat(CONFIGS).forEach((envName) => {
+CONFIGS.forEach((envName) => {
+	// Proceed with camel case first
 	let envValue = process.env[envName];
+	// Proceed with underscored case again if not found
 	if (!envValue) {
 		envValue = process.env[envName.replace(/([A-Z])/g, "_$1").toUpperCase()];
 	}
@@ -33,8 +35,15 @@ const optionDefinitions = [
     {name: 'port', alias: 'p', type: Number, defaultValue: '8081'},
 	{name: 'verbose', alias: 'v', type: Boolean, defaultValue: false}
 ];
-
-MANDATORY_CONFIGS.forEach((envName) => {
+CONFIGS
+.filter((envName) => {
+	// Filter out configurations that are already in option definitions
+	const found = optionDefinitions.find((optionDefinition) => {
+		return (optionDefinition.name === envName);
+	});
+	return (found === undefined);
+})
+.forEach((envName) => {
 	optionDefinitions.push({
 		name: envName,
 		type: String
@@ -43,16 +52,13 @@ MANDATORY_CONFIGS.forEach((envName) => {
 const options = commandLineArgs(optionDefinitions);
 
 // Merge configurations from environment variables to options
-const config = Object.assign(options, environment);
+const config = Object.assign(environment, options);
+
+// Check mandatory parameter is properly set
+if (!config['jwtSecret']) {
+	throw new Error('JWT secret is required.');
+}
+
 
 console.log(config);
-
-// MANDATORY_CONFIGS.forEach((envName) => {
-// 	if (!config[envName]) {
-// 		throw new Error(`Required configuration value (${envName}) is missing.`);
-// 	}
-// });
-
-
 module.exports = config;
-
