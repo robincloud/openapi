@@ -95,6 +95,68 @@ const AuthMiddleware = require('../middlewares/auth');
 /**
  * @swagger
  * definitions:
+ *   ItemPriceDescription:
+ *     properties:
+ *       message:
+ *          type: string
+ *       data:
+ *          type: object
+ *          properties:
+ *              id:
+ *                  type: string
+ *              name:
+ *                  type: string
+ *              image:
+ *                  type: string
+ *              sid:
+ *                  type: string
+ *              options:
+ *                  type: string
+ *              lowest_price:
+ *                  type: number
+ *              lowest_price_with_delivery:
+ *                  type: number
+ */
+
+/**
+ * @swagger
+ * definitions:
+ *   ItemPriceDescription:
+ *     properties:
+ *       message:
+ *          type: string
+ *       data:
+ *          type: object
+ *          properties:
+ *              count:
+ *                  description: # of returned items
+ *                  type: number
+ *              items:
+ *                  type: array
+ *                  items:
+ *                      type: object
+ *                      properties:
+ *                          cat:
+ *                              type: string
+ *                          id:
+ *                              type: string
+ *                          name:
+ *                              type: string
+ *                          sid:
+ *                              type: string
+ *                          image:
+ *                              type: string
+ *                          option:
+ *                              type: string
+ *                          lowest_price:
+ *                              type: number
+ *                          lowest_price_with_delivery:
+ *                              type: number
+ */
+
+/**
+ * @swagger
+ * definitions:
  *   ItemDescription:
  *     properties:
  *       message:
@@ -193,6 +255,49 @@ const AuthMiddleware = require('../middlewares/auth');
  *              description: Successfully created
  */
 router.post('/items', controller.saveItem);
+
+/**
+ * @swagger
+ * /items/query/{id}:
+ *   get:
+ *     description: Returns the description of an item with the information regarding lowest price
+ *     produces:
+ *      - application/json
+ *     parameters:
+ *      - in: header
+ *        name: x-access-token
+ *        type: string
+ *        required: true
+ *        description: JSON Web Token which can be obtained by logging in
+ *        example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNvbWVvbmVAc29tZWRvbWFpbi5jb20iLCJhZG1pbiI6ZmFsc2UsImlhdCI6MTUxMDAyNDUxOSwiZXhwIjoxNTEwMTEwOTE5LCJpc3MiOiJ0aGVjb21tZXJjZS5jby5rciJ9.t5P7as2XWBXZf7HB8b-pQXcsPHqVtDmNSQLmTG_9dL4"
+ *      - in: path
+ *        name: id
+ *        required: true
+ *        description: item's id ({sid}_{pid}_{oid})
+ *        type: string
+ *        example: nv_5639964597_20041523
+ *
+ *     responses:
+ *       200:
+ *         description: the description of the item
+ *         schema:
+ *           $ref: '#/definitions/ItemPriceDescription'
+ *       401:
+ *         description: Unauthorized access with invalid access token
+ *         schema:
+ *           type: object
+ *           properties:
+ *             status:
+ *               type: string
+ *               example: "Unauthorized"
+ *             title:
+ *               type: string
+ *               example: "JsonWebTokenError"
+ *             detail:
+ *               type: string
+ *               example: "empty or wrong x-access-token header"
+ */
+router.get('/items/query/:id', AuthMiddleware.verifyJWT, controller.getItemPrice);
 
 /**
  * @swagger

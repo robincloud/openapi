@@ -19,9 +19,9 @@ class ItemSerivce {
         // make data array to items
         let malls = [];
         const agent = req.agent;
-        const items = req.data.map( (data) => {
+        const items = (req.data || []).map( (data) => {
             // make nodes array to malls
-            const currentMalls = data.nodes.map( (node) => {
+            const currentMalls = (data.nodes || []).map( (node) => {
                 let mall = {
                     id: `${sid}_${node.id}`,
                     sid: sid,
@@ -38,12 +38,12 @@ class ItemSerivce {
             const item = {
                 id: req.id + (data.pkey ? "_" + data.pkey : ""),
                 sid: sid,
-                name: data.item_name,
-                option: data.option_name,
-                malls: currentMalls.map( (m) => m.get("id")),
+                name: (data.item_name || ''),
+                option: (data.option_name || ''),
+                malls: (currentMalls || []).map( (m) => m.get("id")),
                 vector: [1,2,3,4,5,6,7,8,9,10],
-                cat: data.cat,
-                image: data.meta.thumbnail,
+                cat: (data.cat || ''),
+                image: (data.meta.thumbnail || ''),
             };
             return new Item(item);
         });
@@ -59,7 +59,38 @@ class ItemSerivce {
             .then(() => new Item(req).toObject());
     }
 
+    static getItemPrice(id) {
+        if (!id)
+            throw new Error('id should be provided');
+
+        let result = {
+            count: 1
+        };
+
+        return Item.findById(id)
+            .then((item) => {
+                if (!item) {
+                    throw new Error(`An item with id (${id}) does not exist.`);
+                }
+                item.remove('malls');
+                item.remove('vector');
+                result.items = item.toObject();
+
+                if (!item.malls) {
+                    throw new Error(`An item with id (${id}) does not have mall information.`);
+                }
+                return Mall.findByIds(item.malls);
+            })
+            .then((malls) => {
+
+                return result;
+            })
+    }
+
     static getItem(id) {
+        if (!id)
+            throw new Error('id should be provided');
+
         return Item.findById(id)
             .then((item) => {
                 if (!item) {
@@ -82,6 +113,9 @@ class ItemSerivce {
     }
 
     static getMall(id) {
+        if (!id)
+            throw new Error('id should be provided');
+
         return Mall.findById(id)
             .then((mall) => {
                 if (!mall) {

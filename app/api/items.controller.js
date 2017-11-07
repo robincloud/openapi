@@ -18,6 +18,22 @@ const saveItem = (req, res) => {
         });
 };
 
+const getItemPrice = (req, res) => {
+    const id = req.params.id;
+
+    ItemService.getItemPrice(id)
+        .then((item) => {
+            res.json({
+                message: 'Item found',
+                data: item
+            });
+        })
+        .catch((err) => {
+            res.status(404).json({
+                message: err.message
+            });
+        });
+};
 const getItem = (req, res) => {
     const id = req.params.id;
 
@@ -99,6 +115,7 @@ const test = (req, res) => {
 
 module.exports = {
     saveItem,
+    getItemPrice,
     getItem,
     getMall,
     test
