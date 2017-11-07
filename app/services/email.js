@@ -1,4 +1,5 @@
 const AWS = require('aws-sdk');
+const config = require('../config');
 
 
 class Email {
@@ -72,7 +73,7 @@ class Email {
 		email.to = 'mankiplayer@oneprice.co.kr';
 		email.cc = 'mankiplayer@hotmail.com';
 		email.subject = 'E-mail test';
-		email.bodyText = 'This is test email from robincloud API.';
+		email.bodyText = 'This is test email from RobinCloud API.';
 
 		return email.send()
 		.then(() => {
@@ -83,10 +84,16 @@ class Email {
 }
 
 // AWS configuration for SES (SES currently does not support 'ap-northeast-2' region)
-AWS.config.update({
+const options = {
 	region: 'us-east-1'
-});
-Email.SES = new AWS.SES();
+};
+if (config['sesAccessKeyId']) {
+	options.accessKeyId = config['sesAccessKeyId'];
+}
+if (config['sesSecretAccessKey']) {
+	options.secretAccessKey = config['sesSecretAccessKey'];
+}
+Email.SES = new AWS.SES(options);
 
 
 module.exports = Email;

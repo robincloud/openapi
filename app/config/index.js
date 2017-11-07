@@ -2,6 +2,9 @@ const AWS = require('aws-sdk');
 const commandLineArgs = require('command-line-args');
 
 
+// Set AWS region
+AWS.config.region = 'ap-northeast-2';
+
 // Check the existence of AWS credentials
 AWS.config.getCredentials((err) => {
 	if (err) throw err;
@@ -13,7 +16,11 @@ AWS.config.getCredentials((err) => {
 // Configuration values
 const CONFIGS = [
 	{name: 'jwtSecret'},
-	{name: 'serverUrl', defaultValue: 'localhost:8081'}
+	{name: 'serverUrl', defaultValue: 'localhost:8081'},
+
+	// TODO: This is temporary settings for email service. Real server has AWS credentials that have no permission to send email!
+	{name: 'sesAccessKeyId'},
+	{name: 'sesSecretAccessKey'}
 ];
 
 // Runtime user environment
