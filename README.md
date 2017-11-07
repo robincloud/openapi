@@ -7,6 +7,7 @@ The required Basic Development Environment (개발 및 실행 환경에 대해�
 
 - NodeJS + Express : [설치 참고 문서](http://webframeworks.kr/getstarted/expressjs/).
 - DynamoDB : [로컬 설치 참고 문서](http://docs.aws.amazon.com/ko_kr/amazondynamodb/latest/developerguide/DynamoDBLocal.html).
+- AWS credentials : [설정 참고 문서](http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html)
 
 
 
