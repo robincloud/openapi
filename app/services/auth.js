@@ -5,15 +5,18 @@ const CustomError = require('./custom-error');
 
 class AuthService {
 	static issue(email) {
-		// Generate and respond the token if sign in succeeded.
-		const payload = {email};
-		const secret = Config['jwtSecret'];
-		const options = {
-			expiresIn: AuthService._getMaxAge(),    // Set token expiration
-			issuer: AuthService._getIssuer()        // Set token issuer
-		};
-
 		return new Promise((resolve, reject) => {
+			if (!AuthService._isValidEmailAddress(email)) {
+				return reject(new CustomError.InvalidArgument(`invalid email address (${email})`));
+			}
+
+			const payload = {email};
+			const secret = Config['jwtSecret'];
+			const options = {
+				expiresIn: AuthService._getMaxAge(),    // Set token expiration
+				issuer: AuthService._getIssuer()        // Set token issuer
+			};
+
 			jwt.sign(payload, secret, options, (err, token) => {
 				if (err) {
 					reject(new CustomError.Unauthorized(err.message, err.name));
@@ -29,6 +32,7 @@ class AuthService {
 			if (!token) {
 				return reject(new CustomError.InvalidArgument('empty token'));
 			}
+
 			const secret = Config['jwtSecret'];
 			const options = {
 				issuer: AuthService._getIssuer(),   // Verify token issuer
@@ -47,6 +51,11 @@ class AuthService {
 
 
 	// Private methods
+	static _isValidEmailAddress(email) {
+		const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+		return emailRegex.test(email);
+	}
+
 	static _getMaxAge() {
 		return '30d';   // Token expires in 30 days
 	}

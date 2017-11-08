@@ -16,7 +16,7 @@ const controller = require('../api/auth.controller');
  * @swagger
  * /auth/issue:
  *   post:
- *     description: Issues an access token and sends it to the specified email address
+ *     description: Issues an access token and sends it to the given email address
  *     consumes:
  *       - application/json
  *     produces:
@@ -48,7 +48,7 @@ const controller = require('../api/auth.controller');
  *             MessageId:
  *               type: string
  *       400:
- *         description: One of the required parameters is missing
+ *         description: Email address is not valid
  *         schema:
  *           type: object
  *           properties:
@@ -60,7 +60,18 @@ const controller = require('../api/auth.controller');
  *               example: "InvalidArgumentError"
  *             detail:
  *               type: string
- *               example: "empty email address"
+ *               example: "invalid email address (...)"
+ *       500:
+ *         description: Server error occurred
+ *         schema:
+ *           type: object
+ *           properties:
+ *             status:
+ *               type: string
+ *             title:
+ *               type: string
+ *             detail:
+ *               type: string
  */
 router.post('/auth/issue', controller.issueToken);
 

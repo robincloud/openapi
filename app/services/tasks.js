@@ -477,7 +477,7 @@ class TaskStatistics {
 
 	static _throughput(count, msec) {
 		const throughput = (msec ? Math.round(count / msec * 1000 * 100) / 100 : 0);
-		return `${throughput} processed/sec`;
+		return `${throughput} items/sec`;
 	}
 }
 

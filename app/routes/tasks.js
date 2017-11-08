@@ -60,13 +60,10 @@ const AuthMiddleware = require('../middlewares/auth');
  *           properties:
  *             status:
  *               type: string
- *               example: "Internal Server Error"
  *             title:
  *               type: string
- *               example: "TaskManagerError"
  *             detail:
  *               type: string
- *               example: "no handler for 'consume' event"
  */
 router.get('/tasks', controller.getTasks);
 
@@ -101,50 +98,56 @@ router.get('/tasks', controller.getTasks);
  *               properties:
  *                 started:
  *                   type: string
- *                   description: Time that current fetching event is triggered (null if not any event is triggered yet)
+ *                   description: Time that current event is triggered (null if not any event is triggered yet)
  *                   example: "2017-11-01T11:46:18.477Z"
- *                 finished:
+ *                 finished_scan:
  *                   type: string
- *                   description: Time that current fetching event is done (null if it is still fetching)
+ *                   description: Time that scanning items (from DB) event is done (null if it is still scanning)
  *                   example: "2017-11-01T11:46:23.513Z"
- *                 exhausted:
+ *                 finished_fetch:
  *                   type: string
- *                   description: Time that items from current fetching event are all consumed (null if it is still consuming)
+ *                   description: Time that scanned items are all fetched by agents (null if it is still consuming)
  *                   example: null
+ *                 finished_process:
+ *                   type: string
+ *                   description: Time that all items are processed and returned by agents (null if it is still processing)
  *                 elapsed:
  *                   type: string
- *                   description: Elapsed time from current fetching event is started
+ *                   description: Elapsed time from current event is started
  *                   example: "00:00:05.900"
  *             next_event:
  *               type: string
- *               description: Time of next scheduled fetching event
+ *               description: Time of next scheduled event
  *               example: "2017-11-01T12:00:00.000Z"
- *             count:
+ *             counts:
  *               type: object
  *               properties:
+ *                 scanned:
+ *                   type: number
+ *                   description: Number of total scanned items from DB
  *                 fetched:
  *                   type: number
- *                   description: Number of total fetched items from DB
+ *                   description: Number of total fetched items by agents
  *                   example: 2000
- *                 consumed:
+ *                 processed:
  *                   type: number
- *                   description: Number of total consumed items by agent
+ *                   description: Number of total processed items by agents
  *                   example: 1620
- *                 available:
+ *                 timeout:
  *                   type: number
- *                   description: Number of queued items currently available
- *                   example: 380
+ *                   description: Number of total timed out items
+ *                   example: 12
  *             throughput:
  *               type: object
  *               properties:
- *                 fetch:
+ *                 scan:
  *                   type: string
- *                   description: How many items are being consumed to agent per a second
- *                   example: "397.14 processed/sec"
- *                 consume:
+ *                   description: How many items are being scanned from DB per a second
+ *                   example: "397.14 items/sec"
+ *                 process:
  *                   type: string
- *                   description: How many items are being fetched from DB per a second
- *                   example: "274.58 processed/sec"
+ *                   description: How many items are being processed by agents per a second
+ *                   example: "274.58 items/sec"
  *       401:
  *         description: Unauthorized access with invalid access token
  *         schema:
@@ -180,19 +183,16 @@ router.get('/tasks/stat/(:agent)?', AuthMiddleware.verifyJWT, controller.getStat
  *               description: Current client version number
  *               example: 1
  *       500:
- *         description: Server error occurred (probably by the connection failure to memcached server)
+ *         description: Server error occurred
  *         schema:
  *           type: object
  *           properties:
  *             status:
  *               type: string
- *               example: "Internal Server Error"
  *             title:
  *               type: string
- *               example: "Error"
  *             detail:
  *               type: string
- *               example: "connect ECONNREFUSED 127.0.0.1:11211"
  */
 router.get('/tasks/client/version', controller.getClientVersion);
 
@@ -220,7 +220,7 @@ router.get('/tasks/client/version', controller.getClientVersion);
  *           properties:
  *             clientVersion:
  *               type: number
- *               example: 2
+ *               example: 1
  *       401:
  *         description: Unauthorized access with invalid access token
  *         schema:
@@ -235,34 +235,17 @@ router.get('/tasks/client/version', controller.getClientVersion);
  *             detail:
  *               type: string
  *               example: "empty or wrong x-access-token header"
- *       403:
- *         description: No permission for this operation
- *         schema:
- *           type: object
- *           properties:
- *             status:
- *               type: string
- *               example: "Forbidden"
- *             title:
- *               type: string
- *               example: "NotPermittedError"
- *             detail:
- *               type: string
- *               example: "only admins have a permission for this operation"
  *       500:
- *         description: Server error occurred (probably by the connection failure to memcached server)
+ *         description: Server error occurred
  *         schema:
  *           type: object
  *           properties:
  *             status:
  *               type: string
- *               example: "Internal Server Error"
  *             title:
  *               type: string
- *               example: "Error"
  *             detail:
  *               type: string
- *               example: "connect ECONNREFUSED 127.0.0.1:11211"
  */
 router.post('/tasks/client/version/:version', AuthMiddleware.verifyJWT, controller.setClientVersion);
 
