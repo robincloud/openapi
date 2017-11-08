@@ -1,0 +1,264 @@
+<html>
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>RPi Monitoring System</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="googlebot" content="noindex, nofollow">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.16.2/axios.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.3.4/vue.js"></script>
+    <link rel="shortcut icon" href="favicon.ico">
+    <style type="text/css">
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        body {
+            background-color: #1f253d;
+            color: white;
+        }
+
+        .top {
+            padding: 20px 0 25px;
+            margin: 0 0 10px;
+            background-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-size: 30px;
+            text-align: center;
+        }
+
+        #mid-button {
+            padding: 1%;
+        }
+
+        .node {
+            background: #394264;
+            float: left;
+            margin: 0.5%;
+            width: 19%;
+
+        }
+
+        .title {
+            background: #50597b;
+            padding: 5%;
+            border-bottom: 1px solid #1f253d;
+        }
+
+        .bg_gauge {
+            height: 4px;
+        }
+
+        .gauge {
+            background: #4fc4f6;
+            height: 4px;
+        }
+
+        .gauge.c2040 {
+            background: #11a8ab;
+        }
+
+        .gauge.c4060 {
+            background: #fcb150;
+        }
+
+        .gauge.c6080 {
+            background: #e16948;
+        }
+
+        .gauge.c80100 {
+            background: #e64c65;
+        }
+
+        .title:after {
+            content: "";
+            display: block;
+            height: 0;
+            clear: both;
+            visibility: hidden;
+            line-height: 0em;
+        }
+
+        .title {
+            display: inline-block;
+        }
+
+        * html .title {
+            height: 1%;
+        }
+
+        .title {
+            display: block;
+        }
+
+        .name {
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+            width: 60%;
+            float: left;
+            font-weight: normal;
+            color: #b3bcd9;
+        }
+
+        .cpu {
+            width: 30%;
+            float: right;
+            font-weight: bold;
+            text-align: right;
+        }
+
+        .cpu span {
+            font-size: 12px;
+            color: #bcbcd9;
+            padding-left: 3px;
+        }
+
+        #content {
+            margin: 8%;
+            border: 0;
+            background-color: #394264;
+            height: 100px;
+            font-family: tahoma;
+            line-height: 16px;
+            overflow-y: auto;
+            color: white;
+            width: 84%;
+            resize: none;
+        }
+
+        ::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+
+        ::-webkit-scrollbar-button:start:decrement,
+        ::-webkit-scrollbar-button:end:increment {
+            display: block;
+            width: 12px;
+            height: 12px;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.3);
+        }
+    </style>
+    <script type="text/javascript">
+        window.onload = function () {
+            var getMidVM = new Vue({
+                el: '#mid-button',
+                data: {
+                    'clients': []
+                },
+                methods: {
+                    getMid: function () {
+                        var vm = this;
+                        axios.get('https://robin-api.oneprice.co.kr/agents/request')
+                            .then(function (response) {
+                                var list = response.data.message;
+                                for (var i in list) {
+                                    var valid = 0;
+                                    for (var j in vm.clients) {
+                                        if (vm.clients[j].uuid === response.data.message[i].uuid) {
+                                            valid = 1;
+                                            vm.clients[j].cpu = Math.round(response.data.message[i].cpu);
+                                            switch (Math.floor(vm.clients[j].cpu / 20)) {
+                                                case 0:
+                                                    vm.clients[j].cpu_class = 'gauge';
+                                                    break;
+                                                case 1:
+                                                    vm.clients[j].cpu_class = 'gauge c2040';
+                                                    break;
+                                                case 2:
+                                                    vm.clients[j].cpu_class = 'gauge c4060';
+                                                    break;
+                                                case 3:
+                                                    vm.clients[j].cpu_class = 'gauge c6080';
+                                                    break;
+                                                case 4:
+                                                    vm.clients[j].cpu_class = 'gauge c80100';
+                                                    break;
+                                                case 5:
+                                                    vm.clients[j].cpu_class = 'gauge c80100';
+                                                    break;
+                                            }
+                                            var join_msg = response.data.message[i].msg.join("\n") + "\n";
+                                            if (vm.clients[j].message[vm.clients[j].message.length - 1] != join_msg) {
+                                                vm.clients[j].message.push(join_msg);
+                                                vm.clients[j].str = vm.clients[j].message.join("\n");
+                                                var container = vm.$el.querySelector("#content");
+                                                container.scrollTop = container.scrollHeight
+                                            }
+                                        }
+                                    }
+
+                                    if (valid === 0) {
+                                        var message = response.data.message[i].msg.join("\n") + "\n";
+                                        vm.clients.push({
+                                            uuid: response.data.message[i].uuid,
+                                            name: response.data.message[i].name,
+                                            cpu: Math.round(response.data.message[i].cpu),
+                                            message: [message],
+                                            cpu_class: '',
+                                            str: ''
+                                        });
+                                        vm.clients[vm.clients.length - 1].str = vm.clients[vm.clients.length - 1].message.join("\n")
+                                    }
+                                }
+                            })
+                            .catch(function (error) {
+                                vm.mid = '에러! API 요청에 오류가 있습니다. ' + error
+                            })
+                    }
+                },
+                created: function () {
+                    var self = this;
+                    setTimeout(function cycle() {
+                        self.getMid();
+                        setTimeout(cycle, 2000)
+                    }, 2000)
+                }
+            })
+
+        }//]]>
+    </script>
+
+</head>
+
+<body>
+<div class="top">Raspberry Pi Monitoring System</div>
+<div id="mid-button">
+    <div class="node" v-for="item in clients">
+        <div class="bg_gauge">
+            <!-- cpu %를 width에 넣도록 개발-->
+            <div v-bind:class="[ item.cpu_class ]" v-bind:style="{ width:item.cpu + '%' }"></div>
+        </div>
+        <div class="title">
+            <div class="name">{{ item.name }}</div>
+            <div class="cpu">{{ item.cpu }}<span>%</span></div>
+        </div>
+        <textarea id="content">{{ item.str }}</textarea>
+    </div>
+</div>
+
+<script>
+    // tell the embed parent frame the height of the content
+    if (window.parent && window.parent.parent) {
+        window.parent.parent.postMessage(["resultsFrame", {
+            height: document.body.getBoundingClientRect().height,
+            slug: "p47awzve"
+        }], "*")
+    }
+</script>
+
+
+</body>
+
+</html>

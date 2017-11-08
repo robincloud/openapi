@@ -16,6 +16,12 @@ router.get('/', (req, res) => {
     res.sendFile(path);
 });
 
+router.get('/rpi', (req, res) => {
+    //res.send('RobinCloud Open API');
+    const path = __dirname + '/message.html';
+    res.sendFile(path);
+});
+
 router.get('/robin.png', (req, res) => {
     const path = __dirname + '/robin.png';
     res.sendFile(path);

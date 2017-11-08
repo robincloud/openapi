@@ -38,6 +38,7 @@ app.use(bodyParser.json({limit: '50mb'}));
 app.use('/', require('./routes/basic'));
 app.use('/', require('./routes/auth'));
 app.use('/', require('./routes/items'));
+app.use('/', require('./routes/agents'));
 app.use('/', require('./routes/tasks'));
 
 // serve swagger
@@ -59,7 +60,8 @@ app.get('/favicon.ico', function(req, res) {
 // Launching application after models are initialized
 Promise.all([
 	require('./models/item').initialize(),
-	require('./models/mall').initialize()
+	require('./models/mall').initialize(),
+    require('./models/agent').initialize()
 ])
 .then(() => {
 	const listener = app.listen(config['port'], () => {
