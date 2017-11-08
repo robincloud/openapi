@@ -78,18 +78,14 @@ router.get('/tasks', controller.getTasks);
  *     produces:
  *       - applications/json
  *     parameters:
- *       - in: header
- *         name: x-access-token
- *         type: string
- *         required: true
- *         description: JSON Web Token which can be obtained by logging in
- *         example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNvbWVvbmVAc29tZWRvbWFpbi5jb20iLCJhZG1pbiI6ZmFsc2UsImlhdCI6MTUwOTYwODU5MCwiZXhwIjoxNTA5Njk0OTkwLCJpc3MiOiJ0aGVjb21tZXJjZS5jby5rciJ9.JaTmb0VxyPr2jfoFKzEOCUD5m6KI6c2Xkk0IYbdWAfE"
  *       - in: path
  *         name: agent
  *         type: string
  *         required: false
  *         description: Unique identifier of the crawling agent
  *         example: "agent_01"
+ *     security:
+ *       - JWT: []
  *     responses:
  *       200:
  *         description: OK
@@ -204,22 +200,18 @@ router.get('/tasks/client/version', controller.getClientVersion);
  * @swagger
  * /tasks/client/version/{clientVersion}:
  *   post:
- *     description: Changes the client version (Only admin users have a permission)
+ *     description: Changes the client version (Login required)
  *     produces:
  *       -application/json
  *     parameters:
- *       - in: header
- *         name: x-access-token
- *         type: string
- *         required: true
- *         description: JSON Web Token which can be obtained by logging in
- *         example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNvbWVvbmVAc29tZWRvbWFpbi5jb20iLCJhZG1pbiI6ZmFsc2UsImlhdCI6MTUwOTYwODU5MCwiZXhwIjoxNTA5Njk0OTkwLCJpc3MiOiJ0aGVjb21tZXJjZS5jby5rciJ9.JaTmb0VxyPr2jfoFKzEOCUD5m6KI6c2Xkk0IYbdWAfE"
  *       - in: path
  *         name: clientVersion
  *         type: number
  *         required: true
  *         description: Client version number to replace
- *         example: 2
+ *         example: 1
+ *     security:
+ *       - JWT: []
  *     responses:
  *       200:
  *         description: Client version number has been successfully changed

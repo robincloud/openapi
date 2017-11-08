@@ -4,6 +4,16 @@ const controller = require('../api/auth.controller');
 
 /**
  * @swagger
+ * securityDefinitions:
+ *   JWT:
+ *     type: apiKey
+ *     description: JWT based authentication
+ *     name: x-access-token
+ *     in: header
+ */
+
+/**
+ * @swagger
  * /auth/issue:
  *   post:
  *     description: Issues an access token and sends it to the specified email address

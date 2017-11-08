@@ -264,18 +264,14 @@ router.post('/items', controller.saveItem);
  *     produces:
  *      - application/json
  *     parameters:
- *      - in: header
- *        name: x-access-token
- *        type: string
- *        required: true
- *        description: JSON Web Token which can be obtained by logging in
- *        example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImV0aGFuQHRoZWNvbW1lcmNlLmNvLmtyIiwiaWF0IjoxNTEwMTEyMTc3LCJleHAiOjE1MTI3MDQxNzcsImlzcyI6InRoZWNvbW1lcmNlLmNvLmtyIn0.xflfMQgnKmXwdxM1ewWD3k_kcvdkb6UvTfgSkxHZbks"
  *      - in: path
  *        name: id
  *        required: true
  *        description: item's id ({sid}_{pid}_{oid})
  *        type: string
  *        example: nv_5639964597_20041523
+ *     security:
+ *      - JWT: []
  *
  *     responses:
  *       200:
@@ -307,18 +303,14 @@ router.get('/items/query/:id', AuthMiddleware.verifyJWT, controller.getItemPrice
  *     produces:
  *      - application/json
  *     parameters:
- *      - in: header
- *        name: x-access-token
- *        type: string
- *        required: true
- *        description: JSON Web Token which can be obtained by logging in
- *        example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImV0aGFuQHRoZWNvbW1lcmNlLmNvLmtyIiwiaWF0IjoxNTEwMTEyMTc3LCJleHAiOjE1MTI3MDQxNzcsImlzcyI6InRoZWNvbW1lcmNlLmNvLmtyIn0.xflfMQgnKmXwdxM1ewWD3k_kcvdkb6UvTfgSkxHZbks"
  *      - in: path
  *        name: id
  *        required: false
  *        description: item's id ({sid}_{pid}_{oid})
  *        type: string
  *        example: nv_5639964597_20041523
+ *     security:
+ *      - JWT: []
  *
  *     responses:
  *       200:
@@ -350,18 +342,14 @@ router.get('/items/:id?', AuthMiddleware.verifyJWT, controller.getItem);
  *     produces:
  *      - application/json
  *     parameters:
- *      - in: header
- *        name: x-access-token
- *        type: string
- *        required: true
- *        description: JSON Web Token which can be obtained by logging in
- *        example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImV0aGFuQHRoZWNvbW1lcmNlLmNvLmtyIiwiaWF0IjoxNTEwMTEyMTc3LCJleHAiOjE1MTI3MDQxNzcsImlzcyI6InRoZWNvbW1lcmNlLmNvLmtyIn0.xflfMQgnKmXwdxM1ewWD3k_kcvdkb6UvTfgSkxHZbks"
  *      - in: path
  *        name: id
  *        required: false
  *        description: mall's id ({sid}_{pid})
  *        type: string
  *        example: nv_107203229047
+ *     security:
+ *      - JWT: []
  *
  *     responses:
  *       200:
