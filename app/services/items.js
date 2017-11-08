@@ -60,6 +60,7 @@ class ItemSerivce {
     }
 
     static getItemPrice(id) {
+        let refId;
         if (!id)
             throw new Error('id should be provided');
 
@@ -72,16 +73,46 @@ class ItemSerivce {
                 if (!item) {
                     throw new Error(`An item with id (${id}) does not exist.`);
                 }
-                item.removeField('malls');
-                item.removeField('vector');
+                refId = item.get("refId");
+                if (refId) {
+                    return Item.findById(refId);
+                }
+                return item;
+            })
+            .then((item) => {
+                if (!item) {
+                    throw new Error(`An item with id (${refId}) referenced from the item with id (${id}) does not exist.`);
+                }
                 result.items = item.toObject();
-
-                if (!item.malls) {
+                if (!item.get("malls")) {
                     throw new Error(`An item with id (${id}) does not have mall information.`);
                 }
-                return Mall.findByIds(item.malls);
+                return Mall.findByIds(item.get("malls"));
             })
-            .then((malls) => {
+            .then((malls_data) => {
+                console.log(malls_data);
+                let malls = malls_data.malls;
+                console.log(malls);
+                let minPriceIdx = 0;
+                let minPrice = malls[0].get("price");
+                let minPriceWithDeliveryIdx = 0;
+                let minPriceWithDelivery = malls[0].get("price") + malls[0].get("delivery");
+                malls.forEach( (v,i) => {
+                    if (v.get("price") < minPrice) {
+                        minPrice = v.get("price");
+                        minPriceIdx = i;
+                    }
+                    if (v.get("price") + v.get("delivery") < minPriceWithDelivery) {
+                        minPriceWithDelivery = v.get("price") + v.get("delivery");
+                        minPriceWithDeliveryIdx = i;
+                    }
+                });
+                console.log(minPriceIdx, minPriceWithDeliveryIdx);
+                console.log(malls[0]);
+                result.lowest_price = minPrice;
+                result.lowest_price_mall = malls[minPriceIdx].toObject();
+                result.lowest_price_with_delivery = minPriceWithDelivery;
+                result.lowest_price_with_delivery_mall = malls[minPriceWithDeliveryIdx].toObject();
 
                 return result;
             })

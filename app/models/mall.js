@@ -109,17 +109,20 @@ class Mall extends AbstractModel {
     }
 
     static findByIds(ids) {
-        const params = {
-            TableName: Mall.tableName,
+        const tables = {};
+        tables[Mall.tableName] = {
             Keys: ids.map((i) => { return {id:i}} )
         };
+        const params = {
+            RequestItems: tables
+        };
 
-        return DB.docClient.get(params).promise()
+        return DB.docClient.batchGet(params).promise()
             .then((data) => {
-                console.log(data);
+                const res = data['Responses']['malls'];
                 const result = {
-                    count: data['Count'],
-                    malls: (data['Items'] || []).map((data) => new Mall(data))
+                    count: res.length,
+                    malls: (res || []).map((data) => new Mall(data))
                 };
                 return result;
             });

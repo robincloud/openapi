@@ -150,8 +150,12 @@ const AuthMiddleware = require('../middlewares/auth');
  *                              type: string
  *                          lowest_price:
  *                              type: number
+ *                          lowest_price_mall:
+ *                              type: object
  *                          lowest_price_with_delivery:
  *                              type: number
+ *                          lowest_price_with_delivery_mall:
+ *                              type: object
  */
 
 /**
