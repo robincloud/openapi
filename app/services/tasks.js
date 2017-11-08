@@ -4,6 +4,7 @@ const schedule = require('node-schedule');
 const config = require('../config');
 const CustomError = require('./custom-error');
 const Item = require('../models/item');
+require('./polyfills');    // For some unimplemented functions on older version of Node.js
 
 
 // Scan 200 items per every 0.5 second whenever queued items are less than (1000 - 200)
@@ -298,8 +299,7 @@ class TaskTimeoutHandler {
 		if (this.windows.length === this.maxWindows) {
 			const expiredWindow = this.windows.shift();
 
-			Object.keys(expiredWindow).forEach((agent) => {
-				const agentMap = expiredWindow[agent];
+			Object.entries(expiredWindow).forEach(([agent, agentMap]) => {
 				const items = fMapValues(agentMap);
 				if (items.length) {
 					callback(agent, items);
