@@ -487,7 +487,7 @@ class TaskService {
 	constructor() {
 		this._manager = new TaskManager();
 
-		const memcachedServer = `${config['serverUrl']}:11211`;
+		const memcachedServer = `localhost:11211`;
 		this._memcached = new Memcached(memcachedServer, {retries: 1});
 	}
 
