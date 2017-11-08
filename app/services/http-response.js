@@ -106,6 +106,11 @@ class HttpResponse {
 			title: name,
 			detail: message
 		};
+
+		// For debugging purpose
+		if (statusCode === 500) {
+			console.error(err);
+		}
 	}
 }
 
