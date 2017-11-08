@@ -72,8 +72,8 @@ class ItemSerivce {
                 if (!item) {
                     throw new Error(`An item with id (${id}) does not exist.`);
                 }
-                item.remove('malls');
-                item.remove('vector');
+                item.removeField('malls');
+                item.removeField('vector');
                 result.items = item.toObject();
 
                 if (!item.malls) {
