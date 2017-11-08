@@ -487,7 +487,7 @@ class TaskService {
 	constructor() {
 		this._manager = new TaskManager();
 
-		const memcachedServer = `localhost:11211`;
+		const memcachedServer = 'localhost:11211';
 		this._memcached = new Memcached(memcachedServer, {retries: 1});
 	}
 
@@ -497,12 +497,15 @@ class TaskService {
 			return Promise.reject(err);
 		}
 
-		return this._manager.fetchItems(agent, size)
-		.then((items) => {
+		return Promise.all([
+			this.getClientVersion(),
+			this._manager.fetchItems(agent, size)
+		])
+		.then(([clientVersion, items]) => {
 			return items.map((item) => {
 				const id = item.get('id');
 				const mid = (id.split('_')[1] || '');
-				return {id, mid};
+				return {clientVersion, id, mid};
 			});
 		});
 	}
@@ -528,7 +531,7 @@ class TaskService {
 
 	getClientVersion() {
 		return new Promise((resolve, reject) => {
-			this._memcached.get('clientVersion', (err, data = 1) => {
+			this._memcached.get('clientVersion', (err, data = '') => {
 				if (err) reject(new CustomError.ServerError(err.message, err.name));
 				else resolve(data);
 			});
