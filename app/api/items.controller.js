@@ -6,6 +6,7 @@ const saveItem = (req, res) => {
 
     ItemService.saveItem(data)
         .then((item) => {
+            console.log(`* saved item id: ${item.id}`);
             res.json({
                 message: 'items and malls are saved successfully.',
                 item

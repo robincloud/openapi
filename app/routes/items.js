@@ -61,7 +61,7 @@ const AuthMiddleware = require('../middlewares/auth');
  *                        properties:
  *                            id:
  *                                type: number
- *                                example: 11900885999
+ *                                example: 107203229047
  *                            name:
  *                                type: string
  *                                example: shin ramen 120g / best
@@ -269,7 +269,7 @@ router.post('/items', controller.saveItem);
  *        type: string
  *        required: true
  *        description: JSON Web Token which can be obtained by logging in
- *        example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNvbWVvbmVAc29tZWRvbWFpbi5jb20iLCJhZG1pbiI6ZmFsc2UsImlhdCI6MTUxMDAyNDUxOSwiZXhwIjoxNTEwMTEwOTE5LCJpc3MiOiJ0aGVjb21tZXJjZS5jby5rciJ9.t5P7as2XWBXZf7HB8b-pQXcsPHqVtDmNSQLmTG_9dL4"
+ *        example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImV0aGFuQHRoZWNvbW1lcmNlLmNvLmtyIiwiaWF0IjoxNTEwMTEyMTc3LCJleHAiOjE1MTI3MDQxNzcsImlzcyI6InRoZWNvbW1lcmNlLmNvLmtyIn0.xflfMQgnKmXwdxM1ewWD3k_kcvdkb6UvTfgSkxHZbks"
  *      - in: path
  *        name: id
  *        required: true
@@ -312,7 +312,7 @@ router.get('/items/query/:id', AuthMiddleware.verifyJWT, controller.getItemPrice
  *        type: string
  *        required: true
  *        description: JSON Web Token which can be obtained by logging in
- *        example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNvbWVvbmVAc29tZWRvbWFpbi5jb20iLCJhZG1pbiI6ZmFsc2UsImlhdCI6MTUxMDAyNDUxOSwiZXhwIjoxNTEwMTEwOTE5LCJpc3MiOiJ0aGVjb21tZXJjZS5jby5rciJ9.t5P7as2XWBXZf7HB8b-pQXcsPHqVtDmNSQLmTG_9dL4"
+ *        example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImV0aGFuQHRoZWNvbW1lcmNlLmNvLmtyIiwiaWF0IjoxNTEwMTEyMTc3LCJleHAiOjE1MTI3MDQxNzcsImlzcyI6InRoZWNvbW1lcmNlLmNvLmtyIn0.xflfMQgnKmXwdxM1ewWD3k_kcvdkb6UvTfgSkxHZbks"
  *      - in: path
  *        name: id
  *        required: false
@@ -355,13 +355,13 @@ router.get('/items/:id?', AuthMiddleware.verifyJWT, controller.getItem);
  *        type: string
  *        required: true
  *        description: JSON Web Token which can be obtained by logging in
- *        example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNvbWVvbmVAc29tZWRvbWFpbi5jb20iLCJhZG1pbiI6ZmFsc2UsImlhdCI6MTUxMDAyNDUxOSwiZXhwIjoxNTEwMTEwOTE5LCJpc3MiOiJ0aGVjb21tZXJjZS5jby5rciJ9.t5P7as2XWBXZf7HB8b-pQXcsPHqVtDmNSQLmTG_9dL4"
+ *        example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImV0aGFuQHRoZWNvbW1lcmNlLmNvLmtyIiwiaWF0IjoxNTEwMTEyMTc3LCJleHAiOjE1MTI3MDQxNzcsImlzcyI6InRoZWNvbW1lcmNlLmNvLmtyIn0.xflfMQgnKmXwdxM1ewWD3k_kcvdkb6UvTfgSkxHZbks"
  *      - in: path
  *        name: id
  *        required: false
  *        description: mall's id ({sid}_{pid})
  *        type: string
- *        example: nv_11900885999
+ *        example: nv_107203229047
  *
  *     responses:
  *       200:
