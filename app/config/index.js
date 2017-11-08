@@ -1,3 +1,4 @@
+const url = require('url');
 const AWS = require('aws-sdk');
 const commandLineArgs = require('command-line-args');
 
@@ -17,6 +18,7 @@ AWS.config.getCredentials((err) => {
 const CONFIGS = [
 	{name: 'jwtSecret'},
 	{name: 'serverUrl', defaultValue: 'localhost:8081'},
+	{name: 'port', defaultValue: 8081},
 
 	// TODO: This is temporary settings for email service. Real server has AWS credentials that have no permission to send email!
 	{name: 'sesAccessKeyId'},
@@ -47,8 +49,7 @@ CONFIGS.forEach(({name, defaultValue}) => {
 // Command line arguments
 const optionDefinitions = [
 	{name: 'jwtSecret', type: String},
-    {name: 'host', alias: 'h', type: String},
-    {name: 'port', alias: 'p', type: Number, defaultValue: 8081},
+    {name: 'port', alias: 'p', type: Number},
 	{name: 'verbose', alias: 'v', type: Boolean, defaultValue: false}
 ];
 const options = commandLineArgs(optionDefinitions);
@@ -62,18 +63,11 @@ if (!config['jwtSecret']) {
 	throw new Error(`JWT secret is required (Set environment variable 'JWT_SECRET'.)`);
 }
 
-if (config['serverUrl']) {
-	const [host, port] = config['serverUrl'].split(':');
-	config['host'] = host;
-	if (port && !isNaN(Number(port))) config['port'] = Number(port);
-} else if (config['host']) {
-	if (config['port']) {
-		config['serverUrl'] = `${config['host']}:${config['port']}`;
-	} else {
-		config['serverUrl'] = config['host'];
-	}
-} else {
-	throw new Error(`Server URL is required (Set environment variable 'SERVER_URL'.)`);
+// Reconstruct server URL
+if (options['port']) {
+	const urlObject = url.parse(envs['serverUrl']);
+	urlObject.port = options['port'];
+	config['serverUrl'] = url.format(urlObject);
 }
 
 
