@@ -12,7 +12,7 @@ const SCAN_SIZE = 200;
 const SCAN_INTERVAL_MSEC = 500;
 
 // Fetched items(tasks) will be regarded as dropped after timed out. Dropped items are queued again to processed later.
-const PROCESSING_TIMEOUT_MSEC = 15000;
+const PROCESSING_TIMEOUT_MSEC = 60000;  // 1 minute
 
 
 // DataSource interface
