@@ -5,6 +5,43 @@ const AuthMiddleware = require('../middlewares/auth');
 
 /**
  * @swagger
+ * /tasks/force-trigger:
+ *   post:
+ *     description: Force triggers scanning items from DB ignoring reserved schedule
+ *     produces:
+ *       - application/json
+ *     security:
+ *       - JWT: []
+ *     responses:
+ *       200:
+ *         description: Scanning is has been started successfully
+ *         schema:
+ *           type: object
+ *           properties:
+ *             current_event:
+ *               type: string
+ *               description: Time of current event triggered
+ *               example: "2017-11-08T07:32:11.017Z"
+ *             next_event:
+ *               type: string
+ *               description: Time of next scheduled event
+ *               example: "2017-11-08T09:00:00.000Z"
+ *       500:
+ *         description: Server error occurred
+ *         schema:
+ *           type: object
+ *           properties:
+ *             status:
+ *               type: string
+ *             title:
+ *               type: string
+ *             detail:
+ *               type: string
+ */
+router.post('/tasks/force-trigger', AuthMiddleware.verifyJWT, controller.forceTrigger);
+
+/**
+ * @swagger
  * /tasks:
  *   get:
  *     description: Requests some tasks for collecting item information of given mid

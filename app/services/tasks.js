@@ -103,11 +103,19 @@ class TaskManager extends EventEmitter {
 	}
 
 	forceTrigger(dataSource) {
-		if (this.isBusy()) return;  // Do nothing if it is already running
+		return new Promise((resolve) => {
+			// Do nothing if it is already running
+			if (!this.isBusy()) {
+				//this._scheduledJob.cancelNext(true);  // TODO: Not working as expected
+				//this._scheduledJob.reschedule('00 * * * *');
+				this._wakeup(dataSource);
+			}
 
-		//this._scheduledJob.cancelNext(true);          // TODO: Not working as expected
-		//this._scheduledJob.reschedule('00 * * * *');
-		this._wakeup(dataSource);
+			resolve({
+				current_event: this._stats.started,
+				next_event: this._stats.scheduled
+			});
+		});
 	}
 
 	fetchItems(agent, size = 1) {
@@ -327,6 +335,9 @@ class TaskStatistics {
 		};
 	}
 
+	get started()   { return this.events.started; }
+	get scheduled() { return this.events.nextScheduled; }
+
 	markAsStarted(nextSchedule) {
 		this.events.started = new Date();
 		this.events.nextScheduled = nextSchedule;
@@ -488,6 +499,10 @@ class TaskService {
 
 		const memcachedServer = 'localhost:11211';
 		this._memcached = new Memcached(memcachedServer, {retries: 1});
+	}
+
+	forceTrigger() {
+		return this._manager.forceTrigger();
 	}
 
 	getTasks(agent, size = 1) {

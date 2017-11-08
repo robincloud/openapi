@@ -2,6 +2,21 @@ const TaskService = require('../services/tasks');
 const HttpResponse = require('../services/http-response');
 
 
+const forceTrigger = (req, res) => {
+	const httpResponse = new HttpResponse();
+
+	TaskService.forceTrigger()
+	.then((eventInfo) => {
+		httpResponse.setData(eventInfo);
+		res.status(httpResponse.statusCode).json(httpResponse.body);
+	})
+	.catch((err) => {
+		httpResponse.setError(err);
+		res.status(httpResponse.statusCode).json(httpResponse.body);
+	});
+};
+
+
 const getTasks = (req, res) => {
 	const {agent, size = 1} = (req.query || {});
 	const httpResponse = new HttpResponse();
@@ -67,6 +82,7 @@ const setClientVersion = (req, res) => {
 
 
 module.exports = {
+	forceTrigger,
 	getTasks,
 	getStats,
 	getClientVersion,
