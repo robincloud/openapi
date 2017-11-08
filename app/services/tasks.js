@@ -1,7 +1,6 @@
 const EventEmitter = require('events');
 const Memcached = require('memcached');
 const schedule = require('node-schedule');
-const config = require('../config');
 const CustomError = require('./custom-error');
 const Item = require('../models/item');
 require('./polyfills');    // For some unimplemented functions on older version of Node.js
