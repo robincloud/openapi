@@ -16,6 +16,16 @@ router.get('/', (req, res) => {
     res.sendFile(path);
 });
 
+/**
+ * @swagger
+ * /rpi:
+ *   get:
+ *     description: Response echo to 'get /rpi' request for healthy check
+ *
+ *     responses:
+ *       200:
+ *          description: Success
+ */
 router.get('/rpi', (req, res) => {
     //res.send('RobinCloud Open API');
     const path = __dirname + '/message.html';

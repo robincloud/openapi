@@ -21,12 +21,12 @@ const saveMsg = (req, res) => {
     AgentService.put(data)
         .then((item) => {
             res.json({
-                message: 'Item found',
+                message: 'Message saved',
                 item
             });
         })
         .catch((err) => {
-            res.status(404).json({
+            res.status(400).json({
                 message: err.message
             });
         });

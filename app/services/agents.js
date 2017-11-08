@@ -1,5 +1,4 @@
 const Agent = require('../models/agent');
-const TaskService = require('./tasks');
 
 
 class AgentSerivce {
@@ -29,7 +28,7 @@ class AgentSerivce {
             throw new Error(`CPU is not provided for the data`);
         return Agent.Update(data)
             .then((agent) => {
-                return agent._object
+                return agent._object.Attributes
             })
     }
 
@@ -39,9 +38,9 @@ class AgentSerivce {
                 if (!agent) {
                     throw new Error(`There is no agent.`);
                 }
-                var data = [];
+                let data = [];
                 agent._object.forEach((item) => {
-                    var tmp = {};
+                    let tmp = {};
                     tmp['uuid'] = item.id;
                     tmp['name'] = item.name;
                     tmp['cpu'] = item.cpu;
