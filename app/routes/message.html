@@ -149,10 +149,19 @@
         ::-webkit-scrollbar-thumb {
             background: rgba(0, 0, 0, 0.3);
         }
+
+        .fade-enter-active, .fade-leave-active {
+            transition: opacity .3s
+        }
+
+        .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */
+        {
+            opacity: 0
+        }
     </style>
     <script type="text/javascript">
         window.onload = function () {
-            var getMidVM = new Vue({
+            new Vue({
                 el: '#mid-button',
                 data: {
                     'clients': []
@@ -193,8 +202,8 @@
                                             if (vm.clients[j].message[vm.clients[j].message.length - 1] != join_msg) {
                                                 vm.clients[j].message.push(join_msg);
                                                 vm.clients[j].str = vm.clients[j].message.join("\n");
-                                                var container = vm.$el.querySelector("#content");
-                                                container.scrollTop = container.scrollHeight
+                                                vm.clients[j].show = false;
+
                                             }
                                         }
                                     }
@@ -207,7 +216,8 @@
                                             cpu: Math.round(response.data.message[i].cpu),
                                             message: [message],
                                             cpu_class: '',
-                                            str: ''
+                                            str: '',
+                                            show: true
                                         });
                                         vm.clients[vm.clients.length - 1].str = vm.clients[vm.clients.length - 1].message.join("\n")
                                     }
@@ -216,6 +226,10 @@
                             .catch(function (error) {
                                 vm.mid = '에러! API 요청에 오류가 있습니다. ' + error
                             })
+                    },
+                    scroll: function () {
+                        var container = this.$el.querySelector("#content")
+                        container.scrollTop = container.scrollHeight
                     }
                 },
                 created: function () {
@@ -223,7 +237,17 @@
                     setTimeout(function cycle() {
                         self.getMid();
                         setTimeout(cycle, 2000)
-                    }, 2000)
+                    }, 2000);
+                    setTimeout(function cycle() {
+                        for (var j in self.clients) {
+                            self.clients[j].show = true
+                        }
+                        setTimeout(cycle, 1000)
+                    }, 1000);
+                },
+                updated: function () {
+                    var self = this
+                    self.scroll()
                 }
             })
 
@@ -241,7 +265,9 @@
             <div v-bind:class="[ item.cpu_class ]" v-bind:style="{ width:item.cpu + '%' }"></div>
         </div>
         <div class="title">
-            <div class="name">{{ item.name }}</div>
+            <transition name="fade">
+                <div class="name" v-if="item.show">{{ item.name }}</div>
+            </transition>
             <div class="cpu">{{ item.cpu }}<span>%</span></div>
         </div>
         <textarea id="content">{{ item.str }}</textarea>
