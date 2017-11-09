@@ -169,7 +169,7 @@
                 methods: {
                     getMid: function () {
                         var vm = this;
-                        axios.get('http://localhost:8081/agents/request')
+                        axios.get('https://robin-api.oneprice.co.kr/agents/request')
                             .then(function (response) {
                                 var list = response.data.message;
                                 for (var i in list) {
