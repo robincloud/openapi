@@ -48,8 +48,8 @@ class ItemSerivce {
                 item.option = data.option_name;
             return new Item(item);
         });
-        console.log(malls);
-        console.log(items);
+        // console.log(malls);
+        // console.log(items);
 
         // save items and malls to db
         let promises = [];
