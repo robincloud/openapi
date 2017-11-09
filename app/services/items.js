@@ -90,9 +90,7 @@ class ItemSerivce {
                 return Mall.findByIds(item.get("malls"));
             })
             .then((malls_data) => {
-                console.log(malls_data);
                 let malls = malls_data.malls;
-                console.log(malls);
                 let minPriceIdx = 0;
                 let minPrice = malls[0].get("price");
                 let minPriceWithDeliveryIdx = 0;
@@ -107,8 +105,9 @@ class ItemSerivce {
                         minPriceWithDeliveryIdx = i;
                     }
                 });
-                console.log(minPriceIdx, minPriceWithDeliveryIdx);
-                console.log(malls[0]);
+                console.log("malls count:", malls.length);
+                console.log("minPriceIdx: ", minPriceIdx);
+                console.log("minPirceWithDeliveryIdx: ", minPriceWithDeliveryIdx);
                 result.lowest_price = minPrice;
                 result.lowest_price_mall = malls[minPriceIdx].toObject();
                 result.lowest_price_with_delivery = minPriceWithDelivery;
