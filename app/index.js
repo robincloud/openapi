@@ -61,7 +61,8 @@ app.get('/favicon.ico', function(req, res) {
 Promise.all([
 	require('./models/item').initialize(),
 	require('./models/mall').initialize(),
-    require('./models/agent').initialize()
+    require('./models/agent').initialize(),
+	require('./models/setting').initialize()
 ])
 .then(() => {
 	const listener = app.listen(config['port'], () => {

@@ -1,6 +1,6 @@
 const EventEmitter = require('events');
-const Memcached = require('memcached');
 const schedule = require('node-schedule');
+const Settings = require('./settings');
 const CustomError = require('./custom-error');
 const Item = require('../models/item');
 require('./polyfills');    // For some unimplemented functions on older version of Node.js
@@ -504,9 +504,6 @@ class TaskStatistics {
 class TaskService {
 	constructor() {
 		this._manager = new TaskManager();
-
-		const memcachedServer = 'localhost:11211';
-		this._memcached = new Memcached(memcachedServer, {retries: 1});
 	}
 
 	forceTrigger() {
@@ -556,26 +553,16 @@ class TaskService {
 	}
 
 	getClientVersion() {
-		return new Promise((resolve, reject) => {
-			this._memcached.get('clientVersion', (err, data = '') => {
-				if (err) reject(new CustomError.ServerError(err.message, err.name));
-				else resolve(data);
-			});
-		});
+		return Settings.load('clientVersion');
 	}
 
 	setClientVersion(version) {
-		if (!version) {
-			throw new CustomError.InvalidArgument('missing required parameter (version)');
+		if (version === undefined) {
+			const err = CustomError.InvalidArgument('missing required parameter (version)');
+			return Promise.reject(err);
 		}
-		const expired = 0;  // Never expired
 
-		return new Promise((resolve, reject) => {
-			this._memcached.set('clientVersion', version, expired, (err) => {
-				if (err) reject(new CustomError.ServerError(err.message, err.name));
-				else resolve();
-			});
-		});
+		return Settings.save('clientVersion', version);
 	}
 }
 
