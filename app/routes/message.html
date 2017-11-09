@@ -151,7 +151,7 @@
         }
 
         .fade-enter-active, .fade-leave-active {
-            transition: opacity .3s
+            transition: opacity .2s
         }
 
         .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */
@@ -164,12 +164,12 @@
             new Vue({
                 el: '#mid-button',
                 data: {
-                    'clients': []
+                    clients: []
                 },
                 methods: {
                     getMid: function () {
                         var vm = this;
-                        axios.get('https://robin-api.oneprice.co.kr/agents/request')
+                        axios.get('http://localhost:8081/agents/request')
                             .then(function (response) {
                                 var list = response.data.message;
                                 for (var i in list) {
@@ -209,7 +209,7 @@
                                     }
 
                                     if (valid === 0) {
-                                        var message = response.data.message[i].msg.join("\n") + "\n";
+                                        const message = response.data.message[i].msg.join("\n") + "\n";
                                         vm.clients.push({
                                             uuid: response.data.message[i].uuid,
                                             name: response.data.message[i].name,
@@ -228,8 +228,12 @@
                             })
                     },
                     scroll: function () {
-                        var container = this.$el.querySelector("#content")
-                        container.scrollTop = container.scrollHeight
+                        console.log(this.$el.querySelectorAll("#content"));
+                        var container = this.$el.querySelectorAll("#content");
+                        for (var i in container){
+                            container[i].scrollTop = container[i].scrollHeight
+                        }
+
                     }
                 },
                 created: function () {
@@ -246,12 +250,11 @@
                     }, 1000);
                 },
                 updated: function () {
-                    var self = this
-                    self.scroll()
+                    var vm = this;
+                    vm.scroll()
                 }
             })
-
-        }//]]>
+        }
     </script>
 
 </head>
@@ -261,7 +264,6 @@
 <div id="mid-button">
     <div class="node" v-for="item in clients">
         <div class="bg_gauge">
-            <!-- cpu %를 width에 넣도록 개발-->
             <div v-bind:class="[ item.cpu_class ]" v-bind:style="{ width:item.cpu + '%' }"></div>
         </div>
         <div class="title">
@@ -273,18 +275,5 @@
         <textarea id="content">{{ item.str }}</textarea>
     </div>
 </div>
-
-<script>
-    // tell the embed parent frame the height of the content
-    if (window.parent && window.parent.parent) {
-        window.parent.parent.postMessage(["resultsFrame", {
-            height: document.body.getBoundingClientRect().height,
-            slug: "p47awzve"
-        }], "*")
-    }
-</script>
-
-
 </body>
-
 </html>

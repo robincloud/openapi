@@ -36,13 +36,13 @@ class Agent extends AbstractModel {
                     TableName: Agent.tableName,
                     AttributeDefinitions: [
                         {
-                            AttributeName: 'id',
+                            AttributeName: 'uuid',
                             AttributeType: 'S'
                         },
                     ],
                     KeySchema: [
                         {
-                            AttributeName: 'id',
+                            AttributeName: 'uuid',
                             KeyType: 'HASH'
                         }
                     ],
@@ -56,11 +56,11 @@ class Agent extends AbstractModel {
             });
     }
 
-    static findById(id) {
+    static findById(uuid) {
         const params = {
             TableName: Agent.tableName,
             Key: {
-                id
+                uuid
             }
         };
         return DB.docClient.get(params).promise()
@@ -82,10 +82,10 @@ class Agent extends AbstractModel {
     }
 
     static Update(data) {
-        const id = data.uuid;
-        const message = data.message;
+        const uuid = data.uuid;
+        const msg = data.msg;
         const cpu = data.cpu;
-        return Agent.findById(id)
+        return Agent.findById(uuid)
             .then((item) => {
                 if (!item) {
                     throw new Error(`Given id does not exists.`);
@@ -93,11 +93,11 @@ class Agent extends AbstractModel {
                 const params = {
                     TableName: Agent.tableName,
                     Key: {
-                        id
+                        uuid
                     },
-                    UpdateExpression: "set message = :m, cpu = :c",
+                    UpdateExpression: "set msg = :m, cpu = :c",
                     ExpressionAttributeValues: {
-                        ":m": message,
+                        ":m": msg,
                         ":c": cpu
                     },
                     ReturnValues: "UPDATED_NEW"
@@ -109,10 +109,10 @@ class Agent extends AbstractModel {
     }
 
     static create(data) {
-        return Agent.findById(data.id)
+        return Agent.findById(data.uuid)
             .then((item) => {
                 if (item) {
-                    throw new Error(`Given id (${item.get('id')}) already exists.`);
+                    throw new Error(`Given id (${item.get('uuid')}) already exists.`);
                 }
                 return new Agent(data).save();
             });
@@ -121,7 +121,7 @@ class Agent extends AbstractModel {
 
     static test() {
         const data = {
-            id: 'asdf',
+            uuid: 'asdf',
             name: 'test_Agent_name'
         };
         return Agent.initialize()
@@ -129,10 +129,10 @@ class Agent extends AbstractModel {
             .then((item) => {
                 console.log('Agent created');
                 console.log(item);
-                return Agent.findById(item.get('id'));
+                return Agent.findById(item.get('uuid'));
             }, (err) => {
                 console.log(err);
-                return Agent.findById(data.id);
+                return Agent.findById(data.uuid);
             })
             .then((item) => {
                 console.log('PASSED(Agent)');
