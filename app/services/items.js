@@ -38,14 +38,18 @@ class ItemSerivce {
             const item = {
                 id: req.id + (data.pkey ? "_" + data.pkey : ""),
                 sid: sid,
-                name: (data.item_name || ''),
                 malls: (currentMalls || []).map( (m) => m.get("id")),
-                vector: [1,2,3,4,5,6,7,8,9,10],
-                cat: (data.cat || ''),
-                image: (data.meta.thumbnail || ''),
+                //vector: [1,2,3,4,5,6,7,8,9,10],
             };
             if (data.option_name)
                 item.option = data.option_name;
+            if (data.cat)
+                item.cat = data.cat;
+            if (data.item_name)
+                item.name= data.item_name;
+            if (data.meta && data.meta.thumbnail)
+                item.image= data.meta.thumbnail;
+
             return new Item(item);
         });
         // console.log(malls);
