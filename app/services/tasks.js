@@ -416,6 +416,9 @@ class TaskStatistics {
 			elapsed: TaskStatistics._msecToString(elapsed)
 		};
 
+		// List of agents
+		const agents = Object.keys(this.counter.agents);
+
 		// Generate total counts of all agents
 		const counts = {
 			scanned: this.counter.totalScanned,
@@ -442,12 +445,17 @@ class TaskStatistics {
 			status: (this.events.started && !this.events.finishedProcess) ? 'running' : 'idle',
 			current_events,
 			next_event: this.events.nextScheduled,
+			agents,
 			counts,
 			throughput
 		};
 	}
 
 	getAgentDetail(agent) {
+		if (!(agent in this.counter.agents)) {
+			throw new CustomError.AgentNotFound(agent);
+		}
+
 		const elapsed = TaskStatistics._elapsed(this.events.started, this.events.finishedProcess);
 		const counts = this.counter.agents[agent];
 
@@ -538,8 +546,12 @@ class TaskService {
 	}
 
 	getStatsAsync(agent = null) {
-		return new Promise((resolve) => {
-			resolve(this._manager.getStats(agent));
+		return new Promise((resolve, reject) => {
+			try {
+				resolve(this._manager.getStats(agent));
+			} catch (err) {
+				reject(err);
+			}
 		});
 	}
 
