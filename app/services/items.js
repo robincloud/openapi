@@ -39,16 +39,17 @@ class ItemSerivce {
                 id: req.id + (data.pkey ? "_" + data.pkey : ""),
                 sid: sid,
                 name: (data.item_name || ''),
-                option: (data.option_name || ''),
                 malls: (currentMalls || []).map( (m) => m.get("id")),
                 vector: [1,2,3,4,5,6,7,8,9,10],
                 cat: (data.cat || ''),
                 image: (data.meta.thumbnail || ''),
             };
+            if (data.option_name)
+                item.option = data.option_name;
             return new Item(item);
         });
-        // console.log(malls);
-        // console.log(items);
+        console.log(malls);
+        console.log(items);
 
         // save items and malls to db
         let promises = [];
