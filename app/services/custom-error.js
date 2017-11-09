@@ -14,27 +14,11 @@ class Unauthorized extends Error {
 	}
 }
 
-class NotPermitted extends Error {
-	constructor(message, name = '') {
-		super(message);
-		this.name = (name || 'NotPermittedError');
-		this.statusCode = 403;
-	}
-}
-
-class UserNotFound extends Error {
-	constructor(email) {
-		super(`unable to find email address (${email}).`);
-		this.name = 'UserNotFoundError';
+class AgentNotFound extends Error {
+	constructor(agent) {
+		super(`unable to find agent name (${agent}).`);
+		this.name = 'AgentNotFoundError';
 		this.statusCode = 404;
-	}
-}
-
-class UserExists extends Error {
-	constructor(email) {
-		super(`email address (${email}) already exists`);
-		this.name = 'UserExistsError';
-		this.statusCode = 409;
 	}
 }
 
@@ -50,8 +34,6 @@ class ServerError extends Error {
 module.exports = {
 	InvalidArgument,
 	Unauthorized,
-	NotPermitted,
-	UserNotFound,
-	UserExists,
+	AgentNotFound,
 	ServerError
 };
