@@ -1,4 +1,3 @@
-const async = require('async');
 const DB = require('../database');
 const CustomError = require('../services/custom-error');
 const AbstractModel = require('./abstract-model');
