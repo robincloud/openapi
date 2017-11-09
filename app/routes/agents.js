@@ -32,6 +32,11 @@ const controller = require('../api/agents.controller');
  *            type: array
  *            description: Message which sent from each individual RPI
  *            example: ["--- start 4564475---", " Finish!", "--- 1.0477879047393799 seconds ---", "--- Sleeping For 9 Sec ---"]
+ *            items:
+ *              type: object
+ *              properties:
+ *                  text:
+ *                      type: string
  */
 
 
