@@ -60,7 +60,15 @@ class ItemModelDataSource extends DataSource {
 				this._idScanFrom = result.nextId;
 			}
 
-			return result.items;
+			// Currently we need information of items with following conditions.
+			//  1. From Naver shopping : id has prefix 'nv'
+			//  2. Have no options : no option id field  e.g. nv_123456_567890 (X)
+			const targetItems = result.items.filter((item) => {
+				const id = item.get('id');
+				return id.startsWith('nv') && (id.split('_').length < 3);
+			});
+
+			return targetItems;
 		});
 	}
 }
