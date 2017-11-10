@@ -556,17 +556,19 @@ class TaskService {
 		return Settings.load('clientVersion');
 	}
 
-	setClientVersion(version) {
-		if (version === undefined) {
-            this.getClientVersion()
-                .then((r_version) => {
-                    version = String(Number(r_version) + 1);
-                    return Settings.save('clientVersion', version);
-                });
-        }
-        else {
-            return Settings.save('clientVersion', version);
-		}
+	setClientVersion(newVersion) {
+		return this.getClientVersion()
+		.then((curVersion) => {
+			if (!newVersion) {
+				newVersion = (Number(curVersion) || 0) + 1;
+			}
+			if (newVersion === curVersion) {
+				return Promise.resolve(newVersion); // Do not save if the value is not changed
+			} else {
+				return Settings.save('clientVersion', newVersion)
+				.then(() => newVersion);
+			}
+		});
 	}
 }
 

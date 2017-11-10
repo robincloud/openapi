@@ -244,8 +244,8 @@ router.get('/tasks/client/version', controller.getClientVersion);
  *       - in: path
  *         name: clientVersion
  *         type: number
- *         required: true
- *         description: Client version number to replace
+ *         required: false
+ *         description: Client version number to replace. Current version is incremented by 1 if this value is not set
  *         example: 1
  *     security:
  *       - JWT: []

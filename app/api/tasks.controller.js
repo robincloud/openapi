@@ -68,7 +68,7 @@ const setClientVersion = (req, res) => {
 	const httpResponse = new HttpResponse();
 
 	TaskService.setClientVersion(version)
-	.then(() => {
+	.then((version) => {
 		httpResponse.setData({
 			clientVersion: version
 		});
