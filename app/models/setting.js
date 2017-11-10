@@ -48,9 +48,9 @@ class Setting extends AbstractModel {
 			}
 		};
 		return DB.docClient.get(params).promise()
-		.then((data) => {
-			if (!data['Item']) return null;
-			return new Setting(data);
+		.then(({Item}) => {
+			if (!Item) return null;
+			return new Setting(Item.key, Item.value);
 		})
 	}
 
