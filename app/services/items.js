@@ -19,7 +19,6 @@ class ItemSerivce {
         // make data array to items
         let malls = [];
         let items = [];
-        const agent = req.agent;
         const promises_items = (req.data || []).map( (data) => {
             // make nodes array to malls
             const currentMalls = (data.nodes || []).map( (node) => {
@@ -63,7 +62,7 @@ class ItemSerivce {
         // save items and malls to db
         let promises_malls = malls.map((mall) => mall.save());
         return Promise.all(promises_items.concat(promises_malls))
-            .then(() => TaskService.releaseTasks(agent, items))
+            .then(() => TaskService.releaseTask(req.agent, req.id))
             .then(() => new Item(req).toObject());
     }
 

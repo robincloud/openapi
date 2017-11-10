@@ -127,9 +127,9 @@ class TaskManager extends EventEmitter {
 		});
 	}
 
-	returnItems(agent, items) {
+	returnItem(agent, itemId) {
 		return new Promise((resolve, reject) => {
-			this.emit('process', agent, items, (err) => {
+			this.emit('process', agent, itemId, (err) => {
 				if (err) reject(err);
 				else resolve();
 			});
@@ -189,6 +189,8 @@ class TaskManager extends EventEmitter {
 	}
 
 	_onScan(items) {
+		if (!Array.isArray(items)) items = new Array(items);
+
 		this._scannedQueue = this._scannedQueue.concat(items);
 		this._stats.addScanned(items.length);
 	}
@@ -219,11 +221,9 @@ class TaskManager extends EventEmitter {
 		callback(null, items);
 	}
 
-	_onProcess(agent, items, callback) {
-		if (!Array.isArray(items)) items = new Array(items);
-
-		this._timeout.unwatch(agent, items);    // Disable timeout timer
-		this._stats.addProcessed(agent, items.length);
+	_onProcess(agent, itemId, callback) {
+		this._timeout.unwatch(agent, itemId);    // Disable timeout timer
+		this._stats.addProcessed(agent, 1);
 
 		// Mark as processing finished
 		if (!this.available && this._timeout.isEmpty()) {
@@ -282,20 +282,17 @@ class TaskTimeoutHandler {
 		});
 	}
 
-	unwatch(agent, items) {
+	unwatch(agent, itemId) {
 		setImmediate(() => {
-			items.forEach((item) => {
-				for (const window of this.windows) {
-					if (!(agent in window)) continue;
+			for (const window of this.windows) {
+				if (!(agent in window)) continue;
 
-					const agentMap = window[agent];
-					const id = item.get('id');
-					if (agentMap.has(id)) {
-						agentMap.delete(id);
-						break;
-					}
+				const agentMap = window[agent];
+				if (agentMap.has(itemId)) {
+					agentMap.delete(itemId);
+					break;
 				}
-			});
+			}
 		});
 	}
 
@@ -529,13 +526,13 @@ class TaskService {
 		});
 	}
 
-	releaseTasks(agent, items) {
+	releaseTask(agent, itemId) {
 		if (!agent) {
 			const err = new CustomError.InvalidArgument('missing required parameter (agent)');
 			return Promise.reject(err);
 		}
 
-		return this._manager.returnItems(agent, items);
+		return this._manager.returnItem(agent, itemId);
 	}
 
 	getStatsSync(agent = null) {
@@ -616,8 +613,9 @@ class TaskServiceTester {
 					console.log(`---------------------------------------------`);
 					console.log(`${JSON.stringify(stats, null, 4)}`);
 
-					items = items.map((item) => new Item(item));
-					taskService.releaseTasks(agent, items);
+					items.forEach((item) => {
+						taskService.releaseTask(agent, item['id']);
+					});
 				});
 			}, 200);
 		};
