@@ -18,8 +18,9 @@ class ItemSerivce {
 
         // make data array to items
         let malls = [];
+        let items = [];
         const agent = req.agent;
-        const items = (req.data || []).map( (data) => {
+        const promises_items = (req.data || []).map( (data) => {
             // make nodes array to malls
             const currentMalls = (data.nodes || []).map( (node) => {
                 let mall = {
@@ -35,31 +36,33 @@ class ItemSerivce {
             });
             malls = malls.concat(currentMalls);
 
-            const item = {
+            const item_data = {
                 id: req.id + (data.pkey ? "_" + data.pkey : ""),
                 sid: sid,
                 malls: (currentMalls || []).map( (m) => m.get("id")),
                 //vector: [1,2,3,4,5,6,7,8,9,10],
             };
             if (data.option_name)
-                item.option = data.option_name;
+                item_data.option = data.option_name;
             if (data.cat)
-                item.cat = data.cat;
-            if (data.item_name)
-                item.name= data.item_name;
+                item_data.cat = data.cat;
+            if (data.item_data_name)
+                item_data.name= data.item_data_name;
             if (data.meta && data.meta.thumbnail)
-                item.image= data.meta.thumbnail;
+                item_data.image= data.meta.thumbnail;
 
-            return new Item(item);
+            const item = new Item(item_data);
+            items.push(item);
+            if (data.is_invalid)
+                return item.remove();
+            return item.save();
         });
         // console.log(malls);
         // console.log(items);
 
         // save items and malls to db
-        let promises = [];
-        promises = promises.concat(items.map((i) => i.save()));
-        promises = promises.concat(malls.map((m) => m.save()));
-        return Promise.all(promises)
+        let promises_malls = malls.map((mall) => mall.save());
+        return Promise.all(promises_items.concat(promises_malls))
             .then(() => TaskService.releaseTasks(agent, items))
             .then(() => new Item(req).toObject());
     }

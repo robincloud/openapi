@@ -21,6 +21,19 @@ class Item extends AbstractModel {
             .then(() => this);
     }
 
+    remove() {
+        if (!this.get('id')) {
+            throw new Error(`id is empty.`);
+        }
+        const params = {
+            TableName: Item.tableName,
+            Key: {
+                id: this.get('id')
+            }
+        };
+        return DB.docClient.delete(params).promise();
+    }
+
     static initialize() {
         Item.tableName = 'items';
 
@@ -128,14 +141,7 @@ class Item extends AbstractModel {
                 if (!item) {
                     throw new Error(`Given id (${id}) does not exist.`);
                 }
-
-                const params = {
-                    TableName: Item.tableName,
-                    Key: {
-                        id
-                    }
-                };
-                return DB.docClient.delete(params).promise();
+                return item.remove();
             });
     }
 
