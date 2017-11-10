@@ -558,8 +558,7 @@ class TaskService {
 
 	setClientVersion(version) {
 		if (version === undefined) {
-			const err = CustomError.InvalidArgument('missing required parameter (version)');
-			return Promise.reject(err);
+			version = String(Number(this.getClientVersion()) + 1)
 		}
 
 		return Settings.save('clientVersion', version);
