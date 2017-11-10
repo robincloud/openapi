@@ -49,6 +49,8 @@ class ItemSerivce {
                 item_data.name= data.item_data_name;
             if (data.meta && data.meta.thumbnail)
                 item_data.image= data.meta.thumbnail;
+            if (data.refid)
+                item_data.refid = data.refid;
 
             const item = new Item(item_data);
             items.push(item);
