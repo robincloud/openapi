@@ -284,7 +284,7 @@ router.get('/tasks/client/version', controller.getClientVersion);
  *             detail:
  *               type: string
  */
-router.post('/tasks/client/version/:version', AuthMiddleware.verifyJWT, controller.setClientVersion);
+router.post('/tasks/client/version/:version?', AuthMiddleware.verifyJWT, controller.setClientVersion);
 
 
 module.exports = router;
