@@ -30,7 +30,7 @@ class AuthService {
 	static verify(token) {
 		return new Promise((resolve, reject) => {
 			if (!token) {
-				return reject(new CustomError.InvalidArgument('empty token'));
+				return reject(new CustomError.Unauthorized('empty access token'));
 			}
 
 			const secret = Config['jwtSecret'];
