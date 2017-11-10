@@ -558,10 +558,15 @@ class TaskService {
 
 	setClientVersion(version) {
 		if (version === undefined) {
-			version = String(Number(this.getClientVersion()) + 1)
+            this.getClientVersion()
+                .then((r_version) => {
+                    version = String(Number(r_version) + 1);
+                    return Settings.save('clientVersion', version);
+                });
+        }
+        else {
+            return Settings.save('clientVersion', version);
 		}
-
-		return Settings.save('clientVersion', version);
 	}
 }
 
