@@ -1,13 +1,14 @@
 const Memcached = require('memcached-elasticache');
+const config = require('../config');
 const Setting = require('../models/setting');
 const CustomError = require('./custom-error');
 
 
 class Settings {
 	constructor() {
-		const memcachedServer = 'oneprice-api.nk1r9f.cfg.apn2.cache.amazonaws.com:11211';
+		const cacheUrl = config['cacheUrl'];
 		this._memcached = new Memcached();
-		this._memcached = new Memcached(memcachedServer, {retries: 1});
+		this._memcached = new Memcached(cacheUrl, {retries: 1});
 	}
 
 	load(key) {
