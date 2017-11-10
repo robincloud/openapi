@@ -18,6 +18,7 @@ AWS.config.getCredentials((err) => {
 const CONFIGS = [
 	{name: 'jwtSecret'},
 	{name: 'serverUrl', defaultValue: 'localhost:8081'},
+	{name: 'cacheUrl', defaultValue: 'localhost:11211'},
 	{name: 'port', defaultValue: 8081},
 
 	// TODO: This is temporary settings for email service. Real server has AWS credentials that have no permission to send email!
