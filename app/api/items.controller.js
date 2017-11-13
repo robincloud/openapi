@@ -25,7 +25,7 @@ const saveMall = (req, res) => {
 
     ItemService.saveMall(data)
         .then((mall) => {
-            console.log(`* saved mall id: ${mall.id}`);
+            console.log(`* saved mall id: ${mall.get('id')}`);
             res.json({
                 message: 'malls are saved successfully.',
                 mall
