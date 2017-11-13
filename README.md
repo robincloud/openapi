@@ -1,3 +1,6 @@
+
+[![GitHub version](https://badge.fury.io/gh/robincloud%2Fopenapi.svg)](https://badge.fury.io/gh/robincloud%2Fopenapi)
+
 # Robin OpenAPI
 Open API server application for Robin Service.
 
