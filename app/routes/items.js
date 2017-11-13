@@ -102,32 +102,6 @@ const AuthMiddleware = require('../middlewares/auth');
  *       data:
  *          type: object
  *          properties:
- *              id:
- *                  type: string
- *              name:
- *                  type: string
- *              image:
- *                  type: string
- *              sid:
- *                  type: string
- *              options:
- *                  type: string
- *              lowest_price:
- *                  type: number
- *              lowest_price_with_delivery:
- *                  type: number
- */
-
-/**
- * @swagger
- * definitions:
- *   ItemPriceDescription:
- *     properties:
- *       message:
- *          type: string
- *       data:
- *          type: object
- *          properties:
  *              count:
  *                  description: # of returned items
  *                  type: number

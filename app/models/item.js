@@ -11,12 +11,8 @@ class Item extends AbstractModel {
     save() {
         const params = {
             TableName: Item.tableName,
-            // Key: {
-            //     id: this.get('id')
-            // },
             Item: this._object
         };
-        //return DB.docClient.update(params).promise()
         return DB.docClient.put(params).promise()
             .then(() => this);
     }
@@ -32,6 +28,16 @@ class Item extends AbstractModel {
             }
         };
         return DB.docClient.delete(params).promise();
+    }
+
+    static count() {
+        const params = {
+            TableName: Item.tableName
+        };
+        return DB.dynamodb.describeTable(params).promise()
+            .then((data) => {
+                return data['Table']['ItemCount']
+            });
     }
 
     static initialize() {
@@ -91,6 +97,7 @@ class Item extends AbstractModel {
 	    return DB.docClient.scan(params).promise()
 	        .then((data) => {
     		    const result = {
+    		        total_count: data['ScannedCount'],
     		    	count: data['Count'],
     		    	items: (data['Items'] || []).map((data) => new Item(data))
 		        };

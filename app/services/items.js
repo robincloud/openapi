@@ -144,9 +144,15 @@ class ItemSerivce {
     }
 
     static getAllItems() {
-        return Item.scan(10)
-            .then((result) => {
-                result.items = result.items.map((item) => item.toObject());
+        let result = {};
+        return Item.count()
+            .then((total_count) => {
+                result.total_count = total_count;
+                return Item.scan(10)
+            })
+            .then((data ) => {
+                result.count = data.count;
+                result.items = data.items.map((item) => item.toObject());
                 return result;
             });
     }
