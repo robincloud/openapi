@@ -18,12 +18,13 @@
         }
 
         .robin {
-            width: 200px;
+            width: 300px;
             margin: 100px auto 40px;
         }
 
         .robin img {
             width: 200px;
+            margin-left: 50px;
         }
 
         .robin div {
@@ -56,8 +57,8 @@
         }
 
     </style>
-    <title>Robin-api</title>
-    <script type='text/javascript'>//<![CDATA[
+    <title>RobinCloud OpenAPI</title>
+    <script type='text/javascript'>
     window.onload = function () {
         Vue.use(VeeValidate)
 
@@ -76,20 +77,19 @@
                                 "email": this.email,
                             })
                                 .then(response => {
-                                    this.$Message('Key has sent to your email.')
+                                    this.$Message('API key has been sent to your email.')
                                 })
                                 .catch(error => {
                                     this.$Message(error.response.statusText)
                                 });
                         })
                         .catch(() => {
-                            this.$Message('Please confirm your input.')
+                            this.$Message('Please confirm your email address.')
                         });
                 }
             }
         })
-
-    }//]]>
+    }
 
     </script>
 
@@ -97,7 +97,7 @@
 <body>
 <div class="robin">
     <img src="robin.png"/>
-    <div>Robin <span>api</span></div>
+    <div>RobinCloud <span>OpenAPI</span></div>
 </div>
 <div id="app">
     <form class="ui form" @submit.prevent="onSubmit">
