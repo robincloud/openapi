@@ -5,10 +5,10 @@ const CustomError = require('./custom-error');
 const Item = require('../models/item');
 
 
-// Scan 200 items per every 0.5 second whenever queued items are less than (1000 - 200)
-const MAX_QUEUE_SIZE = 1000;
-const SCAN_SIZE = 200;
-const SCAN_INTERVAL_MSEC = 500;
+// Scan 500 items per every 1 second whenever queued items are less than (2000 - 500)
+const MAX_QUEUE_SIZE = 2000;
+const SCAN_SIZE = 500;
+const SCAN_INTERVAL_MSEC = 1000;
 
 // Fetched items(tasks) will be regarded as dropped after timed out. Dropped items are queued again to processed later.
 const PROCESSING_TIMEOUT_MSEC = (3 * 60 * 1000);  // 3 minutes
@@ -582,7 +582,7 @@ class DummyDataSource extends DataSource {
 
 		// Initialize dummy items
 		this._items = [];
-		for (let i = 1000; i < 3000; ++i) {
+		for (let i = 1000; i < 7000; ++i) {
 			this._items.push(`nv_${i}`);
 		}
 	}
@@ -624,7 +624,7 @@ class TaskServiceTester {
 
 		setTimeout(() => {
 			tasks.forEach(clearInterval);
-		}, 10000);
+		}, 30000);
 	}
 }
 
