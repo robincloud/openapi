@@ -1,5 +1,6 @@
 
 [![GitHub version](https://badge.fury.io/gh/robincloud%2Fopenapi.svg)](https://badge.fury.io/gh/robincloud%2Fopenapi)
+[![Build Status](https://travis-ci.org/robincloud/openapi.svg?branch=master)](https://travis-ci.org/robincloud/openapi)
 
 # Robin OpenAPI
 Open API server application for Robin Service.
