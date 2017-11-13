@@ -4,16 +4,29 @@ const router = require('express').Router();
  * @swagger
  * /:
  *   get:
- *     description: Response echo to 'get /' request for healthy check
+ *     description: Returns RobinCloud OpenAPI default HTML page
  *
  *     responses:
  *       200:
  *          description: Success
  */
 router.get('/', (req, res) => {
-    //res.send('RobinCloud Open API');
     const path = __dirname + '/default.html';
     res.sendFile(path);
+});
+
+/**
+ * @swagger
+ * /echo:
+ *   get:
+ *     description: Send echo
+ *
+ *     responses:
+ *       200:
+ *          description: Success
+ */
+router.get('/echo', (req, res) => {
+	res.send('Hello RobinCloud OpenAPI!');
 });
 
 /**
