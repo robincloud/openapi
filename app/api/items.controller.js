@@ -136,6 +136,7 @@ const test = (req, res) => {
 
 module.exports = {
     saveItem,
+    saveMall,
     getItemPrice,
     getItem,
     getMall,
