@@ -68,6 +68,18 @@ class ItemSerivce {
             .then(() => new Item(req).toObject());
     }
 
+    static saveMall(req) {
+
+        if (!req.id)
+            throw new Error(`ID is not provided for the data`);
+
+        const sid = req.id.split('_')[0]||'';
+        const pid = req.id.split('_')[1]||'';
+	
+	return new Mall(req).save();
+
+    }
+
     static getItemPrice(id) {
         let refId;
         if (!id)

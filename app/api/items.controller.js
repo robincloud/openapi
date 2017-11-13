@@ -20,6 +20,25 @@ const saveItem = (req, res) => {
         });
 };
 
+const saveMall = (req, res) => {
+    const data = req.body;
+
+    ItemService.saveMall(data)
+        .then((mall) => {
+            console.log(`* saved mall id: ${mall.id}`);
+            res.json({
+                message: 'malls are saved successfully.',
+                mall
+            });
+        })
+        .catch((err) => {
+            console.error(err);
+            res.status(500).json({
+                message: err.message
+            });
+        });
+};
+
 const getItemPrice = (req, res) => {
     const id = req.params.id;
 

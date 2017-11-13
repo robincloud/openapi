@@ -233,6 +233,7 @@ const AuthMiddleware = require('../middlewares/auth');
  *              description: Successfully created
  */
 router.post('/items', controller.saveItem);
+router.post('/malls', controller.saveMall);
 
 /**
  * @swagger
