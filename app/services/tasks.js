@@ -62,12 +62,9 @@ class ItemModelDataSource extends DataSource {
 			// Currently we need information of items with following conditions.
 			//  1. From Naver shopping : id has prefix 'nv'
 			//  2. Have no options : no option id field  e.g. nv_123456_567890 (X)
-			const targetItems = result.items.filter((item) => {
-				const id = item.get('id');
-				return id.startsWith('nv') && (id.split('_').length < 3);
-			});
-
-			return targetItems;
+			return result.items
+			.map((item) => item.get('id'))
+			.filter((id) => id && id.startsWith('nv') && (id.split('_').length < 3));
 		});
 	}
 }
@@ -95,7 +92,7 @@ class TaskManager extends EventEmitter {
 		this._idScanFrom = null;
 
 		// For retry mechanism
-		const timeoutCallback = (agent, items) => { this.emit('timeout', agent, items); };
+		const timeoutCallback = (agent, idArray) => { this.emit('timeout', agent, idArray); };
 		this._timeout = new TaskTimeoutHandler(PROCESSING_TIMEOUT_MSEC, timeoutCallback);
 
 		// For statistics
@@ -127,16 +124,16 @@ class TaskManager extends EventEmitter {
 
 	fetchItems(agent, size = 1) {
 		return new Promise((resolve, reject) => {
-			this.emit('fetch', agent, size, (err, items) => {
+			this.emit('fetch', agent, size, (err, idArray) => {
 				if (err) reject(err);
-				else resolve(items);
+				else resolve(idArray);
 			});
 		});
 	}
 
-	returnItem(agent, itemId) {
+	returnItem(agent, id) {
 		return new Promise((resolve, reject) => {
-			this.emit('process', agent, itemId, (err) => {
+			this.emit('process', agent, id, (err) => {
 				if (err) reject(err);
 				else resolve();
 			});
@@ -167,12 +164,12 @@ class TaskManager extends EventEmitter {
 		// Enable scanning task
 		this._tScanItems = setInterval(() => {
 			// Enough amount of items are already in queue
-			if (this.available > (MAX_QUEUE_SIZE - SCAN_SIZE)) return;
+			if (this._scannedQueue.length > (MAX_QUEUE_SIZE - SCAN_SIZE)) return;
 
 			dataSource.get(SCAN_SIZE)
-			.then((items) => {
+			.then((idArray) => {
 				// Emit 'scan' event - TaskManager._onScan() will be invoked
-				this.emit('scan', items);
+				this.emit('scan', idArray);
 
 				// Suspend fetch task if no more items are left
 				if (dataSource.isEmpty()) {
@@ -195,41 +192,41 @@ class TaskManager extends EventEmitter {
 		this._stats.markAsScanFinished();
 	}
 
-	_onScan(items) {
-		if (!Array.isArray(items)) items = new Array(items);
+	_onScan(idArray) {
+		if (!Array.isArray(idArray)) idArray = new Array(idArray);
 
-		this._scannedQueue = this._scannedQueue.concat(items);
-		this._stats.addScanned(items.length);
+		this._scannedQueue = this._scannedQueue.concat(idArray);
+		this._stats.addScanned(idArray.length);
 	}
 
 	_onFetch(agent, size, callback) {
-		let items = [];
+		let idArray = [];
 
 		// First get items from retry queue
 		if (this._retryQueue.length) {
-			const retryItems = this._retryQueue.splice(0, size);
-			items = items.concat(retryItems);
-			size -= retryItems.length;
+			const idArrayToRetry = this._retryQueue.splice(0, size);
+			idArray = idArray.concat(idArrayToRetry);
+			size -= idArrayToRetry.length;
 		}
 		// Next get items from scanned queue
 		if (size > 0) {
-			const normalItems = this._scannedQueue.splice(0, size);
-			items = items.concat(normalItems);
-			this._stats.addFetched(agent, normalItems.length);
+			const idArrayToProcess = this._scannedQueue.splice(0, size);
+			idArray = idArray.concat(idArrayToProcess);
+			this._stats.addFetched(agent, idArrayToProcess.length);
 		}
 
-		this._timeout.watch(agent, items);  // Enable timeout timer
+		this._timeout.watch(agent, idArray);  // Enable timeout timer
 
 		// Mark as fetching finished
-		if (items.length && !this.available) {
+		if (idArray.length && !this.available) {
 			this._stats.markAsFetchFinished();
 		}
 
-		callback(null, items);
+		callback(null, idArray);
 	}
 
-	_onProcess(agent, itemId, callback) {
-		this._timeout.unwatch(agent, itemId);    // Disable timeout timer
+	_onProcess(agent, id, callback) {
+		this._timeout.unwatch(agent, id);    // Disable timeout timer
 		this._stats.addProcessed(agent, 1);
 
 		// Mark as processing finished
@@ -240,9 +237,9 @@ class TaskManager extends EventEmitter {
 		callback(null);
 	}
 
-	_onTimeout(agent, items) {
-		this._retryQueue = this._retryQueue.concat(items);
-		this._stats.addTimeout(agent, items.length);
+	_onTimeout(agent, idArray) {
+		this._retryQueue = this._retryQueue.concat(idArray);
+		this._stats.addTimeout(agent, idArray.length);
 	}
 }
 
@@ -266,37 +263,37 @@ class TaskTimeoutHandler {
 		}, true);
 	}
 
-	watch(agent, items) {
-		const getAgentMap = (agent) => {
-			let agentMap;
+	watch(agent, idArray) {
+		const getAgentSet = (agent) => {
+			let agentSet;
 			const curWindow = this.windows[this.windows.length - 1];
 
 			if (agent in curWindow) {
-				agentMap = curWindow[agent];
+				agentSet = curWindow[agent];
 			} else {
-				agentMap = new Map();
-				curWindow[agent] = agentMap;
+				agentSet = new Set();
+				curWindow[agent] = agentSet;
 			}
 
-			return agentMap;
+			return agentSet;
 		};
 
 		setImmediate(() => {
-			const agentMap = getAgentMap(agent);
-			items.forEach((item) => {
-				agentMap.set(item.get('id'), item);
+			const agentSet = getAgentSet(agent);
+			idArray.forEach((id) => {
+				agentSet.add(id);
 			});
 		});
 	}
 
-	unwatch(agent, itemId) {
+	unwatch(agent, id) {
 		setImmediate(() => {
 			for (const window of this.windows) {
 				if (!(agent in window)) continue;
 
-				const agentMap = window[agent];
-				if (agentMap.has(itemId)) {
-					agentMap.delete(itemId);
+				const agentSet = window[agent];
+				if (agentSet.has(id)) {
+					agentSet.delete(id);
 					break;
 				}
 			}
@@ -305,15 +302,13 @@ class TaskTimeoutHandler {
 
 
 	_check(callback) {
-		const fMapValues = (map) => { return Array.from(map.values()); };
-
 		if (this.windows.length === this.maxWindows) {
 			const expiredWindow = this.windows.shift();
 
-			Object.entries(expiredWindow).forEach(([agent, agentMap]) => {
-				const items = fMapValues(agentMap);
-				if (items.length) {
-					callback(agent, items);
+			Object.entries(expiredWindow).forEach(([agent, agentSet]) => {
+				const idArray = Array.from(agentSet.values());
+				if (idArray.length) {
+					callback(agent, idArray);
 				}
 			});
 		}
@@ -524,9 +519,8 @@ class TaskService {
 			this.getClientVersion(),
 			this._manager.fetchItems(agent, size)
 		])
-		.then(([clientVersion, items]) => {
-			return items.map((item) => {
-				const id = item.get('id');
+		.then(([clientVersion, idArray]) => {
+			return idArray.map((id) => {
 				const mid = (id.split('_')[1] || '');
 				return {clientVersion, id, mid};
 			});
@@ -589,9 +583,7 @@ class DummyDataSource extends DataSource {
 		// Initialize dummy items
 		this._items = [];
 		for (let i = 1000; i < 3000; ++i) {
-			this._items.push(new Item({
-				id: `nv_${i}`
-			}));
+			this._items.push(`nv_${i}`);
 		}
 	}
 
@@ -615,13 +607,13 @@ class TaskServiceTester {
 		const fTask = (agent) => {
 			return setInterval(() => {
 				taskService.getTasks(agent, 12)
-				.then((items) => {
+				.then((tasks) => {
 					const stats = taskService.getStatsSync();
 					console.log(`---------------------------------------------`);
 					console.log(`${JSON.stringify(stats, null, 4)}`);
 
-					items.forEach((item) => {
-						taskService.releaseTask(agent, item['id']);
+					tasks.forEach(({id}) => {
+						taskService.releaseTask(agent, id);
 					});
 				});
 			}, 200);
