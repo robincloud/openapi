@@ -12,8 +12,8 @@ const app = express();
 const swaggerDefinition = {
     info: {
         title: 'RobinCloud Open API',
-        version: '1.0.0',
-        description: 'Open API server API specification',
+        version: '1.0.1',
+        description: 'Robin Open API Service Specification',
     },
     host: `${config['serverUrl']}`,
     basePath: '/',
