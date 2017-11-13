@@ -26,6 +26,7 @@
     "memcached-elasticache": "^1.1.0",
     "node-schedule": "^1.2.5",
     "nodemon": "^1.12.1",
+    "request": "^2.83.0",
     "swagger-jsdoc": "^1.9.7",
     "vee-validate": "^2.0.0-rc.21"
   }

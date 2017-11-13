@@ -3,7 +3,6 @@ const schedule = require('node-schedule');
 const Settings = require('./settings');
 const CustomError = require('./custom-error');
 const Item = require('../models/item');
-require('./polyfills');    // For some unimplemented functions on older version of Node.js
 
 
 // Scan 200 items per every 0.5 second whenever queued items are less than (1000 - 200)
