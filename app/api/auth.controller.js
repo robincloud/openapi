@@ -12,13 +12,13 @@ const issueToken = (req, res) => {
 		const authMail  = EmailService.create();
 		authMail.source = 'no-reply@oneprice.co.kr';
 		authMail.to = email;
-		authMail.subject = '자동 회신: [RobinCloud] Open API 인증 토큰';
+		authMail.subject = '자동 회신: [RobinCloud OpenAPI] 인증키 발송';
 		authMail.bodyText =
 `
-RobinCloud Open API 인증이 활성화되었습니다.
+RobinCloud OpenAPI 인증이 활성화 되었습니다.
 
-아래 발급된 token 값을 Open API 호출 시 HTTP 헤더의 x-access-token 값으로 설정 해주시기 바랍니다.
-이 token은 최대 30일 간 유효하며, 30일 경과 후 재발급 받으시기 바랍니다.
+아래 발급된 API key 값을 Open API 호출 시 HTTP 헤더의 x-access-token 값으로 설정 해주시기 바랍니다.
+이 key는 최대 30일 간 유효하며, 30일 경과 시 만료 되므로 재발급 받으시기 바랍니다.
 
 ${token}
 `;
