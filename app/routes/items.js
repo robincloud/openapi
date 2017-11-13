@@ -233,6 +233,25 @@ const AuthMiddleware = require('../middlewares/auth');
  *              description: Successfully created
  */
 router.post('/items', controller.saveItem);
+/**
+ * @swagger
+ * /malls:
+ *  post:
+ *      description: Store the data crawled from the mall
+ *      produces:
+ *          - application/json
+ *      consumes:
+ *          - application/json
+ *      parameters:
+ *          - in: body
+ *            name: item_detail
+ *            schema:
+ *              $ref: '#/definitions/ItemMall'
+ *
+ *      responses:
+ *          200:
+ *              description: Successfully created
+ */
 router.post('/malls', controller.saveMall);
 
 /**

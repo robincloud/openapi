@@ -69,6 +69,7 @@ class ItemSerivce {
     }
 
     static saveMall(req) {
+	console.log(req);
 
         if (!req.id)
             throw new Error(`ID is not provided for the data`);
