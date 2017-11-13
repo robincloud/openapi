@@ -5,11 +5,12 @@ import csv
 from functools import partial
 from tqdm import tqdm
 
-CSVFILENAME = "items2.csv"
-ITEMCOUNT = 1000000
-FIELDNAMES = ("id", "sid", "item_name", "thumbnail")
-POST_URL = 'https://robin-api.oneprice.co.kr/items'
+CSVFILENAME = "xaa"
+ITEMCOUNT = 5000000
+FIELDNAMES = ("id", "sid", "item_name", "mall", "delivery", "price")
+POST_URL = 'https://robin-api.oneprice.co.kr/malls'
 PROCESSES = 30  # os.cpu_count()
+dataList = []
 
 
 def post(startIdx, count):
@@ -30,21 +31,18 @@ def usage():
 
 def run():
     print("CSVFILENAME=", CSVFILENAME, "ITEMCOUNT=", ITEMCOUNT)
+    global dataList
     dataList = [None] * ITEMCOUNT
     with open(CSVFILENAME) as csvfile:
         reader = csv.DictReader(csvfile,FIELDNAMES)
         for idx, row in enumerate(reader):
             data = {
-                'agent': 'dummy#1',
-                'id': row['id'],
-                'mid': int(row['id'][3:]),
-                'data': [
-                    {
-                        "item_name": row['item_name'],
-                        'meta': {
-                            'thumbnail': row['thumbnail'] }
-                    },
-                ],
+		'id': row['id'],
+		'sid': row['sid'],
+		'name': row['item_name'],
+		'mall': row['mall'],
+		'delivery': row['delivery'],
+		'price': row['price'],
             }
             dataList[idx] = data
         print("loaded: ", CSVFILENAME, "count: ", len(dataList))
