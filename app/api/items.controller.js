@@ -6,11 +6,8 @@ const saveItem = (req, res) => {
 
     ItemService.saveItem(data)
         .then((item) => {
-            console.log(`* saved item id: ${item.id}`);
-            res.json({
-                message: 'items and malls are saved successfully.',
-                item
-            });
+            //console.log(`* saved item id: ${item.id}`);
+            res.status(200);
         })
         .catch((err) => {
             console.error(err);
@@ -25,11 +22,8 @@ const saveMall = (req, res) => {
 
     ItemService.saveMall(data)
         .then((mall) => {
-            console.log(`* saved mall id: ${mall.get('id')}`);
-            res.json({
-                message: 'malls are saved successfully.',
-                mall
-            });
+            //console.log(`* saved mall id: ${mall.get('id')}`);
+            res.status(200);
         })
         .catch((err) => {
             console.error(err);
