@@ -45,8 +45,8 @@ class ItemSerivce {
                 item_data.option = data.option_name;
             if (data.cat)
                 item_data.cat = data.cat;
-            if (data.item_data_name)
-                item_data.name= data.item_data_name;
+            if (data.item_name)
+                item_data.name= data.item_name;
             if (data.meta && data.meta.thumbnail)
                 item_data.image= data.meta.thumbnail;
             if (data.refid)
