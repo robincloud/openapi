@@ -157,9 +157,9 @@ class ItemSerivce {
         return Item.count()
             .then((total_count) => {
                 result.total_count = total_count;
-                return Item.scan(10)
+                return Item.scan(10);
             })
-            .then((data ) => {
+            .then((data) => {
                 result.count = data.count;
                 result.items = data.items.map((item) => item.toObject());
                 return result;
@@ -184,9 +184,15 @@ class ItemSerivce {
     }
 
     static getAllMalls() {
-        return Mall.scan(10)
-            .then((result) => {
-                result.malls = result.malls.map((mall) => mall.toObject());
+        let result = {};
+        return  Mall.count()
+            .then((total_count) => {
+                result.total_count = total_count;
+                return Mall.scan(10);
+            })
+            .then((data) => {
+                result.count = data.count;
+                result.malls = data.malls.map((mall) => mall.toObject());
                 return result;
             });
     }

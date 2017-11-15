@@ -55,6 +55,16 @@ class Mall extends AbstractModel {
             });
     }
 
+    static count() {
+        const params = {
+            TableName: Mall.tableName
+        };
+        return DB.dynamodb.describeTable(params).promise()
+            .then((data) => {
+                return data['Table']['ItemCount']
+            });
+    }
+
     // Limit = 0 means there is no limitation of number of items to evaluate.
     // However, DynamoDB limits maximum data set size to 1 MB. In this case the results are returned immediately.
     static scan(size = 0, projection = null, fromId = null) {
