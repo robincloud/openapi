@@ -11,8 +11,8 @@ class App {
 
 		return config.initialize()
 		.then(() => Promise.all([
-			app._initRouter(),
 			app._initMiddlewares(),
+			app._initRouter(),
 			app._initModels(),
 			app._initSwagger()
 		]))
@@ -25,6 +25,18 @@ class App {
 	}
 
 
+	_initMiddlewares() {
+		const bodyParser = require('body-parser');
+
+		return new Promise((resolve) => {
+			// Setup middlewares
+			this._app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
+			this._app.use(bodyParser.json({limit: '50mb'}));
+
+			resolve();
+		});
+	}
+
 	_initRouter() {
 		return new Promise((resolve) => {
 			// Routings
@@ -33,18 +45,6 @@ class App {
 			this._app.use('/', require('./routes/items'));
 			this._app.use('/', require('./routes/agents'));
 			this._app.use('/', require('./routes/tasks'));
-
-			resolve();
-		});
-	}
-
-	_initMiddlewares() {
-		const bodyParser = require('body-parser');
-
-		return new Promise((resolve) => {
-			// Setup middlewares
-			this._app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
-			this._app.use(bodyParser.json({limit: '50mb'}));
 
 			resolve();
 		});
