@@ -58,11 +58,12 @@ class Settings {
 
 	_loadFromDB(key) {
 		return Setting.find(key)
-		.then((value) => {
-			if (!value) {
-				return value;
+		.then((setting) => {
+			if (!setting) {
+				return null;
 			}
 
+			const value = setting.get('value');
 			return this._saveToCache(key, value)    // Save to cache
 			.then(() => value);
 		});
