@@ -9,10 +9,12 @@ Open API server application for Robin Service.
 # Environment (환경)
 The required Basic Development Environment (개발 및 실행 환경에 대해서 설명).
 
-- NodeJS + Express : [설치 참고 문서](http://webframeworks.kr/getstarted/expressjs/).
-- DynamoDB : [로컬 설치 참고 문서](http://docs.aws.amazon.com/ko_kr/amazondynamodb/latest/developerguide/DynamoDBLocal.html).
-- AWS credentials : [설정 참고 문서](http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html)
-
+- NodeJS + Express : [설치 참고 문서 링크](http://webframeworks.kr/getstarted/expressjs/)
+- AWS 환경
+   - Credentials : [설정 참고 문서 링크](http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html)
+   - DynamoDB : [로컬 설치 참고 문서 링크](http://docs.aws.amazon.com/ko_kr/amazondynamodb/latest/developerguide/DynamoDBLocal.html)
+   - Elasticache : memcached 엔진 설정 필요. [설정 참고 문서 링크](http://wildpup.cafe24.com/archives/1028)
+   - SES(Simple Email Service) : 이메일 발송 권한 필요. [설정 참고 문서 링크](http://docs.aws.amazon.com/ko_kr/ses/latest/DeveloperGuide/quick-start.html)
 
 
 # Installation (설치)
