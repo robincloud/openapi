@@ -4,6 +4,8 @@
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <meta name="robots" content="noindex, nofollow">
     <meta name="googlebot" content="noindex, nofollow">
+    <script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.auto.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.2.1/vue.js"></script>
     <script type="text/javascript" src="https://unpkg.com/at-ui@1.2.1/dist/at.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://unpkg.com/at-ui-style@1.4.0/css/at.min.css">
@@ -60,31 +62,30 @@
     <title>RobinCloud OpenAPI</title>
     <script type='text/javascript'>
     window.onload = function () {
-        Vue.use(VeeValidate)
-
+        Vue.use(VeeValidate);
         new Vue({
             el: '#app',
-            data() {
-                return {
+            data: {
                     email: ''
-                }
             },
             methods: {
-                onSubmit() {
-                    this.$validator.validateAll()
-                        .then(() => {
-                            axios.post('https://robin-api.oneprice.co.kr/auth/issue', {
-                                "email": this.email,
+                onSubmit: function () {
+                    const email = this.email;
+                    const msg = this.$Message;
+                    this.$validator.validateAll(email, msg)
+                        .then(function() {
+                            return axios.post('https://robin-api.oneprice.co.kr/auth/issue', {
+                                "email": email,
                             })
-                                .then(response => {
-                                    this.$Message('API key has been sent to your email.')
+                                .then(function() {
+                                    msg('API key has been sent to your email.')
                                 })
-                                .catch(error => {
-                                    this.$Message(error.response.statusText)
+                                .catch(function(error) {
+                                    msg(error.response.statusText)
                                 });
                         })
-                        .catch(() => {
-                            this.$Message('Please confirm your email address.')
+                        .catch(function(error) {
+                            msg('Please confirm your email address.')
                         });
                 }
             }
