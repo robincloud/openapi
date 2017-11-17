@@ -73,7 +73,7 @@ $ eb deploy
 
 
 # Test Data (테스트 데이터)
-TBD..
+테스트 데이터: [testset](https://github.com/robincloud/testset)
 
 
 # Slack Workspace (커뮤니티 환경)
