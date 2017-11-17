@@ -51,6 +51,8 @@ class ItemSerivce {
                 item_data.image= data.meta.thumbnail;
             if (data.refid)
                 item_data.refid = data.refid;
+            if (data.vector)
+                item_data.vector = data.vector;
 
             const item = new Item(item_data);
             items.push(item);
