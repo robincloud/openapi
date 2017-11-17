@@ -18,7 +18,7 @@
   },
   "homepage": "https://github.com/robincloud/openapi#readme",
   "dependencies": {
-    "aws-sdk": "^2.133.0",
+    "aws-sdk": "^2.152.0",
     "body-parser": "^1.18.2",
     "command-line-args": "^4.0.7",
     "express": "^4.16.2",
