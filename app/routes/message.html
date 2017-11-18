@@ -1,4 +1,4 @@
-<html>
+<html xmlns:v-bind="http://www.w3.org/1999/xhtml">
 
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
@@ -78,7 +78,7 @@
             height: 0;
             clear: both;
             visibility: hidden;
-            line-height: 0em;
+            line-height: 0;
         }
 
         .title {
@@ -121,7 +121,7 @@
             border: 0;
             background-color: #394264;
             height: 100px;
-            font-family: tahoma;
+            font-family: tahoma,sans-serif;
             line-height: 16px;
             overflow-y: auto;
             color: white;
@@ -151,12 +151,11 @@
         }
 
         .fade-enter-active, .fade-leave-active {
-            transition: opacity .2s
+            transition: opacity .2s;
         }
 
-        .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */
-        {
-            opacity: 0
+        .fade-enter, .fade-leave-to {
+            opacity: 0;
         }
     </style>
     <script type="text/javascript">
@@ -168,13 +167,13 @@
                 },
                 methods: {
                     getMid: function () {
-                        var vm = this;
+                        const vm = this;
                         axios.get('https://robin-api.oneprice.co.kr/agents/request')
                             .then(function (response) {
-                                var list = response.data.message;
-                                for (var i in list) {
-                                    var valid = 0;
-                                    for (var j in vm.clients) {
+                                const list = response.data.message;
+                                for (let i in list) {
+                                    let valid = 0;
+                                    for (let j in vm.clients) {
                                         if (vm.clients[j].uuid === response.data.message[i].uuid) {
                                             valid = 1;
                                             vm.clients[j].cpu = Math.round(response.data.message[i].cpu);
@@ -198,8 +197,8 @@
                                                     vm.clients[j].cpu_class = 'gauge c80100';
                                                     break;
                                             }
-                                            var join_msg = response.data.message[i].msg.join("\n") + "\n";
-                                            if (vm.clients[j].message[vm.clients[j].message.length - 1] != join_msg) {
+                                            let join_msg = response.data.message[i].msg.join("\n") + "\n";
+                                            if (vm.clients[j].message[vm.clients[j].message.length - 1] !== join_msg) {
                                                 vm.clients[j].message.push(join_msg);
                                                 vm.clients[j].str = vm.clients[j].message.join("\n");
                                                 vm.clients[j].show = false;
@@ -229,28 +228,28 @@
                     },
                     scroll: function () {
                         console.log(this.$el.querySelectorAll("#content"));
-                        var container = this.$el.querySelectorAll("#content");
-                        for (var i in container){
+                        const container = this.$el.querySelectorAll("#content");
+                        for (let i in container){
                             container[i].scrollTop = container[i].scrollHeight
                         }
 
                     }
                 },
                 created: function () {
-                    var self = this;
+                    const self = this;
                     setTimeout(function cycle() {
                         self.getMid();
                         setTimeout(cycle, 2000)
                     }, 2000);
                     setTimeout(function cycle() {
-                        for (var j in self.clients) {
+                        for (let j in self.clients) {
                             self.clients[j].show = true
                         }
                         setTimeout(cycle, 1000)
                     }, 1000);
                 },
                 updated: function () {
-                    var vm = this;
+                    const vm = this;
                     vm.scroll()
                 }
             })
@@ -272,7 +271,7 @@
             </transition>
             <div class="cpu">{{ item.cpu }}<span>%</span></div>
         </div>
-        <textarea id="content">{{ item.str }}</textarea>
+        <textarea id="content" title="log">{{ item.str }}</textarea>
     </div>
 </div>
 </body>
