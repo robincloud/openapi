@@ -17,6 +17,22 @@ class Item extends AbstractModel {
             .then(() => this);
     }
 
+    //TODO: should be at abstract-model
+    static batchWrite(malls) {
+        const params = {
+            "RequestItems": {
+                [this.tableName]: []
+            }
+        };
+        for (let i=0; i < malls.length; ++i) {
+            params["RequestItems"][[this.tableName]].push(malls[i].getRequestParam());
+        }
+
+        console.log(JSON.stringify(params, null, 4));
+        return DB.dynamodb.batchWriteItem(params).promise()
+            .then(() => "success" );
+    }
+
     remove() {
         if (!this.get('id')) {
             throw new Error(`id is empty.`);

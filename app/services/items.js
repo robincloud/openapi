@@ -6,7 +6,6 @@ const TaskService = require('./tasks');
 class ItemSerivce {
     static saveItem(req) {
         // handle data
-        //console.log(req);
 
         if (!req.id)
             throw new Error(`ID is not provided for the data`);
@@ -18,8 +17,7 @@ class ItemSerivce {
 
         // make data array to items
         let malls = [];
-        let items = [];
-        const promises_items = (req.data || []).map( (data) => {
+        let items = (req.data || []).map( (data) => {
             // make nodes array to malls
             const currentMalls = (data.nodes || []).map( (node) => {
                 let mall = {
@@ -54,29 +52,21 @@ class ItemSerivce {
             if (data.vector)
                 item_data.vector = data.vector;
 
-            const item = new Item(item_data);
-            items.push(item);
-            if (data.is_invalid)
-                return item.remove();
-            return item.save();
+            return new Item(item_data);
         });
-        // console.log(malls);
-        // console.log(items);
 
         // save items and malls to db
-        let promises_malls = malls.map((mall) => mall.save());
-        return Promise.all(promises_items.concat(promises_malls))
+        return Mall.batchWrite(malls)
+            .then(() => Item.batchWrite(items))
             .then(() => TaskService.releaseTask(req.agent, req.id))
             .then(() => new Item(req).toObject());
     }
 
     static saveMall(req) {
-	console.log(req);
-
         if (!req.id)
             throw new Error(`ID is not provided for the data`);
 
-	return new Mall(req).save();
+        return new Mall(req).save();
     }
 
     static getItemPrice(id) {
