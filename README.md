@@ -127,3 +127,5 @@ invalid | boolean   | 판매 여부.
 # TBD
 
 
+
+
