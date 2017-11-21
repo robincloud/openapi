@@ -27,7 +27,9 @@ class AbstractModel {
             data = {
                 "DeleteRequest": {
                     "Key": {
-                        "N": this._object["id"]
+                        "id": {
+                            "S": this._object["id"]
+                        }
                     }
                 }
             };

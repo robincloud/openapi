@@ -20,6 +20,9 @@ class Mall extends AbstractModel {
 
     //TODO: should be at abstract-model
     static batchWrite(malls) {
+        if (malls.length === 0 ) {
+            return Promise.resolve()
+        }
         const params = {
             "RequestItems": {
                 [this.tableName]: []

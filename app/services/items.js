@@ -51,6 +51,8 @@ class ItemSerivce {
                 item_data.refid = data.refid;
             if (data.vector)
                 item_data.vector = data.vector;
+            if (data.is_invalid !== undefined)
+                item_data.is_invalid = 1;
 
             return new Item(item_data);
         });
