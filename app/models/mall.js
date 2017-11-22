@@ -28,11 +28,16 @@ class Mall extends AbstractModel {
                 [this.tableName]: []
             }
         };
-        for (let i=0; i < malls.length; ++i) {
+        for (let i=0; i < malls.length; i++) {
             params["RequestItems"][[this.tableName]].push(malls[i].getRequestParam());
+            if (i % 25 === 0) {
+                DB.dynamodb.batchWriteItem(params, function(err, data) {
+                    if (err) console.log(err, err.stack);
+                    else     console.log(data);
+                });
+                params["RequestItems"][[this.tableName]] = [];
+            }
         }
-
-        console.log(JSON.stringify(params, null, 4));
         return DB.dynamodb.batchWriteItem(params).promise()
             .then(() => "success" );
     }

@@ -23,12 +23,14 @@ class ItemSerivce {
                 let mall = {
                     id: `${sid}_${node.id}`,
                     sid: sid,
-                    mall: node.mall,
-                    name: node.name,
-                    price: node.price,
-                    delivery: node.delivery,
-                    npay: node.npay
+                    mall: node.mall !== "" ? node.mall : undefined,
+                    name: node.name !== "" ? node.name : undefined,
+                    price: node.price !== "" ? node.price : undefined,
+                    delivery: node.delivery !== "" ? node.delivery : undefined,
+                    npay: node.npay !== "" ? node.npay : undefined
                 };
+                if (Object.keys(mall).length !== 7)
+                    console.log(mall);
                 return new Mall(mall);
             });
             malls = malls.concat(currentMalls);
