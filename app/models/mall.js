@@ -30,7 +30,8 @@ class Mall extends AbstractModel {
         };
         for (let i=0; i < malls.length; i++) {
             params["RequestItems"][[this.tableName]].push(malls[i].getRequestParam());
-            if (i % 24 === 0 && i !== 0) {
+            if (i % 24 === 0 && i !== 0 && malls.length !== 25) {
+                console.log(params["RequestItems"][[this.tableName]].length);
                 DB.dynamodb.batchWriteItem(params, function (err) {
                     if (err) console.error(err, err.stack);
                 });
