@@ -83,7 +83,7 @@ class TaskManager extends EventEmitter {
 
 		// Scheduling (cron-based) - Default schedule is 'AT EVERY HOUR ON THE HOUR'
 		const scheduleCallback = () => { this._wakeup(); };
-		this._scheduledJob = schedule.scheduleJob('0 0 20-08/4 * * ?', scheduleCallback);
+		this._scheduledJob = schedule.scheduleJob('0 */4 * * *', scheduleCallback);
 
 		// For scanning items
 		this._tScanItems = null;
