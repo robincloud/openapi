@@ -124,10 +124,12 @@ class TaskManager extends EventEmitter {
 
 	fetchItems(agent, size = 1) {
 		return new Promise((resolve, reject) => {
-			this.emit('fetch', agent, size, (err, idArray) => {
-				if (err) reject(err);
-				else resolve(idArray);
-			});
+			setTimeout(() => {
+				this.emit('fetch', agent, size, (err, idArray) => {
+					if (err) reject(err);
+					else resolve(idArray);
+				});
+			}, 200);
 		});
 	}
 
