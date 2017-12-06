@@ -580,7 +580,7 @@ module.exports = new TaskService();
 
 
 // FOR TEST PURPOSE
-/*
+///*
 class DummyDataSource extends DataSource {
 	constructor() {
 		super();
@@ -634,4 +634,4 @@ class TaskServiceTester {
 }
 
 TaskServiceTester.launch();
-*/
+//*/
